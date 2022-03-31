@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import org.mapstruct.*;
@@ -31,4 +34,12 @@ public interface DTOMapper {
   @Mapping(source = "username", target = "username")
   @Mapping(source = "status", target = "status")
   UserGetDTO convertEntityToUserGetDTO(User user);
+
+  @Mapping(source = "name", target = "name")
+  @Mapping(source = "username", target = "username")
+  Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "name", target = "name")
+  TeamGetDTO convertEntityToTeamGetDTO(Team team);
 }
