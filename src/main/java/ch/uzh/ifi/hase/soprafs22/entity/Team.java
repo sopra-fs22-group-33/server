@@ -49,5 +49,5 @@ public class Team implements Serializable {
 
   public Collection<User> getUsers() {
     return users;
-}  
+  }  
 }
