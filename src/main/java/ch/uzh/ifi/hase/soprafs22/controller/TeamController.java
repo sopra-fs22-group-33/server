@@ -24,8 +24,8 @@ public class TeamController {
   @GetMapping("/teams")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<TeamGetDTO> getAllUsers() {
-    List<Team> teams = teamService.getUsers();
+  public List<TeamGetDTO> getAllTeams() {
+    List<Team> teams = teamService.getTeams();
     List<TeamGetDTO> teamGetDTOs = new ArrayList<>();
 
     for (Team team : teams) {

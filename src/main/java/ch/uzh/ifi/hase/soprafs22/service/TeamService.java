@@ -19,7 +19,7 @@ import java.util.UUID;
 @Transactional
 public class TeamService {
 
-  private final Logger log = LoggerFactory.getLogger(UserService.class);
+  private final Logger log = LoggerFactory.getLogger(TeamService.class);
 
   private final TeamRepository teamRepository;
 
@@ -28,7 +28,7 @@ public class TeamService {
     this.teamRepository = teamRepository;
   }
 
-  public List<Team> getUsers() {
+  public List<Team> getTeams() {
     return this.teamRepository.findAll();
   }
 
@@ -41,14 +41,14 @@ public class TeamService {
     newTeam = teamRepository.save(newTeam);
     teamRepository.flush();
 
-    log.debug("Created Information for User: {}", newTeam);
+    log.debug("Created Information for Team: {}", newTeam);
     return newTeam;
   }
 
   private void checkIfTeamExists(Team teamToBeCreated) {
     Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
 
-    String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
+    String baseErrorMessage = "The %s provided %s not unique. Therefore, the team could not be created!";
     if (TeamByName != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           String.format(baseErrorMessage, "name", "is"));
