@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "TEAM")
@@ -18,8 +20,12 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-/*   @OneToMany(mappedBy = "team")
-  private List<User>  users; */
+  @ManyToMany
+  @JoinTable(
+    name = "team_user",
+    joinColumns = @JoinColumn(name = "user_id"), 
+    inverseJoinColumns = @JoinColumn(name = "team_id"))
+  private Set<User>  users = new HashSet<User>();
 
 /*TODO  
  @Column(nullable = false)

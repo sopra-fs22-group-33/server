@@ -4,6 +4,8 @@ import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Internal User Representation
@@ -42,6 +44,9 @@ public class User implements Serializable {
 
   @Column(nullable = false)
   private UserStatus status;
+
+  @ManyToMany(mappedBy = "user")
+  private Set<Team>  users = new HashSet<Team>();
 
   public Long getId() {
     return id;
