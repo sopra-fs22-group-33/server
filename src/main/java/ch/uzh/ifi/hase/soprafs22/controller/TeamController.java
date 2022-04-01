@@ -47,4 +47,24 @@ public class TeamController {
     // convert internal representation of team back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeam);
   }
+
+  @PutMapping("/teams/{id}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @ResponseBody
+  public TeamGetDTO updateTeam(@RequestBody TeamPostDTO teamPostDTO, @PathVariable("id") long id) {
+    // convert API user to internal representation
+    Team userInput = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
+
+    // update user
+    Team updatedTeam = teamService.updateTeam(userInput, id);
+
+    // convert internal representation of user back to API
+    return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(updatedTeam);
+  }
+
+  @DeleteMapping("/teams/{id}")
+  @ResponseStatus(HttpStatus.OK)
+  public void deleteTeam(@PathVariable("id") long id){
+    teamService.deleteTeam(id);
+  }
 }

@@ -45,6 +45,21 @@ public class TeamService {
     return newTeam;
   }
 
+  public Team updateTeam(Team team, long id) {
+    Team updatedTeam = teamRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));;
+    if (team.getName() != null){updatedTeam.setName(team.getName());}           
+    
+    teamRepository.save(updatedTeam);
+    teamRepository.flush();
+    return updatedTeam;
+  }
+
+  public void deleteTeam(long id){
+    teamRepository.deleteById(id);
+  }
+
+  //helper
   private void checkIfTeamExists(Team teamToBeCreated) {
     Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
 

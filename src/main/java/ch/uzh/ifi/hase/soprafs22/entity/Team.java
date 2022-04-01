@@ -18,8 +18,8 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "team")
-  private List<User>  users;
+/*   @OneToMany(mappedBy = "team")
+  private List<User>  users; */
 
 /*TODO  
  @Column(nullable = false)
@@ -41,7 +41,7 @@ public class Team implements Serializable {
     this.name = name;
   }
 
-  public void addUser(User user){
+/*   public void addUser(User user){
       if (!getUsers().contains(user)){
         getUsers().add(user);
       }
@@ -49,5 +49,5 @@ public class Team implements Serializable {
 
   public Collection<User> getUsers() {
     return users;
-  }  
+  }   */
 }
