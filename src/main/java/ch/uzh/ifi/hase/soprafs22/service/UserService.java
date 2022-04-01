@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -52,6 +53,46 @@ public class UserService {
 
     log.debug("Created Information for User: {}", newUser);
     return newUser;
+  }
+
+  public User updateUser(User user, long id) {
+    User updatedUser = userRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));;
+    if (user.getName() != null){updatedUser.setName(user.getName());}    
+    if (user.getUsername() != null){updatedUser.setUsername(user.getUsername());}
+    if (user.getEmail() != null){updatedUser.setEmail(user.getEmail());}
+    if (user.getPassword() != null){updatedUser.setPassword(user.getPassword());}
+    if (user.getStatus() != null){updatedUser.setStatus(user.getStatus());        
+    }
+    userRepository.save(updatedUser);
+    userRepository.flush();
+    return updatedUser;
+  }
+
+  public void deleteUser(long id){
+    userRepository.deleteById(id);
+  }
+
+  public User findUserByID(@PathVariable Long id){
+    
+    return userRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+  }
+
+  public User findUserByUsername(@PathVariable String username){
+    User userByUsername = userRepository.findByUsername(username);
+    if (userByUsername != null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this username");
+    }
+    return userByUsername;
+  }
+
+  public User findUserByEmail(@PathVariable String email){
+    User userByEmail = userRepository.findByUsername(email);
+    if (userByEmail != null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this email adress");
+    }
+    return userByEmail;
   }
 
   /**

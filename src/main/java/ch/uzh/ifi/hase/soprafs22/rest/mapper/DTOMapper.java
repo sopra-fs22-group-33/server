@@ -27,16 +27,19 @@ public interface DTOMapper {
 
   @Mapping(source = "name", target = "name")
   @Mapping(source = "username", target = "username")
+  @Mapping(source = "email", target = "email")
+  @Mapping(source = "status", target = "status")
   User convertUserPostDTOtoEntity(UserPostDTO userPostDTO);
 
   @Mapping(source = "id", target = "id")
   @Mapping(source = "name", target = "name")
   @Mapping(source = "username", target = "username")
+  @Mapping(source = "email", target = "email")
   @Mapping(source = "status", target = "status")
   UserGetDTO convertEntityToUserGetDTO(User user);
 
   @Mapping(source = "name", target = "name")
-  @Mapping(source = "username", target = "username")
+  //@Mapping(source = "users", target = "users")
   Team convertTeamPostDTOtoEntity(TeamPostDTO teamPostDTO);
 
   @Mapping(source = "id", target = "id")

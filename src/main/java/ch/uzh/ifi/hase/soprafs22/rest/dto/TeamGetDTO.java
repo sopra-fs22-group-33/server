@@ -1,9 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
-import java.util.List;
-
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
-
 public class TeamGetDTO {
     private Long id;
     private String name;
@@ -23,12 +19,4 @@ public class TeamGetDTO {
     public void setName(String name) {
     this.name = name;
     }
-    //TODO
-    /* public List<Team> getTeams(){
-        return team;
-    } 
-    
-    public void addTeam(Team team){
-        
-    }*/ 
 }
