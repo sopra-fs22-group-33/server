@@ -45,7 +45,7 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @ManyToMany(mappedBy = "users")
+  @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
   private Set<Team>  teams = new HashSet<Team>();
 
   public Long getId() {

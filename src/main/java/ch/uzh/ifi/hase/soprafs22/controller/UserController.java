@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
+import ch.uzh.ifi.hase.soprafs22.service.TeamService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +23,11 @@ import java.util.List;
 public class UserController {
 
   private final UserService userService;
+  private final TeamService teamService;
 
-  UserController(UserService userService) {
+  UserController(UserService userService, TeamService teamService) {
     this.userService = userService;
+    this.teamService = teamService;
   }
 
   @GetMapping("/users")
@@ -95,7 +98,9 @@ public class UserController {
   @ResponseBody
   public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId){
     //TODO
-    return null;
+    User userToAdd = userService.findUserByUsername(userPostDTO.getUsername());
+    User addedUser = teamService.addUser(userToAdd, teamId);
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(addedUser);
   }
 
 

@@ -81,15 +81,15 @@ public class UserService {
 
   public User findUserByUsername(@PathVariable String username){
     User userByUsername = userRepository.findByUsername(username);
-    if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this username");
+    if (userByUsername == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with the username " + username);
     }
     return userByUsername;
   }
 
   public User findUserByEmail(@PathVariable String email){
-    User userByEmail = userRepository.findByUsername(email);
-    if (userByEmail != null) {
+    User userByEmail = userRepository.findByEmail(email);
+    if (userByEmail == null) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this email adress");
     }
     return userByEmail;
@@ -102,6 +102,8 @@ public class UserService {
     }
     return users;
   }
+
+  
 
 
   /**

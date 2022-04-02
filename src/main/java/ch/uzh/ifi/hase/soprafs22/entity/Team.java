@@ -18,7 +18,7 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @ManyToMany (cascade = CascadeType.ALL)
+  @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
   @JoinTable(
     name = "team_user",
     joinColumns = @JoinColumn(name = "user_id"), 

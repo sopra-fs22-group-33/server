@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 import java.util.List;
@@ -46,7 +47,7 @@ public class TeamService {
 
   public Team updateTeam(Team team, long id) {
     Team updatedTeam = teamRepository.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
     if (team.getName() != null){updatedTeam.setName(team.getName());}           
     
     teamRepository.save(updatedTeam);
@@ -64,6 +65,21 @@ public class TeamService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
     }
     return teams;
+  }
+
+  public User addUser(User userToAdd, Long teamId) {
+    // User user = userRepository.findByEmail(userToAdd.getEmail());
+    if (userToAdd.getId() == null){
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found, could not be added to team");
+    }
+    Team team = teamRepository.findById(teamId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be added, team not found"));
+
+    team.addUser(userToAdd);
+
+    teamRepository.save(team);
+    teamRepository.flush();
+    return userToAdd;
   }
 
   //helper
