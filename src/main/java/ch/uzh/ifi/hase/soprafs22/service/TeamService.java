@@ -13,7 +13,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @Transactional
@@ -47,7 +46,7 @@ public class TeamService {
 
   public Team updateTeam(Team team, long id) {
     Team updatedTeam = teamRepository.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));;
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
     if (team.getName() != null){updatedTeam.setName(team.getName());}           
     
     teamRepository.save(updatedTeam);
@@ -57,6 +56,14 @@ public class TeamService {
 
   public void deleteTeam(long id){
     teamRepository.deleteById(id);
+  }
+
+  public List<Team> getAllTeamsOfUser(long userId){
+    List<Team> teams = teamRepository.findTeamsByUsersId(userId);
+    if (teams == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
+    }
+    return teams;
   }
 
   //helper

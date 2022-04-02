@@ -2,9 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -20,7 +18,7 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @ManyToMany
+  @ManyToMany (cascade = CascadeType.ALL)
   @JoinTable(
     name = "team_user",
     joinColumns = @JoinColumn(name = "user_id"), 
@@ -47,13 +45,24 @@ public class Team implements Serializable {
     this.name = name;
   }
 
-/*   public void addUser(User user){
-      if (!getUsers().contains(user)){
-        getUsers().add(user);
-      }
+  public Set<User> getUsers(){
+    return users;
   }
 
-  public Collection<User> getUsers() {
-    return users;
-  }   */
+  public void setUsers(Set<User> users){
+    this.users = users;
+  }
+
+  public void addUser(User user){
+    if (!this.getUsers().contains(user)){
+      this.users.add(user);
+      user.getTeams().add(this);
+    }
+  }
+
+  public void removeUser(long userId){
+    User user = this.users.stream().filter(t -> t.getId() == userId).findFirst().orElse(null);
+    if (user != null) this.users.remove(user);
+    user.getTeams().remove(this);
+  }
 }

@@ -95,6 +95,15 @@ public class UserService {
     return userByEmail;
   }
 
+  public List<User> getAllUsersOfTeam(long teamId){
+    List<User> users = userRepository.findUsersByTeamsId(teamId);
+    if (users == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there are no users in this team");
+    }
+    return users;
+  }
+
+
   /**
    * This is a helper method that will check the uniqueness criteria of the
    * username and the name

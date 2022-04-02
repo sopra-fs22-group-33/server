@@ -1,6 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
+import java.util.Set;
+
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 
 public class UserPostDTO {
 
@@ -9,6 +12,7 @@ public class UserPostDTO {
   private String email;
   private String password;
   private UserStatus status;
+  private Set<Team> teams;
 
   public String getName() {
     return name;
@@ -48,5 +52,13 @@ public class UserPostDTO {
 
   public void setStatus(UserStatus status) {
     this.status = status;
+  }
+
+  public Set<Team> getTeams(){
+    return teams;
+  }
+
+  public void setTeams(Set<Team> teams){
+    this.teams = teams;
   }
 }

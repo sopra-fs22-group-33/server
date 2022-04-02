@@ -72,7 +72,37 @@ public class UserController {
 
   @DeleteMapping("/users/{id}")
   @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
   public void deleteUser(@PathVariable("id") long id){
     userService.deleteUser(id);
+  }
+
+  @GetMapping("/teams/{teamId}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId) {
+    List<User> users = userService.getAllUsersOfTeam(teamId);
+    List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+    for (User user : users) {
+      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+    }
+    return userGetDTOs;
+  }
+
+  @PostMapping("/teams/{teamId}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId){
+    //TODO
+    return null;
+  }
+
+
+  @DeleteMapping("/teams/{teamId}/users/{userId}")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public void deleteUserFromTeam(@PathVariable("teamId") long teamId, @PathVariable("userId") long userId){
+    //TODO
   }
 }

@@ -1,8 +1,13 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
+import java.util.Set;
+
+import ch.uzh.ifi.hase.soprafs22.entity.User;
+
 public class TeamPostDTO {
     private Long id;
     private String name;
+    private Set<User> users;
 
     public Long getId() {
         return id;
@@ -18,5 +23,13 @@ public class TeamPostDTO {
 
     public void setName(String name) {
     this.name = name;
-    }    
+    }
+    
+    public Set<User> getUsers(){
+      return users;
+    }
+  
+    public void setUsers(Set<User> users){
+      this.users = users;
+    }
 }
