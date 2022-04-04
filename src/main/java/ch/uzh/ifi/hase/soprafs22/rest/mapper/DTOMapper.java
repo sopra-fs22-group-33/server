@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
 
@@ -46,5 +44,13 @@ public interface DTOMapper {
   @Mapping(source = "name", target = "name")
   @Mapping(source = "users", target = "users")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "basePlan", target = "basePlan")
+  TeamCalendar convertTeamCalendarPostDTOtoEntity(TeamCalendarPostDTO teamCalendarPostDTO);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "basePlan", target = "basePlan")
+  TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
 }
 
