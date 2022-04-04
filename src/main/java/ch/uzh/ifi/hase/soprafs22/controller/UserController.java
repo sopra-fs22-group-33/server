@@ -79,6 +79,14 @@ public class UserController {
   public void deleteUser(@PathVariable("id") long id){
     userService.deleteUser(id);
   }
+  //to be changed
+  @PostMapping("/users/login")
+  @ResponseStatus(HttpStatus.ACCEPTED)
+  public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO){
+    User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
+    User returnUser = userService.loginUser(userInput);
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(returnUser);
+  }
 
   @GetMapping("/teams/{teamId}/users")
   @ResponseStatus(HttpStatus.OK)
@@ -97,7 +105,6 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId){
-    //TODO
     User userToAdd = userService.findUserByUsername(userPostDTO.getUsername());
     User addedUser = teamService.addUser(userToAdd, teamId);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(addedUser);

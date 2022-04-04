@@ -102,6 +102,13 @@ public class UserService {
     return users;
   }
 
+  //to be changed
+  public User loginUser(User userInput){
+    User userByEmail = findUserByEmail(userInput.getEmail());
+    
+    userByEmail.setStatus(UserStatus.ONLINE);
+    return userByEmail;
+  }
   
 
 
