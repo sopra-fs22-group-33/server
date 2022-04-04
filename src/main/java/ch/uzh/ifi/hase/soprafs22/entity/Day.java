@@ -26,6 +26,21 @@ public class Day implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "team_id"))
     private Set<Event> events = new HashSet<Event>();
 
+    public TeamCalendar getTeamcalendar() {
+        return teamcalendar;
+    }
+
+    public void setTeamcalendar(TeamCalendar teamcalendar) {
+        this.teamcalendar = teamcalendar;
+    }
+
+    public Weekday getWeekday() {
+        return weekday;
+    }
+
+    public void setWeekday(Weekday weekday) {
+        this.weekday = weekday;
+    }
 }
 
 class DayKey implements Serializable{

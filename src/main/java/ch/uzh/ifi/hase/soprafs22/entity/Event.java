@@ -15,6 +15,30 @@ public class Event  implements Serializable {
     private int From;
 
     private int To;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getFrom() {
+        return From;
+    }
+
+    public void setFrom(int from) {
+        From = from;
+    }
+
+    public int getTo() {
+        return To;
+    }
+
+    public void setTo(int to) {
+        To = to;
+    }
 /*T
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
