@@ -3,6 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -43,6 +46,7 @@ public class User implements Serializable {
   private UserStatus status;
 
   @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  @JsonIgnore
   private Set<Team>  teams = new HashSet<Team>();
 
   public Long getId() {
