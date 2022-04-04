@@ -47,3 +47,4 @@ public interface DTOMapper {
   @Mapping(source = "users", target = "users")
   TeamGetDTO convertEntityToTeamGetDTO(Team team);
 }
+

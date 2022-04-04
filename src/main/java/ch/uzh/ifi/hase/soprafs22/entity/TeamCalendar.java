@@ -15,29 +15,26 @@ public class TeamCalendar implements Serializable {
     @MapsId
     private Team team;
 
-    @ElementCollection
-    private Map<Weekday, Day> concreteDays = new LinkedHashMap<Weekday, Day>();
+    @OneToMany(mappedBy = "teamcalendar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @MapKey(name = "weekday")
+    private Map<Weekday, Day> basePlan = new LinkedHashMap<Weekday, Day>();
 
 }
 
 
-@Embeddable
-class Day {
+//@Embeddable
+//class Day {
 
 
-    @ElementCollection
-    private ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();
+   // @ElementCollection
+    //private ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();}
 
-}
+// @Embeddable
+//  class Timeslot {
 
-@Embeddable
-class Timeslot {
-
-    @ManyToMany
-    @JoinColumn(name = "User_id")
-    private ArrayList<User> assignedUsers;
-
-
-}
+    //@ManyToMany
+    //@JoinColumn(name = "User_id")
+//private ArrayList<User> assignedUsers;
+//}
 
 
