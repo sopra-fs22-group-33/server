@@ -105,7 +105,9 @@ public class UserService {
   //to be changed
   public User loginUser(User userInput){
     User userByEmail = findUserByEmail(userInput.getEmail());
-    
+    if (!userByEmail.getPassword().toString().matches(userInput.getPassword().toString())){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid password");
+    }
     userByEmail.setStatus(UserStatus.ONLINE);
     return userByEmail;
   }
