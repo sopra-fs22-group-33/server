@@ -58,7 +58,6 @@ public class UserService {
   public User updateUser(User user, long id) {
     User updatedUser = userRepository.findById(id)
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));;
-    if (user.getName() != null){updatedUser.setName(user.getName());}    
     if (user.getUsername() != null){updatedUser.setUsername(user.getUsername());}
     if (user.getEmail() != null){updatedUser.setEmail(user.getEmail());}
     if (user.getPassword() != null){updatedUser.setPassword(user.getPassword());}
@@ -117,17 +116,12 @@ public class UserService {
    * @see User
    */
   private void checkIfUserExists(User userToBeCreated) {
-    User userByUsername = userRepository.findByUsername(userToBeCreated.getUsername());
-    User userByName = userRepository.findByName(userToBeCreated.getName());
+    User userByEmail = userRepository.findByEmail(userToBeCreated.getEmail());
 
     String baseErrorMessage = "The %s provided %s not unique. Therefore, the user could not be created!";
-    if (userByUsername != null && userByName != null) {
+    if (userByEmail != null) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format(baseErrorMessage, "username and the name", "are"));
-    } else if (userByUsername != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "username", "is"));
-    } else if (userByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, String.format(baseErrorMessage, "name", "is"));
-    }
+          String.format(baseErrorMessage, "email", "is"));
+    } 
   }
 }

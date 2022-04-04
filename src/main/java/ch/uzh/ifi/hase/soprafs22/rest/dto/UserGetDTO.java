@@ -8,7 +8,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.Team;
 public class UserGetDTO {
 
   private Long id;
-  private String name;
   private String username;
   private String email;
   private UserStatus status;
@@ -20,14 +19,6 @@ public class UserGetDTO {
 
   public void setId(Long id) {
     this.id = id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   public String getUsername() {

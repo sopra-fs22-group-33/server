@@ -7,20 +7,11 @@ import ch.uzh.ifi.hase.soprafs22.entity.Team;
 
 public class UserPostDTO {
 
-  private String name;
   private String username;
   private String email;
   private String password;
   private UserStatus status;
   private Set<Team> teams;
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
 
   public String getUsername() {
     return username;
