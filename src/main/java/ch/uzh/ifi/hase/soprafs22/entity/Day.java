@@ -13,25 +13,26 @@ public class Day implements Serializable {
     @Id
     @ManyToOne
     @JoinColumn(name = "team_calendar_id")
-    private TeamCalendar teamcalendar;
-
+    private TeamCalendar teamCalendar;
 
     @Id
     private Weekday weekday;
 
 
-    @OneToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany (mappedBy = "day",fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "team_id"))
     private Set<Event> events = new HashSet<Event>();
 
-    public TeamCalendar getTeamcalendar() {
-        return teamcalendar;
+
+
+    public TeamCalendar getTeamCalendar() {
+        return teamCalendar;
     }
 
-    public void setTeamcalendar(TeamCalendar teamcalendar) {
-        this.teamcalendar = teamcalendar;
+    public void setTeamCalendar(TeamCalendar teamcalendar) {
+        this.teamCalendar = teamcalendar;
     }
 
     public Weekday getWeekday() {
@@ -41,11 +42,17 @@ public class Day implements Serializable {
     public void setWeekday(Weekday weekday) {
         this.weekday = weekday;
     }
+
+    public Set<Event> getEvents(){
+        return events;
+    }
+
+    public void setEvents(Set<Event> events){
+        this.events = events;}
 }
 
 class DayKey implements Serializable{
-    @ManyToOne
-    @JoinColumn(name = "team_calendar_id")
+
     private TeamCalendar teamcalendar;
 
     private Weekday weekday;

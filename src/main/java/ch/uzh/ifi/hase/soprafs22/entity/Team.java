@@ -25,6 +25,10 @@ public class Team implements Serializable {
     inverseJoinColumns = @JoinColumn(name = "team_id"))
   private Set<User>  users = new HashSet<User>();
 
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  @PrimaryKeyJoinColumn
+  private TeamCalendar teamCalendar;
+
 /*TODO  
  @Column(nullable = false)
   private List<Role>  roles; */
@@ -65,4 +69,12 @@ public class Team implements Serializable {
     if (user != null) this.users.remove(user);
     user.getTeams().remove(this);
   }
+
+    public TeamCalendar getTeamCalendar() {
+        return teamCalendar;
+    }
+
+    public void setTeamCalendar(TeamCalendar teamCalendar) {
+        this.teamCalendar = teamCalendar;
+    }
 }

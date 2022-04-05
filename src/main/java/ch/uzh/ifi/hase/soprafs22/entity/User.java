@@ -107,4 +107,12 @@ public class User implements Serializable {
   public void setTeams(Set<Team> teams){
     this.teams = teams;
   }
+
+    public Set<Event> getEvents() {
+        return events;
+    }
+
+    public void setEvents(Set<Event> events) {
+        this.events = events;
+    }
 }

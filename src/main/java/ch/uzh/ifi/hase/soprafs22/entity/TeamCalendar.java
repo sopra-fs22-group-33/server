@@ -18,7 +18,7 @@ public class TeamCalendar implements Serializable {
     @MapsId
     private Team team;
 
-    @OneToMany(mappedBy = "teamcalendar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "weekday")
     private Map<Weekday, Day> basePlan = new LinkedHashMap<Weekday, Day>();
 
