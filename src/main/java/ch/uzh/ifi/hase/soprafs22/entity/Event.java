@@ -11,16 +11,16 @@ public class Event  implements Serializable {
     @GeneratedValue
     private int id;
 
-    @ManyToOne (cascade = CascadeType.PERSIST)
+    @ManyToOne (cascade = CascadeType.ALL)
     private Day day;
-
+/*
     @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "event_user",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<User>  users = new HashSet<User>();
-
+*/
     private int From;
 
     private int To;

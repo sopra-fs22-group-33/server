@@ -49,8 +49,6 @@ public class User implements Serializable {
   @JsonIgnore
   private Set<Team>  teams = new HashSet<Team>();
 
-  @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
-  private Set<Event>  events = new HashSet<Event>();
 
   public Long getId() {
     return id;
@@ -108,11 +106,5 @@ public class User implements Serializable {
     this.teams = teams;
   }
 
-    public Set<Event> getEvents() {
-        return events;
-    }
 
-    public void setEvents(Set<Event> events) {
-        this.events = events;
-    }
 }

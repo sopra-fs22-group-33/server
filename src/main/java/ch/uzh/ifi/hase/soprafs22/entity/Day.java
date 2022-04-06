@@ -10,26 +10,24 @@ import java.util.*;
 @IdClass(DayKey.class)
 public class Day implements Serializable {
 
+    // define composite key
     @Id
+    private Long id;
+
     @ManyToOne
+    @MapsId
     @JoinColumn(name = "team_calendar_id")
     private TeamCalendar teamCalendar;
 
     @Id
     private Weekday weekday;
 
-
-    @OneToMany (mappedBy = "day",fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "team_id"))
-    private Set<Event> events = new HashSet<Event>();
-
-
-
     public TeamCalendar getTeamCalendar() {
         return teamCalendar;
     }
+
+    @OneToMany (mappedBy = "day", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    private Set<Event> events = new HashSet<Event>();
 
     public void setTeamCalendar(TeamCalendar teamcalendar) {
         this.teamCalendar = teamcalendar;
@@ -43,17 +41,28 @@ public class Day implements Serializable {
         this.weekday = weekday;
     }
 
-    public Set<Event> getEvents(){
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+     public Set<Event> getEvents(){
         return events;
     }
 
     public void setEvents(Set<Event> events){
         this.events = events;}
+
+
 }
 
-class DayKey implements Serializable{
+class DayKey implements Serializable{  //part of the composite key definition
 
-    private TeamCalendar teamcalendar;
+    private Long id;
 
     private Weekday weekday;
 

@@ -8,15 +8,22 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Entity
+@Table(name = "TeamCalendar")
 public class TeamCalendar implements Serializable {
 
+    private static final long serialVersionUID = 1L;
+
+    // foreign key of the team entity is used as a primary key
     @Id
     private Long id;
 
-    @Id
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @MapsId
+    @JoinColumn(name = "id")
     private Team team;
+
+    @Column(nullable = false) // probably delete this
+    private String name;
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @MapKey(name = "weekday")
@@ -35,8 +42,8 @@ public class TeamCalendar implements Serializable {
     }
 
     public void setBasePlan(Map<Weekday, Day> basePlan) {
-        this.basePlan = basePlan;
-    }
+      this.basePlan = basePlan;
+   }
 
     public Long getId() {
         return id;
@@ -44,6 +51,14 @@ public class TeamCalendar implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
 

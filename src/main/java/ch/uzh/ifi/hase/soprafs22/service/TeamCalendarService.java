@@ -30,15 +30,20 @@ public class TeamCalendarService {
 
     private final TeamCalendarRepository teamCalendarRepository;
 
+
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository) {
         this.teamCalendarRepository = teamCalendarRepository;
     }
 
+    public  List<TeamCalendar> getCalendars() {
+        return this.teamCalendarRepository.findAll();
+    }
+
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
-        newCalendar = teamCalendarRepository.save(newCalendar);
+
         checkIfTeamHasCalendar(id);
 
         // saves the given entity but data is only persisted in the database once
@@ -59,4 +64,5 @@ public class TeamCalendarService {
                     String.format(baseErrorMessage));
         }
     }
+
 }

@@ -10,6 +10,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -22,17 +23,43 @@ public class TeamCalendarController {
         this.teamCalendarService = teamCalendarService;
     }
 
-    @PostMapping("/calendars/teams/{teamId}")
+
+    @PostMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
-        // create team
+        // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
 
-        // convert internal representation of team back to API
+        // convert internal representation of teamCalendar back to API
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
+
+
+    @GetMapping("/teamCalendars")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<TeamCalendarGetDTO> getAllCalendars() {
+        List<TeamCalendar> calendars = teamCalendarService.getCalendars();
+        List<TeamCalendarGetDTO> teamCalendarGetDTOs = new ArrayList<>();
+
+        for (TeamCalendar teamCalendar : calendars) {
+            teamCalendarGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar));
+        }
+        return teamCalendarGetDTOs;
+    }
+
+
+/*
+
+    @GetMapping(value = "/teamCalendar", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public String helloWorld() {
+        return "The application is running.";
+    }
+ */
 }
