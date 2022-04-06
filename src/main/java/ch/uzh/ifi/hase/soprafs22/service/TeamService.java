@@ -75,8 +75,11 @@ public class TeamService {
     Team team = teamRepository.findById(teamId)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be added, team not found"));
 
+    if (teamRepository.findTeamsByUsersId(userToAdd.getId()).contains(team)){
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user is already part of this team");
+    }
+    
     team.addUser(userToAdd);
-
     teamRepository.save(team);
     teamRepository.flush();
     return userToAdd;

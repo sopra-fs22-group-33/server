@@ -105,7 +105,7 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId){
-    User userToAdd = userService.findUserByUsername(userPostDTO.getUsername());
+    User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
     User addedUser = teamService.addUser(userToAdd, teamId);
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(addedUser);
   }
