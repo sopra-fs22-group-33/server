@@ -1,12 +1,11 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
+import ch.uzh.ifi.hase.soprafs22.entity.Event;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 import javax.persistence.ElementCollection;
@@ -14,7 +13,7 @@ import javax.persistence.ElementCollection;
 public class TeamCalendarGetDTO {
     private Long id;
     private String name;
-    private Map<Weekday, Day> basePlan;
+    private Map<Weekday, ArrayList<Long>> basePlan;
 
 
     public Long getId() {
@@ -34,11 +33,6 @@ public class TeamCalendarGetDTO {
         this.name = name;
     }
 
-    public Map<Weekday, Day> getBasePlan() {
-        return basePlan;
-    }
 
-    public void setBasePlan(Map<Weekday, Day> basePlan) {
-        this.basePlan = basePlan;
-    }
+
 }
