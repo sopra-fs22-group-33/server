@@ -46,13 +46,11 @@ public class UserService {
   }
 
   public User createUser(User newUser) {
+    checkIfUserExists(newUser);
+
     newUser.setToken(UUID.randomUUID().toString());
     newUser.setStatus(UserStatus.OFFLINE);
 
-    checkIfUserExists(newUser);
-
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
     newUser = userRepository.save(newUser);
     userRepository.flush();
 
@@ -127,7 +125,6 @@ public class UserService {
     return userByEmail;
   }
   
-
 
   /**
    * This is a helper method that will check the uniqueness criteria of the

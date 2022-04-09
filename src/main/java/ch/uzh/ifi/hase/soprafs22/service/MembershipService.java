@@ -4,8 +4,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
@@ -38,6 +40,15 @@ public class MembershipService {
     return user;
   }
 
+  public Membership findMembership(Team team, long userId){
+    for (Membership membership : team.getMemberships()){
+      if (membership.getUser().getId() == userId){
+        return membership;
+      }
+    }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "membership not found");
+  }
+
 //   public Team updateMembership(Team team, long id) {
 //     Team updatedTeam = teamRepository.findById(id)
 //       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
@@ -48,20 +59,11 @@ public class MembershipService {
 //     return updatedTeam;
 //   }
 
+public void updateMembership(Membership membershipToUpdate, Boolean isAdmin){
+  membershipToUpdate.setIsAdmin(isAdmin);
+}
+
   public void deleteMembership(long id){
     membershipRepository.deleteById(id);
   }
-
-
-
-  //helper
-//   private void checkIfTeamExists(Team teamToBeCreated) {
-//     Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
-
-//     String baseErrorMessage = "The %s provided %s not unique. Therefore, the team could not be created!";
-//     if (TeamByName != null) {
-//       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-//           String.format(baseErrorMessage, "name", "is"));
-//     } 
-//   }
 }
