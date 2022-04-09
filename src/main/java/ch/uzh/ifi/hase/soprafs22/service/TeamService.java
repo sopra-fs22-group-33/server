@@ -7,13 +7,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -59,30 +63,23 @@ public class TeamService {
     teamRepository.deleteById(id);
   }
 
-  public List<Team> getAllTeamsOfUser(long userId){
-    List<Team> teams = teamRepository.findTeamsByUsersId(userId);
-    if (teams == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
-    }
-    return teams;
+  public Team findTeamById(@PathVariable Long id){
+    
+    return teamRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
   }
 
-  public User addUser(User userToAdd, Long teamId) {
-    // User user = userRepository.findByEmail(userToAdd.getEmail());
-    if (userToAdd.getId() == null){
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found, could not be added to team");
-    }
-    Team team = teamRepository.findById(teamId)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User could not be added, team not found"));
+  public Set<User> getAllUsersOfTeam(long teamId){
+    Set<User> users = new HashSet<>();
+    Team team = findTeamById(teamId);
 
-    if (teamRepository.findTeamsByUsersId(userToAdd.getId()).contains(team)){
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "user is already part of this team");
+    for (Membership membership : team.getMemberships()){
+      users.add(membership.getUser());
     }
-    
-    team.addUser(userToAdd);
-    teamRepository.save(team);
-    teamRepository.flush();
-    return userToAdd;
+    if (users.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there are no users in this team");
+    }
+    return users;
   }
 
   //helper

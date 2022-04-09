@@ -68,18 +68,18 @@ public class TeamController {
     teamService.deleteTeam(id);
   }
 
-  @GetMapping("/users/{userId}/teams")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public List<TeamGetDTO> getAllTeamsByUserId(@PathVariable("userId") long userId) {
-    List<Team> teams = teamService.getAllTeamsOfUser(userId);
-    List<TeamGetDTO> teamGetDTOs = new ArrayList<>();
+  // @GetMapping("/users/{userId}/teams")
+  // @ResponseStatus(HttpStatus.OK)
+  // @ResponseBody
+  // public List<TeamGetDTO> getAllTeamsByUserId(@PathVariable("userId") long userId) {
+  //   List<Team> teams = userService.getAllTeamsOfUser(userId);
+  //   List<TeamGetDTO> teamGetDTOs = new ArrayList<>();
 
-    for (Team team : teams) {
-      teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
-    }
-    return teamGetDTOs;
-  }
+  //   for (Team team : teams) {
+  //     teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
+  //   }
+  //   return teamGetDTOs;
+  // }
 
   @DeleteMapping("/users/{userId}/teams/{teamId}")
   @ResponseStatus(HttpStatus.OK)

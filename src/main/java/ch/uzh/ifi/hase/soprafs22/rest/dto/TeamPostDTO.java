@@ -2,12 +2,12 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import java.util.Set;
 
-import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 
 public class TeamPostDTO {
     private Long id;
     private String name;
-    private Set<User> users;
+    private Set<Membership> memberships;
 
     public Long getId() {
         return id;
@@ -25,11 +25,11 @@ public class TeamPostDTO {
     this.name = name;
     }
     
-    public Set<User> getUsers(){
-      return users;
+    public void setMemberships(Set<Membership> memberships) {
+        this.memberships = memberships;
     }
   
-    public void setUsers(Set<User> users){
-      this.users = users;
+    public Set<Membership> getMemberships() {
+        return memberships;
     }
 }

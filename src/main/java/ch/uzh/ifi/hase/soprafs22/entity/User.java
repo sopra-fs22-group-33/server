@@ -6,7 +6,10 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import antlr.collections.List;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -45,9 +48,13 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  // @ManyToMany(mappedBy = "users", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
+  // @JsonIgnore
+  // private Set<Team>  teams = new HashSet<Team>();
+
+  @OneToMany(mappedBy = "user")
   @JsonIgnore
-  private Set<Team>  teams = new HashSet<Team>();
+  private Set<Membership> memberships;
 
   public Long getId() {
     return id;
@@ -97,11 +104,23 @@ public class User implements Serializable {
     this.status = status;
   }
 
-  public Set<Team> getTeams(){
-    return teams;
-  }
+  // public Set<Team> getTeams(){
+  //   Set<Team> teams = new HashSet<Team>();
+  //   for (Member member : members){
+  //     teams.add(member.getTeam());
+  //   }
+  //   return teams;
+  // }
 
   public void setTeams(Set<Team> teams){
-    this.teams = teams;
+    //TODO
+  }
+
+  public Set<Membership> getMemberships() {
+      return memberships;
+  }
+
+  public void setMemberships(Set<Membership> memberships) {
+      this.memberships = memberships;
   }
 }

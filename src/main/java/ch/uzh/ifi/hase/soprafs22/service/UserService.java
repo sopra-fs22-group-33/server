@@ -1,8 +1,11 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -72,7 +77,7 @@ public class UserService {
     userRepository.deleteById(id);
   }
 
-  public User findUserByID(@PathVariable Long id){
+  public User findUserById(@PathVariable Long id){
     
     return userRepository.findById(id)
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
@@ -94,13 +99,23 @@ public class UserService {
     return userByEmail;
   }
 
-  public List<User> getAllUsersOfTeam(long teamId){
-    List<User> users = userRepository.findUsersByTeamsId(teamId);
-    if (users == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there are no users in this team");
+  public Set<Team> getAllTeamsOfUser(long userId){
+    User user = findUserById(userId);
+    Set<Team> teams = new HashSet<>();
+
+    for (Membership membership : user.getMemberships()){
+      teams.add(membership.getTeam());
     }
-    return users;
-  }
+   
+    if (teams.isEmpty()) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
+    }
+   // List<Team> teams = teamRepository.findTeamsByUsersId(userId);
+   // if (teams == null) {
+   //   throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
+   // }
+   return teams;
+ }
 
   //to be changed
   public User loginUser(User userInput){
