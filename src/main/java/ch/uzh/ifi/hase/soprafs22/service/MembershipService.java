@@ -28,22 +28,23 @@ public class MembershipService {
     this.membershipRepository = membershipRepository;
   }
 
-  public User createMembership(Team team, User user) {    
+  public void createMembership(Team team, User user, Boolean isAdmin) {    
     Membership membership = new Membership();
     membership.setUser(user);
     membership.setTeam(team);
-    membership.setIsAdmin(false);
+    membership.setIsAdmin(isAdmin);
     membership = membershipRepository.save(membership);
     membershipRepository.flush();
 
     log.debug("Created Information for Membership: {}", membership);
-    return user;
   }
 
   public Membership findMembership(Team team, long userId){
-    for (Membership membership : team.getMemberships()){
-      if (membership.getUser().getId() == userId){
-        return membership;
+    if (team.getMemberships() != null){
+      for (Membership membership : team.getMemberships()){
+        if (membership.getUser().getId() == userId){
+          return membership;
+        }
       }
     }
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "membership not found");
@@ -59,11 +60,15 @@ public class MembershipService {
 //     return updatedTeam;
 //   }
 
-public void updateMembership(Membership membershipToUpdate, Boolean isAdmin){
+public void updateMembership(Team team, long userId, Boolean isAdmin){
+  Membership membershipToUpdate = findMembership(team, userId);
   membershipToUpdate.setIsAdmin(isAdmin);
+  membershipRepository.flush();
 }
 
-  public void deleteMembership(long id){
-    membershipRepository.deleteById(id);
+  public void deleteMembership(Team team, long userId){
+    Membership membership = findMembership(team, userId);
+    membershipRepository.deleteById(membership.getId());
+    membershipRepository.flush();
   }
 }

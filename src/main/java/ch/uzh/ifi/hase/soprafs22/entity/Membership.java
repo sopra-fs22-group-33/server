@@ -14,11 +14,11 @@ public class Membership implements Serializable {
   @GeneratedValue
   private Long id;
 
-  @ManyToOne (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @ManyToOne (cascade = CascadeType.ALL)
   @JoinColumn(name = "team_id", nullable = false)
   private Team team;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+  @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "user_id", nullable = false)
   private User user; 
   
@@ -56,5 +56,4 @@ public class Membership implements Serializable {
   public void setIsAdmin(boolean isAdmin) {
     this.isAdmin = isAdmin;
   }
-
 }

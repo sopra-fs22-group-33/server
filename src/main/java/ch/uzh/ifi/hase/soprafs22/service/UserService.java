@@ -49,7 +49,7 @@ public class UserService {
     checkIfUserExists(newUser);
 
     newUser.setToken(UUID.randomUUID().toString());
-    newUser.setStatus(UserStatus.OFFLINE);
+    newUser.setStatus(UserStatus.ONLINE);
 
     newUser = userRepository.save(newUser);
     userRepository.flush();
@@ -58,25 +58,46 @@ public class UserService {
     return newUser;
   }
 
-  public User updateUser(User user, long id) {
-    User updatedUser = userRepository.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));;
-    if (user.getUsername() != null){updatedUser.setUsername(user.getUsername());}
-    if (user.getEmail() != null){updatedUser.setEmail(user.getEmail());}
-    if (user.getPassword() != null){updatedUser.setPassword(user.getPassword());}
-    if (user.getStatus() != null){updatedUser.setStatus(user.getStatus());        
+  public User updateUser(User user, long id, String token) {
+    if (authorizeUser(id, token)){
+      User updatedUser = userRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));;
+      if (user.getUsername() != null){updatedUser.setUsername(user.getUsername());}
+      if (user.getEmail() != null){updatedUser.setEmail(user.getEmail());}
+      if (user.getPassword() != null){updatedUser.setPassword(user.getPassword());}
+      if (user.getStatus() != null){updatedUser.setStatus(user.getStatus());        
+      }
+      userRepository.save(updatedUser);
+      userRepository.flush();
+      return updatedUser;
+    }else{
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user cannot be updated, you can only change your own profile.");
+    } 
+  }
+
+  public void deleteUser(long userId, String token){
+    if (authorizeUser(userId, token)){
+      userRepository.deleteById(userId);
+      userRepository.flush();
+    }else{
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "user cannot be deleted, you can only delete your own account.");
+    }    
+  }
+
+  public boolean authorizeUser(long userId, String token){
+     return findUserById(userId) == userRepository.findByToken(token);
+  }
+
+  public boolean authorizeAdmin(Team team, String token){
+    for (Membership membership : team.getMemberships()){
+      if (membership.getUser().getToken() == token && membership.getIsAdmin()){
+        return true;
+      }
     }
-    userRepository.save(updatedUser);
-    userRepository.flush();
-    return updatedUser;
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
   }
 
-  public void deleteUser(long id){
-    userRepository.deleteById(id);
-  }
-
-  public User findUserById(@PathVariable Long id){
-    
+  public User findUserById(@PathVariable Long id){    
     return userRepository.findById(id)
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
   }
@@ -95,6 +116,14 @@ public class UserService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this email adress");
     }
     return userByEmail;
+  }
+
+  public User findUserByToken(@PathVariable String token){
+    User userByToken = userRepository.findByToken(token);
+    if (userByToken == null) {
+      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with this token");
+    }
+    return userByToken;
   }
 
   public Set<Team> getAllTeamsOfUser(long userId){

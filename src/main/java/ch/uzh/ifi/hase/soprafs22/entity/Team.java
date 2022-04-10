@@ -20,7 +20,7 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "team")
+  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
   @JsonIgnore
   private Set<Membership> memberships;
 

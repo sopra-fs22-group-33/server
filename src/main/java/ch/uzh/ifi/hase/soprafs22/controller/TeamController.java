@@ -1,10 +1,14 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
+import ch.uzh.ifi.hase.soprafs22.service.UserService;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,9 +20,11 @@ import java.util.List;
 public class TeamController {
 
   private final TeamService teamService;
+  private final UserService userService;
 
-  TeamController(TeamService teamService) {
+  TeamController(TeamService teamService, UserService userService, MembershipService membershipService) {
     this.teamService = teamService;
+    this.userService = userService;
   }
 
   @GetMapping("/teams")
@@ -37,13 +43,14 @@ public class TeamController {
   @PostMapping("/teams")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public TeamGetDTO createTeam(@RequestBody TeamPostDTO teamPostDTO) {
+  public TeamGetDTO createTeam(@RequestBody TeamPostDTO teamPostDTO, @RequestHeader("token") String token) {
     // convert API team to internal representation
-    Team userInput = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
+    Team teamToCreate = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
 
-    // create team
-    Team createdTeam = teamService.createTeam(userInput);
-
+    // create team   
+    User user = userService.findUserByToken(token);
+    Team createdTeam = teamService.createTeam(teamToCreate, user);
+    
     // convert internal representation of team back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(createdTeam);
   }
@@ -51,12 +58,12 @@ public class TeamController {
   @PutMapping("/teams/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public TeamGetDTO updateTeam(@RequestBody TeamPostDTO teamPostDTO, @PathVariable("id") long id) {
+  public TeamGetDTO updateTeam(@RequestBody TeamPostDTO teamPostDTO, @PathVariable("id") long id, @RequestHeader("token") String token) {
     // convert API user to internal representation
     Team userInput = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
 
     // update user
-    Team updatedTeam = teamService.updateTeam(userInput, id);
+    Team updatedTeam = teamService.updateTeam(userInput, id, token);
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(updatedTeam);

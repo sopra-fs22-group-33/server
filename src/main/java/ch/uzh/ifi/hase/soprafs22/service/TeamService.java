@@ -36,12 +36,16 @@ public class TeamService {
     return this.teamRepository.findAll();
   }
 
-  public Team createTeam(Team newTeam) {
+  public Team createTeam(Team newTeam, User user) {
     
     checkIfTeamExists(newTeam);
-
-    // saves the given entity but data is only persisted in the database once
-    // flush() is called
+    Membership membership = new Membership();
+    membership.setUser(user);
+    membership.setTeam(newTeam);
+    membership.setIsAdmin(true);
+    Set<Membership> mSet = new HashSet<>();
+    mSet.add(membership);
+    newTeam.setMemberships(mSet);
     newTeam = teamRepository.save(newTeam);
     teamRepository.flush();
 
@@ -49,22 +53,25 @@ public class TeamService {
     return newTeam;
   }
 
-  public Team updateTeam(Team team, long id) {
-    Team updatedTeam = teamRepository.findById(id)
-      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
-    if (team.getName() != null){updatedTeam.setName(team.getName());}           
-    
-    teamRepository.save(updatedTeam);
-    teamRepository.flush();
-    return updatedTeam;
+  public Team updateTeam(Team team, long id, String token) {
+    if (authorizeAdmin(team, token)){
+      Team updatedTeam = teamRepository.findById(id)
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
+      if (team.getName() != null){updatedTeam.setName(team.getName());}           
+      
+      teamRepository.save(updatedTeam);
+      teamRepository.flush();
+      return updatedTeam;
+    }else{
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights for this team");
+    }
   }
 
   public void deleteTeam(long id){
     teamRepository.deleteById(id);
   }
 
-  public Team findTeamById(@PathVariable Long id){
-    
+  public Team findTeamById(@PathVariable Long id){    
     return teamRepository.findById(id)
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
   }
@@ -82,7 +89,7 @@ public class TeamService {
     return users;
   }
 
-  //helper
+  //helpers
   private void checkIfTeamExists(Team teamToBeCreated) {
     Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
 
@@ -91,5 +98,14 @@ public class TeamService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
           String.format(baseErrorMessage, "name", "is"));
     } 
+  }
+
+  public boolean authorizeAdmin(Team team, String token){
+    for (Membership membership : team.getMemberships()){
+      if (membership.getUser().getToken() == token && membership.getIsAdmin()){
+        return true;
+      }
+    }
+    throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
   }
 }

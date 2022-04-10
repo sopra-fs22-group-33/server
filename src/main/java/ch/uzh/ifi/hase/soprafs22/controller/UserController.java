@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
@@ -17,6 +16,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * User Controller
@@ -56,12 +57,14 @@ public class UserController {
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO) {
+  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response) {
     // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
     // create user
     User createdUser = userService.createUser(userInput);
+
+    response.addHeader("token", createdUser.getToken());
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
@@ -80,12 +83,12 @@ public class UserController {
   @PutMapping("/users/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   @ResponseBody
-  public UserGetDTO updateUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("id") long id) {
+  public UserGetDTO updateUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("id") long id, @RequestHeader("token") String token) {
     // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
     // update user
-    User updatedUser = userService.updateUser(userInput, id);
+    User updatedUser = userService.updateUser(userInput, id, token);
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(updatedUser);
@@ -95,17 +98,16 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public void deleteUser(@PathVariable("id") long id, @RequestHeader("token") String token){
-    userService.deleteUser(id);
+    userService.deleteUser(id, token);
   }
-  //to be changed
-  //TODO
+  
   @PostMapping("/users/login")
   @ResponseStatus(HttpStatus.ACCEPTED)
-  public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO){
+  public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response){
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
     User returnUser = userService.loginUser(userInput);
+    response.addHeader("token", returnUser.getToken());
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(returnUser);
-    // return new ResponseEntity<String>(token, HttpStatus.OK);
   }
 
   @GetMapping("/teams/{teamId}/users")
@@ -137,28 +139,33 @@ public class UserController {
   @PostMapping("/teams/{teamId}/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId){
-    User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-    Team team = teamService.findTeamById(teamId);
-    User addedUser = membershipService.createMembership(team, userToAdd);
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(addedUser);
+  public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
+    Team team = teamService.findTeamById(teamId); 
+    if (userService.authorizeAdmin(team, token)){
+      User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
+      membershipService.createMembership(team, userToAdd, false);
+      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
+    }
+    return null;
   }
 
   @PutMapping("/teams/{teamId}/users/{userId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void updateMembership(@RequestParam Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId){
+  public void updateMembership(@RequestParam Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
-    Membership membershipToUpdate = membershipService.findMembership(team, userId);
-    membershipService.updateMembership(membershipToUpdate, isAdmin);
+    if (userService.authorizeAdmin(team, token)){
+      membershipService.updateMembership(team, userId, isAdmin);
+    }
   }
 
   @DeleteMapping("/teams/{teamId}/users/{userId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void deleteMembership(@PathVariable("teamId") long teamId, @PathVariable("userId") long userId){
+  public void deleteMembership(@PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
-    Membership membershipToDelete = membershipService.findMembership(team, userId);
-    membershipService.deleteMembership(membershipToDelete.getId());
+    if (userService.authorizeAdmin(team, token)){
+      membershipService.deleteMembership(team, userId);
+    }
   }
 }

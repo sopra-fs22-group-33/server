@@ -44,7 +44,7 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @OneToMany(mappedBy = "user")
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
   private Set<Membership> memberships;
 
