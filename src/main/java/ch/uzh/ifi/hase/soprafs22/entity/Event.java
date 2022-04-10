@@ -21,9 +21,9 @@ public class Event  implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<User>  users = new HashSet<User>();
 */
-    private Long From;
+    private int from;
 
-    private Long To;
+    private int to;
 
 
     public int getId() {
@@ -34,20 +34,28 @@ public class Event  implements Serializable {
         this.id = id;
     }
 
-    public Long getFrom() {
-        return From;
+    public int getFrom() {
+        return from;
     }
 
-    public void setFrom(Long from) {
-        From = from;
+    public void setFrom(int from) {
+        this.from = from;
     }
 
-    public Long getTo() {
-        return To;
+    public int getTo() {
+        return to;
     }
 
-    public void setTo(Long to) {
-        To = to;
+    public void setTo(int to) {
+        this.to = to;
+    }
+
+    public Day getDay() {
+        return day;
+    }
+
+    public void setDay(Day day) {
+        this.day = day;
     }
 /*T
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

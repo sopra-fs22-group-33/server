@@ -15,14 +15,14 @@ public class TeamCalendarPostDTO {
     private List<DayAPI> days;
 
     static class SlotAPI {
-        Long From;
-        Long To;
-        Long[] A;
+        public int from;
+        public int to;
+        public Long[] A;
     }
 
     static class DayAPI {
         public int weekday;
-        SlotAPI[] slots;
+        public List <SlotAPI>  slots;
     }
 
 
@@ -46,26 +46,33 @@ public class TeamCalendarPostDTO {
             switch (day.weekday) {
                 case 0:
                     dayEntity.setWeekday(Weekday.MONDAY);
+                    break;
                 case 1:
                     dayEntity.setWeekday(Weekday.TUESDAY);
+                    break;
                 case 2:
                     dayEntity.setWeekday(Weekday.WEDNESDAY);
+                    break;
                 case 3:
                     dayEntity.setWeekday(Weekday.THURSDAY);
+                    break;
                 case 4:
                     dayEntity.setWeekday(Weekday.FRIDAY);
+                    break;
                 case 5:
                     dayEntity.setWeekday(Weekday.SATURDAY);
+                    break;
                 case 6:
                     dayEntity.setWeekday(Weekday.SUNDAY);
+                    break;
             }
 
             Set<Event> eventsEntity = new HashSet<Event>();
 
             for (SlotAPI slot : day.slots) {
                 Event eventEntity = new Event();
-                eventEntity.setFrom(slot.From);
-                eventEntity.setTo(slot.From);
+                eventEntity.setFrom(slot.from);
+                eventEntity.setTo(slot.to);
                 eventsEntity.add(eventEntity);
             }
             dayEntity.setEvents(eventsEntity);

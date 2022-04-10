@@ -11,8 +11,6 @@ import java.util.*;
 public class Day implements Serializable {
 
     // define composite key
-    @Id
-    private Long id;
 
     @ManyToOne
     @MapsId
@@ -41,13 +39,6 @@ public class Day implements Serializable {
         this.weekday = weekday;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
 
      public Set<Event> getEvents(){
@@ -60,10 +51,3 @@ public class Day implements Serializable {
 
 }
 
-class DayKey implements Serializable{  //part of the composite key definition
-
-    private Long id;
-
-    private Weekday weekday;
-
-}
