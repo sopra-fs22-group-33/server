@@ -30,5 +30,5 @@ public class Game {
 
     // whatever the users enter (input depends on type of game)
 
-    // winners
+    // winner(s) 1 or more
 }

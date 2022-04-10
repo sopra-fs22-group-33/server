@@ -29,7 +29,7 @@ public class GameController {
     @GetMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<GameDTO> getGame() {
+    public GameDTO getGame() {
         // get the current game information
 
         // return the current game information
@@ -48,9 +48,11 @@ public class GameController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public List<GameDTO> startGame() {
+    public GameDTO startGame() {
         // start a new game, only possible if game associated with that shift hasn't been started by another user
-        // check that in the GameService?
+        // check that in the GameService
+
+        // Game Service needs to be given UserID of the client that sent the post call
 
         // returns the game information
         return null;
@@ -60,8 +62,10 @@ public class GameController {
     @PutMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public List<GameDTO> updateGame() {
+    public GameDTO updateGame() {
         // updates the game when a user enters information (makes their move or opts out)
+
+        // GameService needs the userId and what their action is
 
         // either return the current game information or no response because of the frequent GET request
         return null;
