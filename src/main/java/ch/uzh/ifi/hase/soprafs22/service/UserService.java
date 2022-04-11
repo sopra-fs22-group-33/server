@@ -90,7 +90,7 @@ public class UserService {
 
   public boolean authorizeAdmin(Team team, String token){
     for (Membership membership : team.getMemberships()){
-      if (membership.getUser().getToken() == token && membership.getIsAdmin()){
+      if (membership.getUser().getToken().matches(token) && membership.getIsAdmin()){
         return true;
       }
     }
@@ -137,10 +137,6 @@ public class UserService {
     if (teams.isEmpty()) {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
     }
-   // List<Team> teams = teamRepository.findTeamsByUsersId(userId);
-   // if (teams == null) {
-   //   throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
-   // }
    return teams;
  }
 

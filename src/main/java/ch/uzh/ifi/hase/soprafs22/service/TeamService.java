@@ -53,17 +53,17 @@ public class TeamService {
     return newTeam;
   }
 
-  public Team updateTeam(Team team, long id, String token) {
-    if (authorizeAdmin(team, token)){
-      Team updatedTeam = teamRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
-      if (team.getName() != null){updatedTeam.setName(team.getName());}           
+  public Team updateTeam(Team team, long teamId, String token) {
+    Team teamToUpdate = teamRepository.findById(teamId)
+      .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
+    if (authorizeAdmin(teamToUpdate, token)){        
+      if (team.getName() != null){teamToUpdate.setName(team.getName());}           
       
-      teamRepository.save(updatedTeam);
+      teamRepository.save(teamToUpdate);
       teamRepository.flush();
-      return updatedTeam;
+      return teamToUpdate;
     }else{
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights for this team");
+      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are no admin");
     }
   }
 
@@ -102,7 +102,7 @@ public class TeamService {
 
   public boolean authorizeAdmin(Team team, String token){
     for (Membership membership : team.getMemberships()){
-      if (membership.getUser().getToken() == token && membership.getIsAdmin()){
+      if (membership.getUser().getToken().matches(token) && membership.getIsAdmin()){
         return true;
       }
     }
