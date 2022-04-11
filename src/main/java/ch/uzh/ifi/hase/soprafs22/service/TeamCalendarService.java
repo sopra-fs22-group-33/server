@@ -54,29 +54,6 @@ public class TeamCalendarService {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    public void deleteCalendar (Long id){
-        //
-        }
-
-
-   /* public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
-
-
-        //checkIfTeamHasCalendar(id);
-        Optional<Team> team = teamRepository.findById(id);
-        if (team.isPresent()) {
-            Team foundTeam = team.get();
-            foundTeam.setTeamCalendar(newCalendar);
-            newCalendar.setTeam(foundTeam);
-            newCalendar.setId(foundTeam.getId());
-            teamRepository.save(foundTeam);
-            teamRepository.flush();
-
-            return newCalendar;
-        }
-        return newCalendar;
-    }
-    */
 
 
     public TeamCalendar createTeamCalendar2(long id, TeamCalendar newCalendar) {
@@ -89,9 +66,8 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             foundTeam.setTeamCalendar(newCalendar);
             newCalendar.setTeam(foundTeam);
-
         }
-
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
         for (Day day: newCalendar.getBasePlan().values()){
             day.setTeamCalendar(newCalendar);
@@ -104,6 +80,11 @@ public class TeamCalendarService {
         teamCalendarRepository.flush();
         log.debug("Created calendar for Team: {}",id);
         return newCalendar;
+    }
+
+
+    public void deleteCalendar (Long id){
+        //
     }
 
     private void checkIfTeamHasCalendar(Long id) {

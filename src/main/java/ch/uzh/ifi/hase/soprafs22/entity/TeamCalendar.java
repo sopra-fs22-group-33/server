@@ -15,7 +15,6 @@ public class TeamCalendar implements Serializable {
 
     // foreign key of the team entity is used as a primary key
     @Id
-    @GeneratedValue
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -63,20 +62,5 @@ public class TeamCalendar implements Serializable {
     }
 }
 
-
-//@Embeddable
-//class Day {
-
-
-   // @ElementCollection
-    //private ArrayList<Timeslot> timeslots = new ArrayList<Timeslot>();}
-
-// @Embeddable
-//  class Timeslot {
-
-    //@ManyToMany
-    //@JoinColumn(name = "User_id")
-//private ArrayList<User> assignedUsers;
-//}
 
 
