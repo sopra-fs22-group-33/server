@@ -39,6 +39,17 @@ public class TeamCalendarController {
     }
 
 
+    @GetMapping("/teams/{teamId}/calendars")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public TeamCalendarGetDTO getTeamCalendars(@PathVariable("teamId") long id) {
+        TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
+        TeamCalendarGetDTO teamCalendarGetDTOs = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
+
+        return teamCalendarGetDTOs;
+    }
+
+
     @GetMapping("/teamCalendars")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -50,6 +61,14 @@ public class TeamCalendarController {
             teamCalendarGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar));
         }
         return teamCalendarGetDTOs;
+    }
+
+    @DeleteMapping("/teams/{teamId}/calendars")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    void deleteTeamCalendar(@PathVariable("teamId") long id) {
+        //TeamCalendar teamCalendar = teamCalendarService.deleteCalendar(id);
+        return;
     }
 
 

@@ -45,8 +45,38 @@ public class TeamCalendarService {
         return this.teamCalendarRepository.findAll();
     }
 
+    public  TeamCalendar getCalendar(Long id) {
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            return this.teamCalendarRepository.findByTeam(foundTeam); }
+        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+    }
+
+    public void deleteCalendar (Long id){
+        //
+        }
+
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
+
+
+        //checkIfTeamHasCalendar(id);
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()) {
+            Team foundTeam = team.get();
+            foundTeam.setTeamCalendar(newCalendar);
+            newCalendar.setTeam(foundTeam);
+            newCalendar.setId(foundTeam.getId());
+            teamRepository.save(foundTeam);
+            teamRepository.flush();
+
+            return newCalendar;
+        }
+        return newCalendar;
+    }
+
+    public TeamCalendar createTeamCalendar2(long id, TeamCalendar newCalendar) {
 
 
         //checkIfTeamHasCalendar(id);
@@ -60,10 +90,6 @@ public class TeamCalendarService {
         }
         for (Day day: newCalendar.getBasePlan().values()){
             day.setTeamCalendar(newCalendar);
-            DayKey daykey = new DayKey();
-
-            daykey.setWeekday(day.getWeekday());
-
             //day.setId(newCalendar.getId());
             for (Event event: day.getEvents()){
                 event.setDay(day);
