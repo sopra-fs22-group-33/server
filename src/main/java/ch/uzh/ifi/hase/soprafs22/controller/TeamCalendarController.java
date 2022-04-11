@@ -32,7 +32,7 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         // create teamCalendar
-        TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
+        TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar2(id, userInput);
 
         // convert internal representation of teamCalendar back to API
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);

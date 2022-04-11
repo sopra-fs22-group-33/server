@@ -36,12 +36,15 @@ public class TeamCalendarGetDTO {
             DayAPI day = new DayAPI();
             day.weekday = 0;
             day.slots = new ArrayList<SlotAPI>();
+           /*
             for (Event slot:entityDays.get(key).getEvents()){
                 SlotAPI s = new SlotAPI();
                 s.from = slot.getFrom();
                 s.to = slot.getTo();
                 day.slots.add(s);
             }
+
+            */
             list.add(day);
         }
         this.days = list;

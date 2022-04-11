@@ -7,25 +7,38 @@ import java.io.Serializable;
 import java.util.*;
 
 @Entity
-@IdClass(DayKey.class)
 public class Day implements Serializable {
 
     // define composite key
 
+   @Id
+   @GeneratedValue
+   private Long id;
+
     @ManyToOne
-    @MapsId
-    @JoinColumn(name = "team_calendar_id")
+    @JoinColumn(name = "team_calendar_id", updatable = true, insertable = true)
     private TeamCalendar teamCalendar;
 
-    @Id
+    /*@OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    private Set<Event> events = new HashSet<Event>();
+
+
+    public Set<Event> getEvents(){
+        return events;
+    }
+
+    public void setEvents(Set<Event> events){
+        this.events = events;}
+
+     */
+
     private Weekday weekday;
 
     public TeamCalendar getTeamCalendar() {
         return teamCalendar;
     }
 
-    @OneToMany (mappedBy = "day", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    private Set<Event> events = new HashSet<Event>();
+
 
     public void setTeamCalendar(TeamCalendar teamcalendar) {
         this.teamCalendar = teamcalendar;
@@ -41,13 +54,12 @@ public class Day implements Serializable {
 
 
 
-     public Set<Event> getEvents(){
-        return events;
+    public Long getId() {
+        return id;
     }
 
-    public void setEvents(Set<Event> events){
-        this.events = events;}
-
-
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
 

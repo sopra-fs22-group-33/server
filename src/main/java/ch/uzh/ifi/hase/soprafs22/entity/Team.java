@@ -26,7 +26,7 @@ public class Team implements Serializable {
   private Set<User>  users = new HashSet<User>();
 
   @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
-  @PrimaryKeyJoinColumn
+  @JoinColumn
   private TeamCalendar teamCalendar;
 
 /*TODO  
@@ -77,4 +77,6 @@ public class Team implements Serializable {
     public void setTeamCalendar(TeamCalendar teamCalendar) {
         this.teamCalendar = teamCalendar;
     }
+
+
 }

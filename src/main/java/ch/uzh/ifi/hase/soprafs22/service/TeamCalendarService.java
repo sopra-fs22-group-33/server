@@ -49,8 +49,9 @@ public class TeamCalendarService {
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
-            return this.teamCalendarRepository.findByTeam(foundTeam); }
-        else throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+            return foundTeam.getTeamCalendar();
+      }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
     public void deleteCalendar (Long id){
@@ -58,7 +59,7 @@ public class TeamCalendarService {
         }
 
 
-    public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
+   /* public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
 
         //checkIfTeamHasCalendar(id);
@@ -75,34 +76,32 @@ public class TeamCalendarService {
         }
         return newCalendar;
     }
+    */
+
 
     public TeamCalendar createTeamCalendar2(long id, TeamCalendar newCalendar) {
 
 
         //checkIfTeamHasCalendar(id);
+
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
             foundTeam.setTeamCalendar(newCalendar);
             newCalendar.setTeam(foundTeam);
-            newCalendar.setId(foundTeam.getId());
 
         }
+
+
         for (Day day: newCalendar.getBasePlan().values()){
             day.setTeamCalendar(newCalendar);
-            //day.setId(newCalendar.getId());
-            for (Event event: day.getEvents()){
-                event.setDay(day);
-                eventRepository.save(event);
-                //eventRepository.flush();
+
+           // for (Event event: day.getEvents()){
+                //event.setDay(day);}
             }
 
-            teamCalendarRepository.save(newCalendar);
-            dayRepository.save(day);
-            //dayRepository.flush();
-        }
-
-        teamCalendarRepository.flush(); // breaks here - on executing SQL query
+        newCalendar = teamCalendarRepository.save(newCalendar);
+        teamCalendarRepository.flush();
         log.debug("Created calendar for Team: {}",id);
         return newCalendar;
     }

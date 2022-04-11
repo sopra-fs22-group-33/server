@@ -10,17 +10,27 @@ public class Event  implements Serializable {
     @Id
     @GeneratedValue
     private int id;
-
-    @ManyToOne (cascade = CascadeType.ALL)
-    private Day day;
 /*
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<User>  users = new HashSet<User>();
-*/
+    @ManyToOne
+    @JoinColumn(name="day_id", updatable = true, insertable = true)
+    private Day day;
+    /*
+        @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+        @JoinTable(
+                name = "event_user",
+                joinColumns = @JoinColumn(name = "user_id"),
+                inverseJoinColumns = @JoinColumn(name = "event_id"))
+        private Set<User>  users = new HashSet<User>();
+
+        public Day getDay() {
+        return day;
+    }
+
+    public void setDay(Day day) {
+        this.day = day;
+    }
+ */
+
     private int from;
 
     private int to;
@@ -50,14 +60,7 @@ public class Event  implements Serializable {
         this.to = to;
     }
 
-    public Day getDay() {
-        return day;
-    }
-
-    public void setDay(Day day) {
-        this.day = day;
-    }
-/*T
+/*
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "event_user",

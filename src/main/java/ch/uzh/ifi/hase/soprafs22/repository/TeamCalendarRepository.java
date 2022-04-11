@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
 @Repository("teamCalendarRepository")
 public interface TeamCalendarRepository extends JpaRepository<TeamCalendar, Long>{
 
-    TeamCalendar findByTeam(Team team);
+    //TeamCalendar findByTeam(Team team);
     Optional<TeamCalendar> findById (Long id);
 }

@@ -75,7 +75,7 @@ public class TeamCalendarPostDTO {
                 eventEntity.setTo(slot.to);
                 eventsEntity.add(eventEntity);
             }
-            dayEntity.setEvents(eventsEntity);
+            //dayEntity.setEvents(eventsEntity);
             basePlan.put(dayEntity.getWeekday(), dayEntity);
 
         }
