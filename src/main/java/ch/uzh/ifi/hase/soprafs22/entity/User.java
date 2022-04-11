@@ -96,10 +96,6 @@ public class User implements Serializable {
     this.status = status;
   }
 
-  public void setTeams(Set<Team> teams){
-    //TODO
-  }
-
   public Set<Membership> getMemberships() {
       return memberships;
   }

@@ -21,10 +21,12 @@ public class TeamController {
 
   private final TeamService teamService;
   private final UserService userService;
+  private final MembershipService membershipService;
 
   TeamController(TeamService teamService, UserService userService, MembershipService membershipService) {
     this.teamService = teamService;
     this.userService = userService;
+    this.membershipService = membershipService;
   }
 
   @GetMapping("/teams")
@@ -75,23 +77,13 @@ public class TeamController {
     teamService.deleteTeam(id);
   }
 
-  // @GetMapping("/users/{userId}/teams")
-  // @ResponseStatus(HttpStatus.OK)
-  // @ResponseBody
-  // public List<TeamGetDTO> getAllTeamsByUserId(@PathVariable("userId") long userId) {
-  //   List<Team> teams = userService.getAllTeamsOfUser(userId);
-  //   List<TeamGetDTO> teamGetDTOs = new ArrayList<>();
-
-  //   for (Team team : teams) {
-  //     teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
-  //   }
-  //   return teamGetDTOs;
-  // }
-
   @DeleteMapping("/users/{userId}/teams/{teamId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void deleteTeamFromUser(@PathVariable("userId") long userId, @PathVariable("teamId") long teamId){
-    //TODO
+  public void deleteTeamFromUser(@PathVariable("userId") long userId, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
+    Team team = teamService.findTeamById(teamId);
+    if (userService.authorizeUser(userId, token)){
+      membershipService.deleteMembership(team, userId);
+    }
   }
 }
