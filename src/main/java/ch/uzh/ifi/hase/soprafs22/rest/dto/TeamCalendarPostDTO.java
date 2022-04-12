@@ -4,8 +4,6 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 import ch.uzh.ifi.hase.soprafs22.entity.Event;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 
 import java.util.*;
 
@@ -71,11 +69,11 @@ public class TeamCalendarPostDTO {
 
             for (SlotAPI slot : day.slots) {
                 Event eventEntity = new Event();
-                eventEntity.setFrom(slot.from);
-                eventEntity.setTo(slot.to);
+                eventEntity.setTimeFrom(slot.from);
+                eventEntity.setTimeTo(slot.to);
                 eventsEntity.add(eventEntity);
             }
-            //dayEntity.setEvents(eventsEntity);
+            dayEntity.setEvents(eventsEntity);
             basePlan.put(dayEntity.getWeekday(), dayEntity);
 
         }

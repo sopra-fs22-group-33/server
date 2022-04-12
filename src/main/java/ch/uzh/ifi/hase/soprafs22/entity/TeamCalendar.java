@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,6 +27,7 @@ public class TeamCalendar implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     @MapKey(name = "weekday")
     private Map<Weekday, Day> basePlan = new LinkedHashMap<Weekday, Day>();
 

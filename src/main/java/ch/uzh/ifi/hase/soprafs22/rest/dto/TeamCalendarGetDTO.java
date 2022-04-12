@@ -13,6 +13,14 @@ public class TeamCalendarGetDTO {
 
     private String name;
 
+    public Map<Weekday, Day> getBasePlan() {
+        return basePlan;
+    }
+
+    public void setBasePlan(Map<Weekday, Day> basePlan) {
+        this.basePlan = basePlan;
+    }
+
     static class SlotAPI {
         int from;
         int to;
@@ -24,30 +32,32 @@ public class TeamCalendarGetDTO {
         public List <SlotAPI>  slots;
     }
 
-    private List<DayAPI> days;
+    public List<DayAPI> days;
+    private Map<Weekday, Day> basePlan;
 
     public List<DayAPI> getDays() {
         return days;
     }
 
     public void setDays(Map<Weekday, Day>  entityDays) {
-        List<DayAPI> list = null;
+
+        this.days = new ArrayList<DayAPI>();
         for(Weekday key: entityDays.keySet()){
             DayAPI day = new DayAPI();
             day.weekday = 0;
+
             day.slots = new ArrayList<SlotAPI>();
-           /*
             for (Event slot:entityDays.get(key).getEvents()){
                 SlotAPI s = new SlotAPI();
-                s.from = slot.getFrom();
-                s.to = slot.getTo();
+                s.from = slot.getTimeFrom();
+                s.to = slot.getTimeTo();
                 day.slots.add(s);
             }
 
-            */
-            list.add(day);
+
+            this.days.add(day);
         }
-        this.days = list;
+
     }
 
 

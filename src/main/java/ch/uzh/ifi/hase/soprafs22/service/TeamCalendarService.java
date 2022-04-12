@@ -72,8 +72,8 @@ public class TeamCalendarService {
         for (Day day: newCalendar.getBasePlan().values()){
             day.setTeamCalendar(newCalendar);
 
-           // for (Event event: day.getEvents()){
-                //event.setDay(day);}
+            for (Event event: day.getEvents()){
+                event.setDay(day);}
             }
 
         newCalendar = teamCalendarRepository.save(newCalendar);

@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @IdClass(DayKey.class)
@@ -20,6 +21,7 @@ public class Day implements Serializable {
     @Id
     private Weekday weekday;
 
+    @JsonIgnore
     public TeamCalendar getTeamCalendar() {
         return teamCalendar;
     }
@@ -41,7 +43,7 @@ public class Day implements Serializable {
 
 
 
-    /*@OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private Set<Event> events = new HashSet<Event>();
 
 
@@ -52,7 +54,7 @@ public class Day implements Serializable {
     public void setEvents(Set<Event> events){
         this.events = events;}
 
-
+/*
     public Long getId() {
         return id;
     }
