@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 /**
  * Game Service
  * This class is the "worker" and responsible for all functionality related to
@@ -31,6 +33,10 @@ public class GameService {
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository) {
         this.gameRepository = gameRepository;
+    }
+
+    public List<Game> getGames() {
+        return this.gameRepository.findAll();
     }
 
     public Game getGame() {
