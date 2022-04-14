@@ -56,5 +56,7 @@ public interface DTOMapper {
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
 
   Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
+
+  GameGetDTO convertEntityToGameGetDTO(Game game);
 }
 

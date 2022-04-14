@@ -1,9 +1,12 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Game Controller
@@ -21,11 +24,18 @@ public class GameController {
         this.gameService = gameService;
     }
 
+    @GetMapping("/game")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<GameGetDTO> getAllGames() {
+        return null;
+    }
+
 
     @GetMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GamePostDTO getGame() {
+    public GameGetDTO getGame() {
         // get the current game information
 
         // return the current game information
@@ -44,7 +54,7 @@ public class GameController {
     @PostMapping("/game")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GamePostDTO startGame() {
+    public GameGetDTO startGame() {
         // start a new game, only possible if game associated with that shift hasn't been started by another user
         // check that in the GameService
 
@@ -58,7 +68,7 @@ public class GameController {
     @PutMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GamePostDTO updateGame() {
+    public GameGetDTO updateGame() {
         // updates the game when a user enters information (makes their move or opts out)
 
         // GameService needs the userId and what their action is
