@@ -1,13 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.GameDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Game Controller
@@ -29,7 +25,7 @@ public class GameController {
     @GetMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameDTO getGame() {
+    public GamePostDTO getGame() {
         // get the current game information
 
         // return the current game information
@@ -45,10 +41,10 @@ public class GameController {
     but no game id, which is only created when the game is created
     *** start game is only displayed when all users affected by this scheduling conflict are online
      */
-    @PostMapping()
+    @PostMapping("/game")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameDTO startGame() {
+    public GamePostDTO startGame() {
         // start a new game, only possible if game associated with that shift hasn't been started by another user
         // check that in the GameService
 
@@ -62,7 +58,7 @@ public class GameController {
     @PutMapping("/game/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameDTO updateGame() {
+    public GamePostDTO updateGame() {
         // updates the game when a user enters information (makes their move or opts out)
 
         // GameService needs the userId and what their action is

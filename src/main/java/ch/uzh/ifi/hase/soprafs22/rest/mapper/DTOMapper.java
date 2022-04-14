@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
@@ -53,5 +54,7 @@ public interface DTOMapper {
   @Mapping(source = "startingDate", target = "startingDate")
   @Mapping(source = "basePlan", target = "days")
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
+
+  Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
 }
 
