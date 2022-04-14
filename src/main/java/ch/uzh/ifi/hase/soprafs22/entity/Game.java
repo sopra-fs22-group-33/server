@@ -1,17 +1,19 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import javax.persistence.*;
+
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.Set;
 
 /**
  * Internal Game Representation
  * This class composes the internal representation of the game and defines how
  * the game is stored in the database.
  */
-
 @Entity
-@Table(name="GAME")
+@Table(name = "GAME")
 @Getter
 @Setter
 public class Game {
@@ -19,6 +21,12 @@ public class Game {
     @Id
     @GeneratedValue
     private long id;
+
+    @ElementCollection
+    private Set<Player> players;
+
+    @ElementCollection
+    private Set<Location> apples;
 
     // associated shift
 
