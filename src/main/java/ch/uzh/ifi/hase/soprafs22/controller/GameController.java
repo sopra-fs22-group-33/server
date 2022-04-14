@@ -3,10 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,14 +64,18 @@ public class GameController {
     @PostMapping("/game")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public GameGetDTO startGame() {
+    public GameGetDTO startGame(@RequestBody GamePostDTO gamePostDTO) {
         // start a new game, only possible if game associated with that shift hasn't been started by another user
         // check that in the GameService
 
         // Game Service needs to be given UserID of the client that sent the post call
 
         // returns the game information
-        return null;
+        Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
+
+        Game createdGame = gameService.startGame(gameInput);
+
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
     }
 
 

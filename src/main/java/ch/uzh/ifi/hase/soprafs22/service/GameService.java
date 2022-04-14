@@ -45,7 +45,7 @@ public class GameService {
         return null;
     }
 
-    public Game startGame() {
+    public Game startGame(Game game) {
         // check if a game for this shift has been started already
 
         // if it has, return the game information of that game
@@ -56,7 +56,10 @@ public class GameService {
 
         // problem: what to set the other users at (-> if they clicked just a little bit after that?)
 
-        return null;
+        game = gameRepository.save(game);
+        gameRepository.flush();
+
+        return game;
     }
 
     public Game updateGame() {
