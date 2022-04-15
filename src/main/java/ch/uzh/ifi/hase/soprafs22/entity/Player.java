@@ -1,21 +1,32 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import javax.persistence.*;
+import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import java.util.ArrayList;
-
-@Embeddable
-@Getter
-@Setter
+@Entity(name = "Player")
+@Table(name = "player")
 public class Player {
 
-    @Column
+    @Id
+    @GeneratedValue
     private Long id;
 
-    @Column
-    private ArrayList<Location> chunks;
+    @ElementCollection
+    private List<Location> chunks;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public List<Location> getChunks() {
+        return chunks;
+    }
+
+    public void setChunks(List<Location> chunks) {
+        this.chunks = chunks;
+    }
 }

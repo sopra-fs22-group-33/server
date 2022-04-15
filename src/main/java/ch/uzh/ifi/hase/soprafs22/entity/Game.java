@@ -5,6 +5,7 @@ import javax.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -12,21 +13,44 @@ import java.util.Set;
  * This class composes the internal representation of the game and defines how
  * the game is stored in the database.
  */
-@Entity
-@Table(name = "GAME")
-@Getter
-@Setter
+@Entity(name = "Game")
+@Table(name = "game")
 public class Game {
 
     @Id
     @GeneratedValue
     private long id;
 
-    @ElementCollection
-    private Set<Player> players;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "game_id")
+    private List<Player> players;
 
     @ElementCollection
-    private Set<Location> apples;
+    private List<Location> apples;
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public List<Location> getApples() {
+        return apples;
+    }
+
+    public void setApples(List<Location> apples) {
+        this.apples = apples;
+    }
 
     // associated shift
 

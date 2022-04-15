@@ -2,14 +2,26 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Location;
 import ch.uzh.ifi.hase.soprafs22.entity.Player;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
-@Getter
-@Setter
 public class GamePostDTO {
-    private ArrayList<Player> players;
-    private ArrayList<Location> apples;
+    private List<Player> players;
+    private List<Location> apples;
+
+    public List<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(List<Player> players) {
+        this.players = players;
+    }
+
+    public List<Location> getApples() {
+        return apples;
+    }
+
+    public void setApples(List<Location> apples) {
+        this.apples = apples;
+    }
 }
