@@ -55,8 +55,13 @@ public interface DTOMapper {
   @Mapping(source = "basePlan", target = "days")
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
 
+  @Mapping(source = "apples", target = "apples")
+  @Mapping(source = "players", target = "players")
   Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
 
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "apples", target = "apples")
+  @Mapping(source = "players", target = "players")
   GameGetDTO convertEntityToGameGetDTO(Game game);
 }
 
