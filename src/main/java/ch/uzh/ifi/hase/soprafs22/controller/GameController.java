@@ -43,14 +43,17 @@ public class GameController {
     }
 
 
-    @GetMapping("/games/{gameId}/{userId}")
+    @GetMapping("/games/{gameId}/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO getGame() {
+    public GameGetDTO getGame(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         // get the current game information
 
         // return the current game information
-        return null;
+
+        Game game = gameService.getGame(gameId, playerId);
+
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
 

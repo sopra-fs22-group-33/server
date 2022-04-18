@@ -43,10 +43,19 @@ public class GameService {
         return this.gameRepository.findAll();
     }
 
-    public Game getGame() {
+    public Game getGame(Long gameId, Long playerId) {
 
         // must return the current game information
-        return null;
+
+        Game game = gameRepository.findById(gameId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist"));
+
+        Player player = playerRepository.findById(playerId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist"));
+
+        // todo: check whether playerId is in game
+
+        return game;
     }
 
     public Game startGame(Game game) {
