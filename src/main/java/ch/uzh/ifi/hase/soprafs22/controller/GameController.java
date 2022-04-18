@@ -43,7 +43,7 @@ public class GameController {
     }
 
 
-    @GetMapping("/game/{gameId}/{userId}")
+    @GetMapping("/games/{gameId}/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO getGame() {
@@ -62,7 +62,7 @@ public class GameController {
     but no game id, which is only created when the game is created
     *** start game is only displayed when all users affected by this scheduling conflict are online
      */
-    @PostMapping("/game")
+    @PostMapping("/games")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
     public GameGetDTO startGame(@RequestBody GamePostDTO gamePostDTO) {
@@ -80,7 +80,7 @@ public class GameController {
     }
 
 
-    @PutMapping("/game/{gameId}/{playerId}")
+    @PutMapping("/games/{gameId}/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO updateGame(@RequestBody PlayerPutDTO playerPutDTO, @PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
@@ -89,7 +89,7 @@ public class GameController {
         // GameService needs the userId and what their action is
 
         // either return the current game information or no response because of the frequent GET request
-        
+
         Player playerInput = DTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
 
         Game updatedGame = gameService.updatePlayerInGame(playerInput, gameId, playerId);
