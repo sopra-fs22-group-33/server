@@ -64,6 +64,7 @@ public class UserController {
     // create user
     User createdUser = userService.createUser(userInput);
 
+    response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
     // convert internal representation of user back to API
@@ -106,6 +107,7 @@ public class UserController {
   public UserGetDTO loginUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response){
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
     User returnUser = userService.loginUser(userInput);
+    response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", returnUser.getToken());
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(returnUser);
   }
