@@ -86,7 +86,7 @@ public class GameController {
     @PutMapping("/games/{gameId}/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO updateGame(@RequestBody PlayerPutDTO playerPutDTO, @PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
+    public void updateGame(@RequestBody PlayerPutDTO playerPutDTO, @PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         // updates the game when a user enters information (makes their move or opts out)
 
         // GameService needs the userId and what their action is
@@ -95,8 +95,6 @@ public class GameController {
 
         Player playerInput = DTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
 
-        Game updatedGame = gameService.updatePlayerInGame(playerInput, gameId, playerId);
-
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
+        gameService.updatePlayerInGame(playerInput, gameId, playerId);
     }
 }
