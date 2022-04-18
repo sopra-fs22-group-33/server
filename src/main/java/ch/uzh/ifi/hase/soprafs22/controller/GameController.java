@@ -1,9 +1,10 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.entity.Player;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.PlayerPutDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import org.springframework.http.HttpStatus;
@@ -79,17 +80,20 @@ public class GameController {
     }
 
 
-    @PutMapping("/game/{gameId}/{userId}")
+    @PutMapping("/game/{gameId}/{playerId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO updateGame() {
+    public GameGetDTO updateGame(@RequestBody PlayerPutDTO playerPutDTO, @PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
         // updates the game when a user enters information (makes their move or opts out)
 
         // GameService needs the userId and what their action is
 
         // either return the current game information or no response because of the frequent GET request
-        return null;
+        
+        Player playerInput = DTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
+
+        Game updatedGame = gameService.updatePlayerInGame(playerInput, gameId, playerId);
+
+        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(updatedGame);
     }
-
-
 }
