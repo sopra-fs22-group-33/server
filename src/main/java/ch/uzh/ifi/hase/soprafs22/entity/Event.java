@@ -4,12 +4,22 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Event  implements Serializable {
     @Id
     @GeneratedValue
     private int id;
+
+    @Column(nullable = false)
+    private int timeFrom;
+
+    @Column(nullable = false)
+    private int timeTo;
 
     @ManyToOne
     @JoinColumns(value = {
@@ -30,19 +40,16 @@ public class Event  implements Serializable {
     @JsonIgnore
     private Day day;
 
+    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
+    private Set<Schedule> schedules;
 
-        public Day getDay() {
+    public Day getDay() {
         return day;
     }
 
     public void setDay(Day day) {
         this.day = day;
     }
-
-    private int timeFrom;
-
-    private int timeTo;
-
 
     public int getId() {
         return id;
@@ -66,6 +73,14 @@ public class Event  implements Serializable {
 
     public void setTimeTo(int to) {
         this.timeTo = to;
+    }
+
+    public Set<Schedule> getSchedules() {
+        return schedules;
+    }
+
+    public void setSchedules(Set<Schedule> schedules) {
+        this.schedules = schedules;
     }
 
 /*

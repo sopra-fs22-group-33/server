@@ -4,17 +4,19 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 import ch.uzh.ifi.hase.soprafs22.entity.Event;
+import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
 
 import java.util.*;
 
 public class TeamCalendarPostDTO {
 
-    private String name;
+    private String startingDate;
     private List<DayAPI> days;
 
     static class SlotAPI {
         public int from;
         public int to;
+        public HashMap<Long,Long> base;
         public Long[] A;
     }
 
@@ -24,12 +26,12 @@ public class TeamCalendarPostDTO {
     }
 
 
-    public String getName() {
-        return name;
+    public String getStartingDate() {
+        return startingDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStartingDate(String startingDate) {
+        this.startingDate = startingDate;
     }
 
 
@@ -69,8 +71,19 @@ public class TeamCalendarPostDTO {
 
             for (SlotAPI slot : day.slots) {
                 Event eventEntity = new Event();
+                Set<Schedule> schedules = new HashSet<>();
+
                 eventEntity.setTimeFrom(slot.from);
                 eventEntity.setTimeTo(slot.to);
+                for (Map.Entry<Long, Long> entry : slot.base.entrySet()) {
+                    Long key = entry.getKey();
+                    Long value = entry.getValue();
+                    Schedule schedule = new Schedule();
+                    schedule.setId(key);
+                    schedule.setBasePreference(value);
+                    schedules.add(schedule);
+                }
+                eventEntity.setSchedules(schedules);
                 eventsEntity.add(eventEntity);
             }
             dayEntity.setEvents(eventsEntity);

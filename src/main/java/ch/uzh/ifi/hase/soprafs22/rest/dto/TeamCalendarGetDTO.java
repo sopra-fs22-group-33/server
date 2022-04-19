@@ -11,15 +11,8 @@ public class TeamCalendarGetDTO {
 
     private Long id;
 
-    private String name;
+    private String startingDate;
 
-    public Map<Weekday, Day> getBasePlan() {
-        return basePlan;
-    }
-
-    public void setBasePlan(Map<Weekday, Day> basePlan) {
-        this.basePlan = basePlan;
-    }
 
     static class SlotAPI {
         int from;
@@ -32,13 +25,24 @@ public class TeamCalendarGetDTO {
         public List <SlotAPI>  slots;
     }
 
-    public List<DayAPI> days;
-    private Map<Weekday, Day> basePlan;
+  // TODO: 1. check if everyhting works now, fix get DTO so that it looks like post DTO
+    private Map<Weekday, Day> days;
+
+    public Map<Weekday, Day> getDays() {
+        return days;
+    }
+
+    public void setBasePlan(Map<Weekday, Day> days) {
+        this.days = days;
+    }
+
+
+
+/*
 
     public List<DayAPI> getDays() {
         return days;
     }
-
     public void setDays(Map<Weekday, Day>  entityDays) {
 
         this.days = new ArrayList<DayAPI>();
@@ -60,6 +64,8 @@ public class TeamCalendarGetDTO {
 
     }
 
+ */
+
 
 
     public Long getId() {
@@ -71,14 +77,13 @@ public class TeamCalendarGetDTO {
     }
 
 
-    public String getName() {
-        return name;
+    public String getStartingDate() {
+        return startingDate;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStartingDate(String startingDate) {
+        this.startingDate = startingDate;
     }
-
 
 
 }

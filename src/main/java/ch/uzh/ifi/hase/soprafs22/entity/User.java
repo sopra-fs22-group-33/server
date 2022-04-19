@@ -50,6 +50,23 @@ public class User implements Serializable {
   private Set<Team>  teams = new HashSet<Team>();
 
 
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @JsonIgnore
+  private Set<Schedule> schedules;
+
+  public Set<Schedule> getSchedules() {
+        return schedules;
+    }
+
+  public void setSchedules(Set<Schedule> schedules) {
+        this.schedules = schedules;
+  }
+
+  public void addSchedule(Schedule schedule) {
+        this.schedules.add(schedule);
+  }
+
+
   public Long getId() {
     return id;
   }
@@ -105,6 +122,7 @@ public class User implements Serializable {
   public void setTeams(Set<Team> teams){
     this.teams = teams;
   }
+
 
 
 }

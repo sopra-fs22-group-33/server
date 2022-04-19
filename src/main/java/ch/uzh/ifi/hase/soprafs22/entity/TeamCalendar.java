@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public class TeamCalendar implements Serializable {
     private Team team;
 
     @Column(nullable = false) // probably delete this
-    private String name;
+    private String startingDate;
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
@@ -39,28 +38,18 @@ public class TeamCalendar implements Serializable {
         this.team = team;
     }
 
-    public Map<Weekday, Day> getBasePlan() {
-        return basePlan;
-    }
+    public Map<Weekday, Day> getBasePlan() { return basePlan; }
 
-    public void setBasePlan(Map<Weekday, Day> basePlan) {
-      this.basePlan = basePlan;
-   }
+    public void setBasePlan(Map<Weekday, Day> basePlan) { this.basePlan = basePlan;}
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id;}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public void setId(Long id) { this.id = id;}
 
-    public String getName() {
-        return name;
-    }
+    public String getStartingDate() { return startingDate;}
 
-    public void setName(String name) {
-        this.name = name;
+    public void setStartingDate(String startingDate) {
+        this.startingDate = startingDate;
     }
 }
 
