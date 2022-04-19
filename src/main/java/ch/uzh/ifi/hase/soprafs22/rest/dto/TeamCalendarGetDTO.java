@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 import ch.uzh.ifi.hase.soprafs22.entity.Event;
+import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
 
 public class TeamCalendarGetDTO {
 
@@ -15,58 +16,64 @@ public class TeamCalendarGetDTO {
 
 
     static class SlotAPI {
-        int from;
-        int to;
-        Long[] A;
+        public int from ;
+        public int to;
+        public HashMap<Long,Long> base;
+        public HashMap<Long,Long> special;
+        public List<Long> assignedUsers;
     }
 
     static class DayAPI {
-        public int weekday;
+        public Weekday weekday;
         public List <SlotAPI>  slots;
     }
 
-  // TODO: 1. check if everyhting works now, fix get DTO so that it looks like post DTO
-    private Map<Weekday, Day> days;
+    private List <DayAPI> days;
 
-    public Map<Weekday, Day> getDays() {
+
+
+
+    public  List <DayAPI> getDays() {
         return days;
     }
 
-    public void setBasePlan(Map<Weekday, Day> days) {
-        this.days = days;
-    }
 
+    public void setDays(Map<Weekday, Day> days) {
+        List <DayAPI> daysToSave = new ArrayList<>();
+        for (Day day : days.values()) {
+            DayAPI d = new DayAPI();
+            List <SlotAPI>  slots = new ArrayList<>();
 
+            d.weekday = day.getWeekday();
 
-/*
+            Set<Event> events = day.getEvents();
+            for (Event event:events){
+                            SlotAPI s = new SlotAPI();
+                            HashMap<Long,Long> base = new HashMap<>();
+                            HashMap<Long,Long> special = new HashMap<>();
+                            List<Long> userId = new ArrayList<>();
+                            s.from = event.getTimeFrom();
+                            s.to = event.getTimeTo();
+                            Set<Schedule> schedules = event.getSchedules();
+                            for (Schedule schedule:schedules){
+                                base.put(schedule.getId(), schedule.getBasePreference());
+                                special.put(schedule.getId(), schedule.getSpecialPreference());
+                                if (schedule.getAssigned() == 1){
+                                    userId.add(schedule.getId());
+                                }
 
-    public List<DayAPI> getDays() {
-        return days;
-    }
-    public void setDays(Map<Weekday, Day>  entityDays) {
-
-        this.days = new ArrayList<DayAPI>();
-        for(Weekday key: entityDays.keySet()){
-            DayAPI day = new DayAPI();
-            day.weekday = 0;
-
-            day.slots = new ArrayList<SlotAPI>();
-            for (Event slot:entityDays.get(key).getEvents()){
-                SlotAPI s = new SlotAPI();
-                s.from = slot.getTimeFrom();
-                s.to = slot.getTimeTo();
-                day.slots.add(s);
+                            }
+                            s.assignedUsers = userId;
+                            s.base = base;
+                            s.special = special;
+                            slots.add(s);
             }
+            d.slots = slots;
 
-
-            this.days.add(day);
+        daysToSave.add(d);
         }
-
+        this.days = daysToSave;
     }
-
- */
-
-
 
     public Long getId() {
         return id;
@@ -76,7 +83,6 @@ public class TeamCalendarGetDTO {
         this.id = id;
     }
 
-
     public String getStartingDate() {
         return startingDate;
     }
@@ -84,6 +90,4 @@ public class TeamCalendarGetDTO {
     public void setStartingDate(String startingDate) {
         this.startingDate = startingDate;
     }
-
-
 }

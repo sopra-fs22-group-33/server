@@ -24,16 +24,6 @@ public class Schedule implements Serializable {
     @JoinColumn(name = "user_id")
     private User user;
 
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-
-
     @Column
     private String role;
 
@@ -41,7 +31,10 @@ public class Schedule implements Serializable {
     private Long basePreference;
 
     @Column
-    private int specialPreference;
+    private Long specialPreference;
+
+    @Column
+    private int assigned = 0;
 
     public Long getId() {
         return id;
@@ -68,11 +61,11 @@ public class Schedule implements Serializable {
         this.basePreference = basePreference;
     }
 
-    public int getSpecialPreference() {
+    public Long getSpecialPreference() {
         return specialPreference;
     }
 
-    public void setSpecialPreference(int specialPreference) {
+    public void setSpecialPreference(Long specialPreference) {
         this.specialPreference = specialPreference;
     }
 
@@ -82,5 +75,21 @@ public class Schedule implements Serializable {
 
     public void setEvent(Event event) {
         this.event = event;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public int getAssigned() {
+        return assigned;
+    }
+
+    public void setAssigned(int assigned) {
+        this.assigned = assigned;
     }
 }
