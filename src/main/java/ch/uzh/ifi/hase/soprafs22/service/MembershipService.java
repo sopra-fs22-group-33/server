@@ -50,16 +50,6 @@ public class MembershipService {
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "membership not found");
   }
 
-//   public Team updateMembership(Team team, long id) {
-//     Team updatedTeam = teamRepository.findById(id)
-//       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
-//     if (team.getName() != null){updatedTeam.setName(team.getName());}           
-    
-//     teamRepository.save(updatedTeam);
-//     teamRepository.flush();
-//     return updatedTeam;
-//   }
-
 public void updateMembership(Team team, long userId, Boolean isAdmin){
   Membership membershipToUpdate = findMembership(team, userId);
   membershipToUpdate.setIsAdmin(isAdmin);
