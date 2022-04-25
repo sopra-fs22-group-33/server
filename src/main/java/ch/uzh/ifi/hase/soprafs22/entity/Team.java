@@ -24,6 +24,10 @@ public class Team implements Serializable {
   @JsonIgnore
   private Set<Membership> memberships;
 
+  @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
+  @JoinColumn
+  private TeamCalendar teamCalendar;
+
   public Long getId() {
     return id;
   }
@@ -47,4 +51,14 @@ public class Team implements Serializable {
   public void setMemberships(Set<Membership> memberships) {
       this.memberships = memberships;
   }
+
+    public TeamCalendar getTeamCalendar() {
+        return teamCalendar;
+    }
+
+    public void setTeamCalendar(TeamCalendar teamCalendar) {
+        this.teamCalendar = teamCalendar;
+    }
+
+
 }
