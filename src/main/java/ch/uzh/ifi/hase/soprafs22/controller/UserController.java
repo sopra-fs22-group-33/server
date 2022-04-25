@@ -68,6 +68,7 @@ public class UserController {
     // create user
     User createdUser = userService.createUser(userInput);
 
+    //create header with token
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
@@ -119,29 +120,32 @@ public class UserController {
   @GetMapping("/teams/{teamId}/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId) {
-    Set<User> users = teamService.getAllUsersOfTeam(teamId);
-    List<UserGetDTO> userGetDTOs = new ArrayList<>();
+  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId, @RequestHeader("token") String token) {
+    if (membershipService.findMembership(teamService.findTeamById(teamId), userService.findUserByToken(token).getId()) != null){
+      Set<User> users = teamService.getAllUsersOfTeam(teamId);
+      List<UserGetDTO> userGetDTOs = new ArrayList<>();
 
-    for (User user : users) {
-      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-    }
-    return userGetDTOs;
+      for (User user : users) {
+        userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+      }
+      return userGetDTOs;
+    }return null;
   }
 
-  //TODO
-  // add token authtetication
   @GetMapping("/users/{userId}/teams")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Set<TeamGetDTO> getAllTeamsOfUser(@PathVariable("userId") long userId) {
-    Set<Team> teams = userService.getAllTeamsOfUser(userId);
-    Set<TeamGetDTO> teamGetDTOs = new HashSet<>();
+  public Set<TeamGetDTO> getAllTeamsOfUser(@PathVariable("userId") long userId, @RequestHeader("token") String token) {
+    if (userService.authorizeUser(userId, token)){
+      Set<Team> teams = userService.getAllTeamsOfUser(userId);
+      Set<TeamGetDTO> teamGetDTOs = new HashSet<>();
 
-    for (Team team : teams) {
-      teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
+      for (Team team : teams) {
+        teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
+      }
+      return teamGetDTOs;
     }
-    return teamGetDTOs;
+    return null;
   }
 
   @PostMapping("/teams/{teamId}/users")
@@ -181,11 +185,22 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   @Transactional
-  public void answerInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
+  public void acceptInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
     if (userService.authorizeUser(userId, token)){
       //creating a new membership
       membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
       
+      //deleting the invitation
+      invitationService.deleteInvitation(invitationId);
+    }
+  }
+
+  @PostMapping("/users/{userId}/invitations/{invitationId}/decline")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  @Transactional
+  public void declineInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
+    if (userService.authorizeUser(userId, token)){
       //deleting the invitation
       invitationService.deleteInvitation(invitationId);
     }

@@ -83,8 +83,8 @@ public class TeamController {
 
   @DeleteMapping("/teams/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public void deleteTeam(@PathVariable("id") long id){
-    teamService.deleteTeam(id);
+  public void deleteTeam(@PathVariable("id") long id, @RequestHeader("token") String token){
+    teamService.deleteTeam(id, token);
   }
 
   @DeleteMapping("/users/{userId}/teams/{teamId}")
@@ -96,20 +96,4 @@ public class TeamController {
       membershipService.deleteMembership(team, userId);
     }
   }
-
-    //TODO
-  // @GetMapping("/teams/{teamId}/invitations")
-  // @ResponseStatus(HttpStatus.OK)
-  // @ResponseBody
-  // public List<UserGetDTO> getAllInvitationsOfTeam(@PathVariable("teamId") long teamId, @RequestHeader("token") String token) {
-  //   // fetch all users in the internal representation
-  //   List<User> users = userService.getUsers();
-  //   List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-  //   // convert each user to the API representation
-  //   for (User user : users) {
-  //     userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-  //   }
-  //   return userGetDTOs;
-  // }
 }
