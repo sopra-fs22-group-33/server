@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -76,18 +77,22 @@ public class User implements Serializable {
     this.email = email;
   }
 
+  @JsonIgnore
   public String getPassword(){
     return password;
   }
 
+  @JsonProperty
   public void setPassword(String password){
     this.password = password;
   }
 
+  @JsonIgnore
   public String getToken() {
     return token;
   }
 
+  @JsonProperty
   public void setToken(String token) {
     this.token = token;
   }
