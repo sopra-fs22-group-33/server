@@ -14,6 +14,8 @@ public class TeamCalendarPostDTO {
     private List<DayAPI> days;
 
     static class SlotAPI {
+        public Long id;
+        public int weekday;
         public int from;
         public int to;
         public HashMap<Long,Long> base;
@@ -45,7 +47,7 @@ public class TeamCalendarPostDTO {
             basePlan = new LinkedHashMap<Weekday, Day>();
             Day dayEntity = new Day();
 
-            // change from int to smth more meaningful
+            // TODO: change to smth else than int
             switch (day.weekday) {
                 case 0:
                     dayEntity.setWeekday(Weekday.MONDAY);
@@ -78,8 +80,9 @@ public class TeamCalendarPostDTO {
 
                 eventEntity.setTimeFrom(slot.from);
                 eventEntity.setTimeTo(slot.to);
-                // works only if the length of the basea and special preferences os the same
-                // and in the same order
+                eventEntity.setId(slot.id);
+
+                // TODO: handle the case when special requirement is not give when value2 is null.......
                 for (Map.Entry<Long, Long> entry : slot.base.entrySet()) {
                     Long key = entry.getKey();
                     Long value = entry.getValue();
@@ -89,7 +92,7 @@ public class TeamCalendarPostDTO {
                     schedule.setId(key);
                     schedule.setBasePreference(value);
                     // try with value passing to special
-                    schedule.setSpecialPreference(value);
+                    schedule.setSpecialPreference(value2);
                     schedules.add(schedule);
                 }
                 eventEntity.setSchedules(schedules);
