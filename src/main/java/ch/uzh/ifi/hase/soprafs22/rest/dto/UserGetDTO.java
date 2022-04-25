@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 import java.util.Set;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 
 public class UserGetDTO {
@@ -12,6 +13,7 @@ public class UserGetDTO {
   private String email;
   private UserStatus status;
   private Set<Membership> memberships;
+  private Set<Invitation> invitations;
 
   public Long getId() {
     return id;
@@ -51,5 +53,13 @@ public class UserGetDTO {
 
   public void setMemberships(Set<Membership> memberships) {
       this.memberships = memberships;
+  }
+
+  public Set<Invitation> getInvitations() {
+    return invitations;
+  }
+
+  public void setInvitations(Set<Invitation> invitations) {
+      this.invitations = invitations;
   }
 }

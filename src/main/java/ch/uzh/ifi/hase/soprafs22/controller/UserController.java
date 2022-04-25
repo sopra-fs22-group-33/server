@@ -8,8 +8,10 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
+import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,11 +34,13 @@ public class UserController {
   private final UserService userService;
   private final TeamService teamService;
   private final MembershipService membershipService;
+  private final InvitationService invitationService;
 
-  UserController(UserService userService, TeamService teamService, MembershipService membershipService) {
+  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
+    this.invitationService = invitationService;
   }
 
   @GetMapping("/users")
@@ -125,10 +129,12 @@ public class UserController {
     return userGetDTOs;
   }
 
+  //TODO
+  // add token authtetication
   @GetMapping("/users/{userId}/teams")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Set<TeamGetDTO> getAllTeamsByUserId(@PathVariable("userId") long userId) {
+  public Set<TeamGetDTO> getAllTeamsOfUser(@PathVariable("userId") long userId) {
     Set<Team> teams = userService.getAllTeamsOfUser(userId);
     Set<TeamGetDTO> teamGetDTOs = new HashSet<>();
 
@@ -141,11 +147,11 @@ public class UserController {
   @PostMapping("/teams/{teamId}/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
+  public UserGetDTO inviteUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId); 
     if (userService.authorizeAdmin(team, token)){
       User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-      membershipService.createMembership(team, userToAdd, false);
+      invitationService.createInvitation(team, userToAdd);
       return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
     return null;
@@ -154,7 +160,7 @@ public class UserController {
   @PutMapping("/teams/{teamId}/users/{userId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void updateMembership(@RequestParam Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
+  public void updateMembership(@RequestBody Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.updateMembership(team, userId, isAdmin);
@@ -168,6 +174,20 @@ public class UserController {
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
+    }
+  }
+
+  @PostMapping("/users/{userId}/invitations/{invitationId}/accept")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  @Transactional
+  public void answerInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
+    if (userService.authorizeUser(userId, token)){
+      //creating a new membership
+      membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
+      
+      //deleting the invitation
+      invitationService.deleteInvitation(invitationId);
     }
   }
 }

@@ -4,8 +4,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.server.ResponseStatusException;
+
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
@@ -35,15 +39,13 @@ public class InvitationService {
     log.debug("Created Information for invitation: {}", invitation);
   }
 
-  public void acceptInvitation(long invitationId){
-  }
-
-  public void declineInvitation(long invitationId){
-      this.deleteInvitation(invitationId);
-  }
-
   public void deleteInvitation(long invitationId){
     invitationRepository.deleteById(invitationId);
     invitationRepository.flush();
+  }
+
+  public Invitation findInvitationById(@PathVariable Long id){    
+    return invitationRepository.findById(id)
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
   }
 }

@@ -44,9 +44,13 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Membership> memberships;
+
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JsonIgnore
+  private Set<Invitation> invitations;
 
   public Long getId() {
     return id;
@@ -102,5 +106,13 @@ public class User implements Serializable {
 
   public void setMemberships(Set<Membership> memberships) {
       this.memberships = memberships;
+  }
+
+  public Set<Invitation> getInvitations() {
+    return invitations;
+  }
+
+  public void setInvitations(Set<Invitation> invitations) {
+      this.invitations = invitations;
   }
 }
