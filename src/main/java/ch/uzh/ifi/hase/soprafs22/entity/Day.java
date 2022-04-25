@@ -19,7 +19,7 @@ public class Day implements Serializable {
     private TeamCalendar teamCalendar;
 
     @Id
-    private Weekday weekday; // change it to storing int 0-30
+    private Weekday weekday;
 
     @JsonIgnore
     public TeamCalendar getTeamCalendar() {

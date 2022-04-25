@@ -1,27 +1,25 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Event  implements Serializable {
     @Id
-    private Long id;
+    @GeneratedValue
+    private int id;
 
     @Column(nullable = false)
     private int timeFrom;
 
     @Column(nullable = false)
     private int timeTo;
-
-    @Column (nullable = true)
-    @Type( type = "json" )
-    private Map<String, Integer> requirements = new LinkedHashMap<>();
 
     @ManyToOne
     @JoinColumns(value = {
@@ -45,12 +43,6 @@ public class Event  implements Serializable {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private Set<Schedule> schedules;
 
-    public Event() {
-    }
-    class Role{
-        String role;
-    }
-
     public Day getDay() {
         return day;
     }
@@ -59,11 +51,11 @@ public class Event  implements Serializable {
         this.day = day;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -89,14 +81,6 @@ public class Event  implements Serializable {
 
     public void setSchedules(Set<Schedule> schedules) {
         this.schedules = schedules;
-    }
-
-    public Map<String, Integer> getRequirements() {
-        return requirements;
-    }
-
-    public void setRequirements(Map<String, Integer> requirements) {
-        this.requirements = requirements;
     }
 
 /*

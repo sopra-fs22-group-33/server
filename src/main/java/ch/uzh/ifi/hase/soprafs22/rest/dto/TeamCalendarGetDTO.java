@@ -10,7 +10,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
 
 public class TeamCalendarGetDTO {
 
-
     private Long id;
 
     private String startingDate;
