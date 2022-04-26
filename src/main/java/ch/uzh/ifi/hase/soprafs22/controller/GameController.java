@@ -29,7 +29,7 @@ public class GameController {
         this.gameService = gameService;
     }
 
-    @GetMapping("/game")
+    @GetMapping("/games")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<GameGetDTO> getAllGames() {
