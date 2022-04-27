@@ -2,7 +2,9 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
@@ -38,8 +40,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * request without actually sending them over the network.
  * This tests if the UserController works.
  */
-@WebMvcTest(UserController.class)
-public class UserControllerTest {
+@WebMvcTest(TeamController.class)
+public class TeamControllerTest {
 
   @Autowired
   private MockMvc mockMvc;
@@ -57,64 +59,58 @@ public class UserControllerTest {
   private InvitationService invitationService;
 
   @Test
-  public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
+  public void givenTeams_whenGetTeams_thenReturnJsonArray() throws Exception {
     // given
-    User user = new User();
-    user.setEmail("firstname@lastname");
-    user.setPassword("1234");
-    user.setStatus(UserStatus.OFFLINE);
+    Team team = new Team();
+    team.setName("team1");
 
-    List<User> allUsers = Collections.singletonList(user);
+    List<Team> allTeams = Collections.singletonList(team);
 
     // this mocks the UserService -> we define above what the userService should
     // return when getUsers() is called
-    given(userService.getUsers()).willReturn(allUsers);
+    given(teamService.getTeams()).willReturn(allTeams);
 
     // when
-    MockHttpServletRequestBuilder getRequest = get("/users").contentType(MediaType.APPLICATION_JSON);
+    MockHttpServletRequestBuilder getRequest = get("/teams").contentType(MediaType.APPLICATION_JSON);
 
     // then
     mockMvc.perform(getRequest).andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(1)))
-        .andExpect(jsonPath("$[0].email", is(user.getEmail())))
-        .andExpect(jsonPath("$[0].status", is(user.getStatus().toString())));
+        .andExpect(jsonPath("$[0].name", is(team.getName())));
   }
 
   @Test
-  public void createUser_validInput_userCreated() throws Exception {
+  public void createTeam_validInput_teamCreated() throws Exception {
     // given
+    Team team = new Team();
+    team.setName("team1");
+    team.setId(1L);
     User user = new User();
-    user.setId(1L);
-    user.setEmail("firstname@lastname");
-    user.setUsername("testUsername");
     user.setToken("1");
-    user.setStatus(UserStatus.ONLINE);
-    user.setPassword("password");
 
-    UserPostDTO userPostDTO = new UserPostDTO();
-    userPostDTO.setEmail("firstname@lastname");
-    userPostDTO.setUsername("testUsername");
+    TeamPostDTO teamPostDTO = new TeamPostDTO();
+    teamPostDTO.setName("team1");
 
-    given(userService.createUser(Mockito.any())).willReturn(user);
+    given(teamService.createTeam(Mockito.any(), Mockito.any())).willReturn(team);
+    given(userService.findUserByToken("1")).willReturn(user);
 
     // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/users")
+    MockHttpServletRequestBuilder postRequest = post("/teams")
         .contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(userPostDTO));
+        .content(asJsonString(teamPostDTO))
+        .header("token", "1");
 
     // then
     mockMvc.perform(postRequest)
         .andExpect(status().isCreated())
-        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
-        .andExpect(jsonPath("$.email", is(user.getEmail())))
-        .andExpect(jsonPath("$.username", is(user.getUsername())))
-        .andExpect(jsonPath("$.status", is(user.getStatus().toString())));
+        .andExpect(jsonPath("$.id", is(team.getId().intValue())))
+        .andExpect(jsonPath("$.name", is(team.getName())));
   }
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input
    * can be processed
-   * Input will look like this: {"name": "Test User", "username": "testUsername"}
+   * Input will look like this: {"name": "Test Team", "username": "testUsername"}
    * 
    * @param object
    * @return string

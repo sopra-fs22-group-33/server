@@ -68,7 +68,7 @@ public class UserServiceIntegrationTest {
     // attempt to create second user with same username
     User testUser2 = new User();
 
-    // change the name but forget about the username
+    // change the name but forget about the email
     testUser2.setUsername("testName2");
     testUser2.setEmail("firstname@lastname");
     testUser2.setPassword("password");
