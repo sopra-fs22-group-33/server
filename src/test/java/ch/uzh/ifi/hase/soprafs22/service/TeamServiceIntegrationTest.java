@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import javax.transaction.Transactional;
 
 /**
  * Test class for the TeamResource REST resource.
@@ -27,11 +31,18 @@ public class TeamServiceIntegrationTest {
   private TeamRepository teamRepository;
 
   @Autowired
+  private UserRepository userRepository;
+
+  @Autowired
   private TeamService teamService;
+
+  @Autowired
+  private UserService userService;
 
   @BeforeEach
   public void setup() {
     teamRepository.deleteAll();
+    userRepository.deleteAll();
   }
 
   @Test
@@ -45,7 +56,8 @@ public class TeamServiceIntegrationTest {
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
     // when
-    Team createdTeam = teamService.createTeam(testTeam, testUser);
+    User createdUser = userService.createUser(testUser);
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
 
     // then
     assertEquals(testTeam.getId(), createdTeam.getId());
@@ -61,7 +73,8 @@ public class TeamServiceIntegrationTest {
     User testUser = new User();
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
-    Team createdTeam = teamService.createTeam(testTeam, testUser);
+    User createdUser = userService.createUser(testUser);
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
 
     // attempt to create second Team with same Teamname
     Team testTeam2 = new Team();

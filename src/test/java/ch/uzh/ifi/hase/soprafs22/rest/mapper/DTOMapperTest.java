@@ -1,7 +1,10 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import org.junit.jupiter.api.Test;
@@ -48,5 +51,32 @@ public class DTOMapperTest {
     assertEquals(user.getEmail(), userGetDTO.getEmail());
     assertEquals(user.getUsername(), userGetDTO.getUsername());
     assertEquals(user.getStatus(), userGetDTO.getStatus());
+  }
+
+  @Test
+  public void testCreateTeam_fromTeamPostDTO_toTeam_success() {
+    // create TeamPostDTO
+    TeamPostDTO teamPostDTO = new TeamPostDTO();
+    teamPostDTO.setName("team1");
+    
+    // MAP -> Create user
+    Team team = DTOMapper.INSTANCE.convertTeamPostDTOtoEntity(teamPostDTO);
+
+    // check content
+    assertEquals(teamPostDTO.getName(), team.getName());
+  }
+
+  @Test
+  public void testGetTeam_fromTeam_toTeamGetDTO_success() {
+    // create User
+    Team team = new Team();
+    team.setName("team1");
+    
+    // MAP -> Create UserGetDTO
+    TeamGetDTO teamGetDTO = DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team);
+
+    // check content
+    assertEquals(team.getId(), teamGetDTO.getId());
+    assertEquals(team.getName(), teamGetDTO.getName());
   }
 }
