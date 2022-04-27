@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
@@ -11,7 +12,6 @@ import ch.uzh.ifi.hase.soprafs22.service.TeamService;
 import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import org.springframework.http.HttpStatus;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -140,7 +140,7 @@ public class UserController {
     Team team = teamService.findTeamById(teamId); 
     if (userService.authorizeAdmin(team, token)){
       User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-      invitationService.createInvitation(team, userToAdd);
+      Invitation invitation = invitationService.createInvitation(team, userToAdd);
       return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
     return null;

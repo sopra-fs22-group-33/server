@@ -29,7 +29,7 @@ public class InvitationService {
     this.invitationRepository = invitationRepository;
   }
 
-  public void createInvitation(Team team, User user) {    
+  public Invitation createInvitation(Team team, User user) {    
     Invitation invitation = new Invitation();
     invitation.setUser(user);
     invitation.setTeam(team);
@@ -37,6 +37,7 @@ public class InvitationService {
     invitationRepository.flush();
 
     log.debug("Created Information for invitation: {}", invitation);
+    return invitation;
   }
 
   public void deleteInvitation(long invitationId){
