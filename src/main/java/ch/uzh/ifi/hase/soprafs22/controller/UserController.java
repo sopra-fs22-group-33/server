@@ -117,21 +117,6 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(returnUser);
   }
 
-  @GetMapping("/teams/{teamId}/users")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId, @RequestHeader("token") String token) {
-    if (membershipService.findMembership(teamService.findTeamById(teamId), userService.findUserByToken(token).getId()) != null){
-      Set<User> users = teamService.getAllUsersOfTeam(teamId);
-      List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-      for (User user : users) {
-        userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-      }
-      return userGetDTOs;
-    }return null;
-  }
-
   @GetMapping("/users/{userId}/teams")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
@@ -178,31 +163,6 @@ public class UserController {
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
-    }
-  }
-
-  @PostMapping("/users/{userId}/invitations/{invitationId}/accept")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  @Transactional
-  public void acceptInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
-    if (userService.authorizeUser(userId, token)){
-      //creating a new membership
-      membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
-      
-      //deleting the invitation
-      invitationService.deleteInvitation(invitationId);
-    }
-  }
-
-  @PostMapping("/users/{userId}/invitations/{invitationId}/decline")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  @Transactional
-  public void declineInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
-    if (userService.authorizeUser(userId, token)){
-      //deleting the invitation
-      invitationService.deleteInvitation(invitationId);
     }
   }
 }
