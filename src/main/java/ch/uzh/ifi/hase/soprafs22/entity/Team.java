@@ -20,13 +20,17 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Membership> memberships;
 
   @OneToOne(mappedBy = "team", cascade = CascadeType.ALL)
   @JoinColumn
   private TeamCalendar teamCalendar;
+  
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JsonIgnore
+  private Set<Invitation> invitations;
 
   public Long getId() {
     return id;
@@ -52,13 +56,20 @@ public class Team implements Serializable {
       this.memberships = memberships;
   }
 
-    public TeamCalendar getTeamCalendar() {
-        return teamCalendar;
-    }
+  public TeamCalendar getTeamCalendar() {
+      return teamCalendar;
+  }
 
-    public void setTeamCalendar(TeamCalendar teamCalendar) {
-        this.teamCalendar = teamCalendar;
-    }
+  public void setTeamCalendar(TeamCalendar teamCalendar) {
+      this.teamCalendar = teamCalendar;
+  }
 
 
+  public Set<Invitation> getInvitations() {
+    return invitations;
+  }
+
+  public void setInvitations(Set<Invitation> invitations) {
+      this.invitations = invitations;
+  }
 }

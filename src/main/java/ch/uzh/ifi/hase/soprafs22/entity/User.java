@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -44,7 +45,7 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Membership> memberships;
 
@@ -65,6 +66,9 @@ public class User implements Serializable {
         this.schedules.add(schedule);
   }
 
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JsonIgnore
+  private Set<Invitation> invitations;
 
   public Long getId() {
     return id;
@@ -90,18 +94,22 @@ public class User implements Serializable {
     this.email = email;
   }
 
+  @JsonIgnore
   public String getPassword(){
     return password;
   }
 
+  @JsonProperty
   public void setPassword(String password){
     this.password = password;
   }
 
+  @JsonIgnore
   public String getToken() {
     return token;
   }
 
+  @JsonProperty
   public void setToken(String token) {
     this.token = token;
   }
@@ -122,6 +130,11 @@ public class User implements Serializable {
       this.memberships = memberships;
   }
 
+  public Set<Invitation> getInvitations() {
+    return invitations;
+  }
 
-
+  public void setInvitations(Set<Invitation> invitations) {
+      this.invitations = invitations;
+  }
 }

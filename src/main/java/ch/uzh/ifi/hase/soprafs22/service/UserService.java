@@ -140,7 +140,7 @@ public class UserService {
    return teams;
  }
 
-  //to be changed
+  //TODO to be changed
   public User loginUser(User userInput){
     User userByEmail = findUserByEmail(userInput.getEmail());
     if (!userByEmail.getPassword().toString().matches(userInput.getPassword().toString())){

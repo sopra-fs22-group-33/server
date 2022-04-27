@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository("membershipRepository")
 public interface MembershipRepository extends JpaRepository<Membership, Long>{
     Membership findById (long id);
-    //List<Team> findTeamsByUsersId(long userId);  
 }

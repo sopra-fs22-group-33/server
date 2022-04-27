@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 @RestController
@@ -83,8 +85,23 @@ public class TeamController {
 
   @DeleteMapping("/teams/{id}")
   @ResponseStatus(HttpStatus.OK)
-  public void deleteTeam(@PathVariable("id") long id){
-    teamService.deleteTeam(id);
+  public void deleteTeam(@PathVariable("id") long id, @RequestHeader("token") String token){
+    teamService.deleteTeam(id, token);
+  }
+
+  @GetMapping("/teams/{teamId}/users")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId, @RequestHeader("token") String token) {
+    if (membershipService.findMembership(teamService.findTeamById(teamId), userService.findUserByToken(token).getId()) != null){
+      Set<User> users = teamService.getAllUsersOfTeam(teamId);
+      List<UserGetDTO> userGetDTOs = new ArrayList<>();
+
+      for (User user : users) {
+        userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
+      }
+      return userGetDTOs;
+    }return null;
   }
 
   @DeleteMapping("/users/{userId}/teams/{teamId}")

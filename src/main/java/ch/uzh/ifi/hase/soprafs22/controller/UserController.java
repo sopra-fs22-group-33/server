@@ -8,8 +8,10 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
+import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -32,11 +34,13 @@ public class UserController {
   private final UserService userService;
   private final TeamService teamService;
   private final MembershipService membershipService;
+  private final InvitationService invitationService;
 
-  UserController(UserService userService, TeamService teamService, MembershipService membershipService) {
+  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
+    this.invitationService = invitationService;
   }
 
   @GetMapping("/users")
@@ -64,6 +68,7 @@ public class UserController {
     // create user
     User createdUser = userService.createUser(userInput);
 
+    //create header with token
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
@@ -112,40 +117,30 @@ public class UserController {
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(returnUser);
   }
 
-  @GetMapping("/teams/{teamId}/users")
-  @ResponseStatus(HttpStatus.OK)
-  @ResponseBody
-  public List<UserGetDTO> getAllUsersByTeamId(@PathVariable("teamId") long teamId) {
-    Set<User> users = teamService.getAllUsersOfTeam(teamId);
-    List<UserGetDTO> userGetDTOs = new ArrayList<>();
-
-    for (User user : users) {
-      userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
-    }
-    return userGetDTOs;
-  }
-
   @GetMapping("/users/{userId}/teams")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public Set<TeamGetDTO> getAllTeamsByUserId(@PathVariable("userId") long userId) {
-    Set<Team> teams = userService.getAllTeamsOfUser(userId);
-    Set<TeamGetDTO> teamGetDTOs = new HashSet<>();
+  public Set<TeamGetDTO> getAllTeamsOfUser(@PathVariable("userId") long userId, @RequestHeader("token") String token) {
+    if (userService.authorizeUser(userId, token)){
+      Set<Team> teams = userService.getAllTeamsOfUser(userId);
+      Set<TeamGetDTO> teamGetDTOs = new HashSet<>();
 
-    for (Team team : teams) {
-      teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
+      for (Team team : teams) {
+        teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team));
+      }
+      return teamGetDTOs;
     }
-    return teamGetDTOs;
+    return null;
   }
 
   @PostMapping("/teams/{teamId}/users")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public UserGetDTO addUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
+  public UserGetDTO inviteUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId); 
     if (userService.authorizeAdmin(team, token)){
       User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-      membershipService.createMembership(team, userToAdd, false);
+      invitationService.createInvitation(team, userToAdd);
       return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
     return null;
@@ -154,7 +149,7 @@ public class UserController {
   @PutMapping("/teams/{teamId}/users/{userId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  public void updateMembership(@RequestParam Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
+  public void updateMembership(@RequestBody Boolean isAdmin, @PathVariable("teamId") long teamId, @PathVariable("userId") long userId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.updateMembership(team, userId, isAdmin);

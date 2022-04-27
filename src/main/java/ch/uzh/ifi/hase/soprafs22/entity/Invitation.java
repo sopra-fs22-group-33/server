@@ -5,8 +5,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "MEMBERSHIP")
-public class Membership implements Serializable {
+@Table(name = "INVITATION")
+public class Invitation implements Serializable {
 
   private static final long serialVersionUID = 1L;
 
@@ -22,9 +22,6 @@ public class Membership implements Serializable {
   @JoinColumn(name = "user_id", nullable = false)
   private User user; 
   
-  @Column
-  private boolean isAdmin;
-
   public Long getId() {
     return id;
   }
@@ -47,13 +44,5 @@ public class Membership implements Serializable {
 
   public void setUser(User user) {
     this.user = user;
-  }
-
-  public boolean getIsAdmin() {
-    return isAdmin;
-  }
-
-  public void setIsAdmin(boolean isAdmin) {
-    this.isAdmin = isAdmin;
   }
 }
