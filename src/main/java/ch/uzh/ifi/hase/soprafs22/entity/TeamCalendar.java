@@ -13,13 +13,12 @@ public class TeamCalendar implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    // foreign key of the team entity is used as a primary key
     @Id
     @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id", updatable = true, insertable = true)
     private Team team;
 
     @Column(nullable = false) // probably delete this
