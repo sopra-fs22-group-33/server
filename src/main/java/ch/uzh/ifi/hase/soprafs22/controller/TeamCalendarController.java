@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
-import ilog.concert.IloException;
+
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
@@ -23,7 +23,7 @@ public class TeamCalendarController {
     @PostMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) throws IloException {
+    public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
