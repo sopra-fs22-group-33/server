@@ -4,12 +4,6 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 
 
-import ilog.concert.IloException;
-import ilog.concert.IloNumExpr;
-import ilog.concert.IloNumVar;
-import ilog.cplex.IloCplex;
-
-
 
 /*
 
