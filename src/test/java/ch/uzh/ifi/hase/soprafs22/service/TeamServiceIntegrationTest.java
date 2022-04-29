@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.MembershipRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 
@@ -11,11 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import javax.transaction.Transactional;
 
 /**
  * Test class for the TeamResource REST resource.
@@ -34,14 +34,25 @@ public class TeamServiceIntegrationTest {
   private UserRepository userRepository;
 
   @Autowired
+  private MembershipRepository membershipRepository;
+
+  @Autowired
+  private InvitationRepository invitationRepository;
+
+  @Autowired
   private TeamService teamService;
 
   @Autowired
   private UserService userService;
 
+  @Autowired
+  private MembershipService membershipService;
+
   @BeforeEach
-  public void setup() {
-    teamRepository.deleteAll();
+  public void setup() {   
+    invitationRepository.deleteAll(); 
+    membershipRepository.deleteAll();
+    teamRepository.deleteAll();    
     userRepository.deleteAll();
   }
 

@@ -2,6 +2,9 @@ package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.MembershipRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,11 +30,23 @@ public class UserServiceIntegrationTest {
   private UserRepository userRepository;
 
   @Autowired
+  private InvitationRepository invitationRepository;
+
+  @Autowired
+  private TeamRepository teamRepository;
+  
+  @Autowired
+  private MembershipRepository membershipRepository;
+
+  @Autowired
   private UserService userService;
 
   @BeforeEach
   public void setup() {
-    userRepository.deleteAll();
+    invitationRepository.deleteAll();
+    membershipRepository.deleteAll();    
+    teamRepository.deleteAll();
+    userRepository.deleteAll(); 
   }
 
   @Test

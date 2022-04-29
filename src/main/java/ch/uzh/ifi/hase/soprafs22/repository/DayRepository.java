@@ -1,13 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.repository;
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
+
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
-
-import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.Optional;
+import org.springframework.stereotype.Repository;
 
 @Repository("dayRepository")
 public interface DayRepository extends JpaRepository< Day, Long>{

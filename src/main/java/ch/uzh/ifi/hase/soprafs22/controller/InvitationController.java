@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
@@ -72,7 +73,7 @@ public class InvitationController {
     if (userService.authorizeUser(userId, token)){
       //creating a new membership if invitation is accepted
       if (accept.matches("true")){
-        membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
+        Membership membership = membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
       }
       //deleting the invitation
       invitationService.deleteInvitation(invitationId);

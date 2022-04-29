@@ -28,7 +28,7 @@ public class MembershipService {
     this.membershipRepository = membershipRepository;
   }
 
-  public void createMembership(Team team, User user, Boolean isAdmin) {    
+  public Membership createMembership(Team team, User user, Boolean isAdmin) {    
     Membership membership = new Membership();
     membership.setUser(user);
     membership.setTeam(team);
@@ -37,6 +37,7 @@ public class MembershipService {
     membershipRepository.flush();
 
     log.debug("Created Information for Membership: {}", membership);
+    return membership;
   }
 
   public Membership findMembership(Team team, long userId){

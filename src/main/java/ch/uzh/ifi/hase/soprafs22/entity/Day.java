@@ -1,11 +1,12 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
-import ch.uzh.ifi.hase.soprafs22.constant.PreferenceType;
+
 import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @IdClass(DayKey.class)

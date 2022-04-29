@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.MembershipRepository;
-import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -14,9 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 
 /**
  * Test class for the TeamResource REST resource.
@@ -25,23 +21,23 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 @WebAppConfiguration
 @SpringBootTest
-public class InvitationServiceIntegrationTest {
+public class MembershipServiceIntegrationTest {
 
-  @Qualifier("invitationRepository")
+  @Qualifier("membershipRepository")
+  @Autowired
+  private MembershipRepository membershipRepository;
+
   @Autowired
   private InvitationRepository invitationRepository;
 
   @Autowired
-  private TeamRepository teamRepository;
+  private MembershipRepository teamRepository;
 
   @Autowired
   private UserRepository userRepository;
 
   @Autowired
-  private MembershipRepository membershipRepository;
-
-  @Autowired
-  private InvitationService invitationService;
+  private MembershipService membershipService;
 
   @Autowired
   private TeamService teamService;
@@ -52,15 +48,15 @@ public class InvitationServiceIntegrationTest {
   @BeforeEach
   public void setup() {
     invitationRepository.deleteAll();
-    membershipRepository.deleteAll();    
+    membershipRepository.deleteAll();
     teamRepository.deleteAll();
-    userRepository.deleteAll();    
+    userRepository.deleteAll();
   }
 
   @Test
-  public void createTeam_validInputs_success() {
+  public void createMembership_validInputs_success() {
     // given
-    assertTrue(invitationRepository.findAll().isEmpty());
+    assertTrue(membershipRepository.findAll().isEmpty());
 
     Team testTeam = new Team();
     testTeam.setName("team1");
@@ -75,10 +71,10 @@ public class InvitationServiceIntegrationTest {
     User createdUser = userService.createUser(testUser);
     User createdUser2 = userService.createUser(testUser2);
     Team createdTeam = teamService.createTeam(testTeam, createdUser);
-    Invitation invitation = invitationService.createInvitation(testTeam, testUser2);
+    membershipService.createMembership(testTeam, testUser2, false);
 
     // then
-    assertEquals(testTeam.getId(), invitation.getTeam().getId());
+    assertFalse(membershipRepository.findAll().isEmpty());
     // assertEquals(testTeam.getName(), createdTeam.getName());
   }
 }

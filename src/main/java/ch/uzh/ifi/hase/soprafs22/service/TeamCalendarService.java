@@ -14,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
