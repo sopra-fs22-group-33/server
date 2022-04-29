@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 @Entity
-public class Event  implements Serializable {
+public class Slot implements Serializable {
     @Id
     @GeneratedValue
     private int id;
@@ -37,8 +37,8 @@ public class Event  implements Serializable {
     @JsonIgnore
     private Day day;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
-    private Set<Schedule> schedules;
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+    private List<Schedule> schedules;
 
     public Day getDay() {
         return day;
@@ -72,11 +72,11 @@ public class Event  implements Serializable {
         this.timeTo = to;
     }
 
-    public Set<Schedule> getSchedules() {
+    public List<Schedule> getSchedules() {
         return schedules;
     }
 
-    public void setSchedules(Set<Schedule> schedules) {
+    public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
     }
 

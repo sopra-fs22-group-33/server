@@ -1,12 +1,10 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
 
@@ -41,20 +39,16 @@ public class Day implements Serializable {
         this.weekday = weekday;
     }
 
-
-
-
-
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    private Set<Event> events = new HashSet<Event>();
+    private List<Slot> slots;
 
 
-    public Set<Event> getEvents(){
-        return events;
+    public List<Slot> getSlots(){
+        return slots;
     }
 
-    public void setEvents(Set<Event> events){
-        this.events = events;}
+    public void setSlots(List<Slot> slots){
+        this.slots = slots;}
 
 
     public Long getId() {

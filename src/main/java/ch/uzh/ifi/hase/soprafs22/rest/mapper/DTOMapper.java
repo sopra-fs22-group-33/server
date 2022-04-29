@@ -50,7 +50,6 @@ public interface DTOMapper {
   @Mapping(source = "days", target = "basePlan")
   TeamCalendar convertTeamCalendarPostDTOtoEntity(TeamCalendarPostDTO teamCalendarPostDTO);
 
-  @Mapping(source = "id", target = "id")
   @Mapping(source = "startingDate", target = "startingDate")
   @Mapping(source = "basePlan", target = "days")
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);

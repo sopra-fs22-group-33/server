@@ -2,11 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import java.util.*;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
-
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
-import ch.uzh.ifi.hase.soprafs22.entity.Event;
-import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
 
 public class TeamCalendarGetDTO {
 
@@ -14,65 +10,14 @@ public class TeamCalendarGetDTO {
 
     private String startingDate;
 
+    private List <Day> days;
 
-    static class SlotAPI {
-        public int from ;
-        public int to;
-        public HashMap<Long,Long> base;
-        public HashMap<Long,Long> special;
-        public List<Long> assignedUsers;
+    public void setDays(List<Day> days) {
+        this.days = days;
     }
 
-    static class DayAPI {
-        public int weekday;
-        public List <SlotAPI>  slots;
-    }
-
-    private List <DayAPI> days;
-
-
-
-
-    public  List <DayAPI> getDays() {
+    public  List <Day> getDays() {
         return days;
-    }
-
-
-    public void setDays(Map<Integer, Day> days) {
-        List <DayAPI> daysToSave = new ArrayList<>();
-        for (Day day : days.values()) {
-            DayAPI d = new DayAPI();
-            List <SlotAPI>  slots = new ArrayList<>();
-
-            d.weekday = day.getWeekday();
-
-            Set<Event> events = day.getEvents();
-            for (Event event:events){
-                            SlotAPI s = new SlotAPI();
-                            HashMap<Long,Long> base = new HashMap<>();
-                            HashMap<Long,Long> special = new HashMap<>();
-                            List<Long> userId = new ArrayList<>();
-                            s.from = event.getTimeFrom();
-                            s.to = event.getTimeTo();
-                            Set<Schedule> schedules = event.getSchedules();
-                            for (Schedule schedule:schedules){
-                                base.put(schedule.getId(), schedule.getBasePreference());
-                                special.put(schedule.getId(), schedule.getSpecialPreference());
-                                if (schedule.getAssigned() == 1){
-                                    userId.add(schedule.getId());
-                                }
-
-                            }
-                            s.assignedUsers = userId;
-                            s.base = base;
-                            s.special = special;
-                            slots.add(s);
-            }
-            d.slots = slots;
-
-        daysToSave.add(d);
-        }
-        this.days = daysToSave;
     }
 
     public Long getId() {

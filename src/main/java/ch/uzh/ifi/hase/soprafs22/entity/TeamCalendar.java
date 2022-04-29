@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.List;
 
 @Entity
 @Table(name = "TeamCalendar")
@@ -14,20 +13,19 @@ public class TeamCalendar implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id", updatable = true, insertable = true)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @JoinColumn(name = "team", updatable = true, insertable = true)
+    @MapsId
     private Team team;
 
-    @Column(nullable = false) // probably delete this
+    @Column
     private String startingDate;
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL)
     @JsonIgnore
-    @MapKey(name = "weekday")
-    private Map<Integer, Day> basePlan = new LinkedHashMap<Integer, Day>();
+    private List<Day> basePlan;
 
     public Team getTeam() {
         return team;
@@ -37,23 +35,22 @@ public class TeamCalendar implements Serializable {
         this.team = team;
     }
 
-    public Map<Integer, Day> getBasePlan() { return basePlan; }
+    public List<Day> getBasePlan() { return basePlan; }
 
-    public void addDay(Day day){
-        this.basePlan.put(day.getWeekday(), day);
-
-    }
-
-    public void setBasePlan(Map<Integer, Day> basePlan) { this.basePlan = basePlan;}
-
-    public Long getId() { return id;}
-
-    public void setId(Long id) { this.id = id;}
+    public void setBasePlan(List<Day> basePlan) { this.basePlan = basePlan;}
 
     public String getStartingDate() { return startingDate;}
 
     public void setStartingDate(String startingDate) {
         this.startingDate = startingDate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }
 
