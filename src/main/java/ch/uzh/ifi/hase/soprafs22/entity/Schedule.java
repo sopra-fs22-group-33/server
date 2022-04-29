@@ -16,12 +16,12 @@ public class Schedule implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne (cascade = CascadeType.ALL)
+    @ManyToOne ()
     @JoinColumn(name = "event_id")
     @JsonIgnore
     private Event event;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 

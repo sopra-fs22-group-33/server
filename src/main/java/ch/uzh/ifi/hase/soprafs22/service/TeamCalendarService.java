@@ -55,6 +55,19 @@ public class TeamCalendarService {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+            if(oldCalendar != null){
+                teamCalendarRepository.delete(oldCalendar);
+            }
+
+            createTeamCalendar2(id, newCalendar);
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 
 
     public TeamCalendar createTeamCalendar2(long id, TeamCalendar newCalendar) {

@@ -36,6 +36,19 @@ public class TeamCalendarController {
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
+    @PutMapping("/teams/{teamId}/calendars")
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
+    public TeamCalendarGetDTO updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
+        // convert API team to internal representation
+        TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
+
+        // create teamCalendar
+        TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
+
+        return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
+    }
+
 
     @GetMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.OK)
