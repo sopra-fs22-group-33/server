@@ -38,7 +38,7 @@ public class TeamService {
 
   public Team createTeam(Team newTeam, User user) {
     
-    checkIfTeamExists(newTeam);
+    // checkIfTeamExists(newTeam);
     Membership membership = new Membership();
     membership.setUser(user);
     membership.setTeam(newTeam);
@@ -92,15 +92,15 @@ public class TeamService {
   }
 
   //helpers
-  private void checkIfTeamExists(Team teamToBeCreated) {
-    Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
+  // private void checkIfTeamExists(Team teamToBeCreated) {
+  //   Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
 
-    String baseErrorMessage = "The %s provided %s not unique. Therefore, the team could not be created!";
-    if (TeamByName != null) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format(baseErrorMessage, "name", "is"));
-    } 
-  }
+  //   String baseErrorMessage = "The %s provided %s not unique. Therefore, the team could not be created!";
+  //   if (TeamByName != null) {
+  //     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+  //         String.format(baseErrorMessage, "name", "is"));
+  //   } 
+  // }
 
   public boolean authorizeAdmin(Team team, String token){
     for (Membership membership : team.getMemberships()){

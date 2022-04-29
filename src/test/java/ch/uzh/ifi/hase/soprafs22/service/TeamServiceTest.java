@@ -54,17 +54,4 @@ public class TeamServiceTest {
     assertEquals(testTeam.getId(), createdTeam.getId());
     assertEquals(testTeam.getName(), createdTeam.getName());
   }
-
-  @Test
-  public void createTeam_duplicateName_throwsException() {
-    // given -> a first Team has already been created
-    teamService.createTeam(testTeam, testUser);
-
-    // when -> setup additional mocks for TeamRepository
-    Mockito.when(teamRepository.findByName(Mockito.any())).thenReturn(testTeam);
-
-    // then -> attempt to create second Team with same Team -> check that an error
-    // is thrown
-    assertThrows(ResponseStatusException.class, () -> teamService.createTeam(testTeam, testUser));
-  }
 }

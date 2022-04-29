@@ -86,42 +86,42 @@ public class InvitationControllerTest {
   //       .andExpect(jsonPath("$", hasSize(1)));
   // }
 
-  @Test
-  public void createInvitation_validInput_invitationCreated() throws Exception {
-    // given
-    Team team = new Team();
-    team.setName("team1");
-    User user = new User();
-    user.setEmail("1@test.ch");
-    user.setPassword("123");
-    userService.createUser(user);
-    teamService.createTeam(team, user);
+  // @Test
+  // public void createInvitation_validInput_invitationCreated() throws Exception {
+  //   // given
+  //   Team team = new Team();
+  //   team.setName("team1");
+  //   User user = new User();
+  //   user.setEmail("1@test.ch");
+  //   user.setPassword("123");
+  //   userService.createUser(user);
+  //   teamService.createTeam(team, user);
 
-    User user2 = new User();
-    user2.setEmail("2@test.ch");
-    user2.setPassword("123");
-    userService.createUser(user);
+  //   User user2 = new User();
+  //   user2.setEmail("2@test.ch");
+  //   user2.setPassword("123");
+  //   userService.createUser(user);
 
-    UserPostDTO userPostDTO = new UserPostDTO();
-    userPostDTO.setEmail("2@test.ch");
+  //   UserPostDTO userPostDTO = new UserPostDTO();
+  //   userPostDTO.setEmail("2@test.ch");
 
-    given(userService.authorizeAdmin(Mockito.any(), Mockito.any())).willReturn(true);
-    given(userService.findUserByEmail(Mockito.any())).willReturn(user);
-    given(teamService.findTeamById(Mockito.any())).willReturn(team);
+  //   given(userService.authorizeAdmin(Mockito.any(), Mockito.any())).willReturn(true);
+  //   given(userService.findUserByEmail(Mockito.any())).willReturn(user);
+  //   given(teamService.findTeamById(Mockito.any())).willReturn(team);
     
 
-    // when/then -> do the request + validate the result
-    MockHttpServletRequestBuilder postRequest = post("/teams/1/users")
-        .contentType(MediaType.APPLICATION_JSON)
-        .content(asJsonString(userPostDTO));
-        //.header("token", "1");
+  //   // when/then -> do the request + validate the result
+  //   MockHttpServletRequestBuilder postRequest = post("/teams/1/users")
+  //       .contentType(MediaType.APPLICATION_JSON)
+  //       .content(asJsonString(userPostDTO));
+  //       //.header("token", "1");
 
-    // then
-    mockMvc.perform(postRequest)
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id", is(user.getId().intValue())))
-        .andExpect(jsonPath("$.email", is(user.getEmail())));
-  }
+  //   // then
+  //   mockMvc.perform(postRequest)
+  //       .andExpect(status().isOk())
+  //       .andExpect(jsonPath("$.id", is(user.getId().intValue())))
+  //       .andExpect(jsonPath("$.email", is(user.getEmail())));
+  // }
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input

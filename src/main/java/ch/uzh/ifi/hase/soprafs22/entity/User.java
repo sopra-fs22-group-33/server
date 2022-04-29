@@ -49,6 +49,9 @@ public class User implements Serializable {
   @JsonIgnore
   private Set<Membership> memberships;
 
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @JsonIgnore
+  private Set<Invitation> invitations;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
@@ -65,10 +68,6 @@ public class User implements Serializable {
   public void addSchedule(Schedule schedule) {
         this.schedules.add(schedule);
   }
-
-  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
-  @JsonIgnore
-  private Set<Invitation> invitations;
 
   public Long getId() {
     return id;

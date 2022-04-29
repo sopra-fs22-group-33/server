@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 
@@ -24,14 +26,20 @@ import javax.transaction.Transactional;
  */
 @WebAppConfiguration
 @SpringBootTest
-public class TeamServiceIntegrationTest {
+public class InvitationServiceIntegrationTest {
 
-  @Qualifier("teamRepository")
+  @Qualifier("invitationRepository")
   @Autowired
-  private TeamRepository teamRepository;
+  private InvitationRepository invitationRepository;
+
+  @Autowired
+  private InvitationRepository teamRepository;
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private InvitationService invitationService;
 
   @Autowired
   private TeamService teamService;
@@ -41,6 +49,7 @@ public class TeamServiceIntegrationTest {
 
   @BeforeEach
   public void setup() {
+    invitationRepository.deleteAll();
     teamRepository.deleteAll();
     userRepository.deleteAll();
   }
@@ -48,19 +57,25 @@ public class TeamServiceIntegrationTest {
   @Test
   public void createTeam_validInputs_success() {
     // given
-    assertNull(teamRepository.findByName("team1"));
+    assertTrue(invitationRepository.findAll().isEmpty());
 
     Team testTeam = new Team();
     testTeam.setName("team1");
     User testUser = new User();
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
+    User testUser2 = new User();
+    testUser2.setEmail("2@test");
+    testUser2.setPassword("password");
+    
     // when
     User createdUser = userService.createUser(testUser);
+    User createdUser2 = userService.createUser(testUser2);
     Team createdTeam = teamService.createTeam(testTeam, createdUser);
+    Invitation invitation = invitationService.createInvitation(testTeam, testUser2);
 
     // then
-    assertEquals(testTeam.getId(), createdTeam.getId());
-    assertEquals(testTeam.getName(), createdTeam.getName());
+    assertEquals(testTeam.getId(), invitation.getTeam().getId());
+    // assertEquals(testTeam.getName(), createdTeam.getName());
   }
 }
