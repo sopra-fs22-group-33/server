@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 import javax.persistence.*;
@@ -14,6 +16,7 @@ public class Membership implements Serializable {
   @GeneratedValue
   private Long id;
 
+  @JsonIgnore
   @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.REFRESH})
   @JoinColumn(name = "team_id", nullable = false)
   private Team team;
