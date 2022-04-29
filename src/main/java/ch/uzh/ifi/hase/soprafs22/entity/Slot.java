@@ -10,7 +10,7 @@ import java.util.List;
 public class Slot implements Serializable {
     @Id
     @GeneratedValue
-    private int id;
+    private Long id;
 
     @Column(nullable = false)
     private int timeFrom;
@@ -48,14 +48,6 @@ public class Slot implements Serializable {
         this.day = day;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getTimeFrom() {
         return timeFrom;
     }
@@ -78,6 +70,14 @@ public class Slot implements Serializable {
 
     public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
 /*
