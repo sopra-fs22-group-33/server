@@ -64,7 +64,7 @@ public class TeamCalendarService {
                 teamCalendarRepository.delete(oldCalendar);
             }
 
-            createTeamCalendar2(id, newCalendar);
+            return (createTeamCalendar2(id, newCalendar));
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
