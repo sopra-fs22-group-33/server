@@ -28,7 +28,7 @@ public class TeamCalendar implements Serializable {
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     @MapKey(name = "weekday")
-    private Map<Weekday, Day> basePlan = new LinkedHashMap<Weekday, Day>();
+    private Map<Integer, Day> basePlan = new LinkedHashMap<Integer, Day>();
 
     public Team getTeam() {
         return team;
@@ -38,9 +38,9 @@ public class TeamCalendar implements Serializable {
         this.team = team;
     }
 
-    public Map<Weekday, Day> getBasePlan() { return basePlan; }
+    public Map<Integer, Day> getBasePlan() { return basePlan; }
 
-    public void setBasePlan(Map<Weekday, Day> basePlan) { this.basePlan = basePlan;}
+    public void setBasePlan(Map<Integer, Day> basePlan) { this.basePlan = basePlan;}
 
     public Long getId() { return id;}
 

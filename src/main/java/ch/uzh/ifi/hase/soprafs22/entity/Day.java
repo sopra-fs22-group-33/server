@@ -20,7 +20,7 @@ public class Day implements Serializable {
     private TeamCalendar teamCalendar;
 
     @Id
-    private Weekday weekday;
+    private int weekday;
 
     @JsonIgnore
     public TeamCalendar getTeamCalendar() {
@@ -32,11 +32,11 @@ public class Day implements Serializable {
         this.teamCalendar = teamcalendar;
     }
 
-    public Weekday getWeekday() {
+    public int getWeekday() {
         return weekday;
     }
 
-    public void setWeekday(Weekday weekday) {
+    public void setWeekday(int weekday) {
         this.weekday = weekday;
     }
 

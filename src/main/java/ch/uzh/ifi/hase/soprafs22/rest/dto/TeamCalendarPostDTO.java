@@ -39,38 +39,14 @@ public class TeamCalendarPostDTO {
 
 
 
-    public Map<Weekday, Day>  getDays() {
+    public Map<Integer, Day>  getDays() {
 
-        Map<Weekday, Day> basePlan = null;
+        Map<Integer, Day> basePlan = null;
+        basePlan = new LinkedHashMap<Integer, Day>();
+
         for (DayAPI day : this.days) {
-            basePlan = new LinkedHashMap<Weekday, Day>();
             Day dayEntity = new Day();
-
-            // change from int to smth more meaningful
-            switch (day.weekday) {
-                case 0:
-                    dayEntity.setWeekday(Weekday.MONDAY);
-                    break;
-                case 1:
-                    dayEntity.setWeekday(Weekday.TUESDAY);
-                    break;
-                case 2:
-                    dayEntity.setWeekday(Weekday.WEDNESDAY);
-                    break;
-                case 3:
-                    dayEntity.setWeekday(Weekday.THURSDAY);
-                    break;
-                case 4:
-                    dayEntity.setWeekday(Weekday.FRIDAY);
-                    break;
-                case 5:
-                    dayEntity.setWeekday(Weekday.SATURDAY);
-                    break;
-                case 6:
-                    dayEntity.setWeekday(Weekday.SUNDAY);
-                    break;
-            }
-
+            dayEntity.setWeekday(day.weekday);
             Set<Event> eventsEntity = new HashSet<Event>();
 
             for (SlotAPI slot : day.slots) {
@@ -98,7 +74,7 @@ public class TeamCalendarPostDTO {
                 eventsEntity.add(eventEntity);
             }
             dayEntity.setEvents(eventsEntity);
-            basePlan.put(dayEntity.getWeekday(), dayEntity);
+            basePlan.put(day.weekday, dayEntity);
 
         }
         return basePlan;

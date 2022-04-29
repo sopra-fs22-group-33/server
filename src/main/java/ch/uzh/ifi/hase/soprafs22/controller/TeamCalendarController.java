@@ -1,6 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
@@ -31,8 +30,8 @@ public class TeamCalendarController {
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar2(id, userInput);
 
-        Optimizer optimizer = new Optimizer(createdCalendar);
-        optimizer.solve();
+        //Optimizer optimizer = new Optimizer(createdCalendar);
+        //optimizer.solve();
         // convert internal representation of teamCalendar back to API
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }

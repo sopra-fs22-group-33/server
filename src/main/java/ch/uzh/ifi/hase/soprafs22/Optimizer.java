@@ -2,11 +2,16 @@ package ch.uzh.ifi.hase.soprafs22;
 
 import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
+
+
 import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
 
+
+
+/*
 
 import javassist.compiler.ast.Pair;
 
@@ -92,12 +97,12 @@ public class Optimizer {
         }
     }
 
-    /**
+   /**
      * Checks whether the current solution to the model is feasible
      *
      * @return the feasibility of the model
      * @throws IloException if something is wrong with CPLEX
-     */
+
     public boolean isFeasible() throws IloException {
         return cplex.isPrimalFeasible();
     }
@@ -230,7 +235,7 @@ public class Optimizer {
         }
 
         Integer s = 0;
-        for (Map.Entry<Weekday, Day> entry:calendar.getBasePlan().entrySet()){
+        for (Map.Entry<Integer, Day> entry:calendar.getBasePlan().entrySet()){
             for (Event event:entry.getValue().getEvents()){
 
                 if (!this.events.containsKey(hashCode(event.getTimeFrom(), event.getTimeTo()))){
@@ -283,3 +288,4 @@ public class Optimizer {
 
 
 }
+*/

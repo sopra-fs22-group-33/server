@@ -24,7 +24,7 @@ public class TeamCalendarGetDTO {
     }
 
     static class DayAPI {
-        public Weekday weekday;
+        public int weekday;
         public List <SlotAPI>  slots;
     }
 
@@ -38,7 +38,7 @@ public class TeamCalendarGetDTO {
     }
 
 
-    public void setDays(Map<Weekday, Day> days) {
+    public void setDays(Map<Integer, Day> days) {
         List <DayAPI> daysToSave = new ArrayList<>();
         for (Day day : days.values()) {
             DayAPI d = new DayAPI();
