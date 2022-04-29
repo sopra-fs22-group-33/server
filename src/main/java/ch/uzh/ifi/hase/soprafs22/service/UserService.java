@@ -61,7 +61,7 @@ public class UserService {
   public User updateUser(User user, long id, String token) {
     if (authorizeUser(id, token)){
       User updatedUser = userRepository.findById(id)
-        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));;
+        .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
       if (user.getUsername() != null){updatedUser.setUsername(user.getUsername());}
       if (user.getEmail() != null){updatedUser.setEmail(user.getEmail());}
       if (user.getPassword() != null){updatedUser.setPassword(user.getPassword());}
@@ -134,9 +134,9 @@ public class UserService {
       teams.add(membership.getTeam());
     }
    
-    if (teams.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
-    }
+    // if (teams.isEmpty()) {
+    //   throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
+    // }
    return teams;
  }
 
