@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import ilog.concert.IloException;
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
@@ -22,13 +24,15 @@ public class TeamCalendarController {
     @PostMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
+    public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) throws IloException {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar2(id, userInput);
 
+        Optimizer optimizer = new Optimizer(createdCalendar);
+        optimizer.solve();
         // convert internal representation of teamCalendar back to API
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }

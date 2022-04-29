@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 import ch.uzh.ifi.hase.soprafs22.entity.Event;
 import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 
 import java.util.*;
 
@@ -85,8 +86,9 @@ public class TeamCalendarPostDTO {
                     Long value = entry.getValue();
                     Long value2 = slot.special.get(key);
                     Schedule schedule = new Schedule();
-
-                    schedule.setId(key);
+                    User user = new User();
+                    user.setId(key);
+                    schedule.setUser(user);
                     schedule.setBasePreference(value);
                     // try with value passing to special
                     schedule.setSpecialPreference(value);

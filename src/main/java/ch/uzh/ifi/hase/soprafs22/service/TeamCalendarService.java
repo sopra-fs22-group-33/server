@@ -77,7 +77,7 @@ public class TeamCalendarService {
                 event.setDay(day);
                 for(Schedule schedule:event.getSchedules()){
                     schedule.setEvent(event);
-                    Optional<User> user = userRepository.findById(schedule.getId());
+                    Optional<User> user = userRepository.findById(schedule.getUser().getId());
                     if (user.isPresent()){
                         User foundUser = user.get();
                         foundUser.addSchedule(schedule);

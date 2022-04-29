@@ -13,6 +13,7 @@ public class Schedule implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue
     private Long id;
 
     @ManyToOne (cascade = CascadeType.ALL)
@@ -23,6 +24,8 @@ public class Schedule implements Serializable {
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
+
+
 
     @Column
     private String role;
@@ -92,4 +95,5 @@ public class Schedule implements Serializable {
     public void setAssigned(int assigned) {
         this.assigned = assigned;
     }
+
 }

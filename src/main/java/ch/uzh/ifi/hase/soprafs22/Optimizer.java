@@ -6,6 +6,8 @@ import ilog.concert.IloException;
 import ilog.concert.IloNumExpr;
 import ilog.concert.IloNumVar;
 import ilog.cplex.IloCplex;
+
+
 import javassist.compiler.ast.Pair;
 
 import java.util.*;
@@ -24,7 +26,7 @@ public class Optimizer {
     public Schedule[][][] output;
     public Long[][][] base;  // user - day - slot
     public Long[][][] special; // user - day - slot
-    public Long[][][] requirements; // day - slot - role
+    public int[][][] requirements; // day - slot - role
     public Long[] capacityOverall; // for each user
     public Long[] capacityDaily; // now specific for each user, could be fixed or specific for user and day
     public String[] roles;
@@ -222,8 +224,8 @@ public class Optimizer {
     public void fillOutFields(TeamCalendar calendar){
 
         Integer j = 0;
-        for (User user:calendar.getTeam().getUsers()){
-            this.users.put(user.getId(), j);
+        for (Membership membership:calendar.getTeam().getMemberships()){
+            this.users.put(membership.getUser().getId(), j);
             j++;
         }
 
@@ -246,7 +248,7 @@ public class Optimizer {
         // initialize empty arrays
         this.base = new Long[nUsers][nDays][nSlots];
         this.special = new Long[nUsers][nDays][nSlots];
-        this.requirements = new Long[nUsers][nDays][nSlots]; // check
+        this.requirements = new int[nUsers][nDays][nSlots]; // check
         this.capacityDaily = new  Long[nUsers];
         this.capacityOverall = new  Long[nUsers];
         this.roles = new String[1];
@@ -271,6 +273,7 @@ public class Optimizer {
 
                     for (int k = 0; k< roles.length; k++){
                         //this.requirements[d][i][k] = event.getRequirements().get(rolesAll[k]);
+                        this.requirements[d][i][k] = 2;
                     }
                 }
 
