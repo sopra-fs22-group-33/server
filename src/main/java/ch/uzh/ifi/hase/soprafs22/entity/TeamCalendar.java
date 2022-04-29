@@ -15,10 +15,10 @@ public class TeamCalendar implements Serializable {
 
     // foreign key of the team entity is used as a primary key
     @Id
+    @GeneratedValue
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @MapsId
     @JoinColumn(name = "id")
     private Team team;
 

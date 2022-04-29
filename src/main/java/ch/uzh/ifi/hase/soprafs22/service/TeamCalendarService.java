@@ -60,35 +60,9 @@ public class TeamCalendarService {
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+
             if(oldCalendar != null){
-                oldCalendar.setStartingDate(newCalendar.getStartingDate());
-                for (Day day: oldCalendar.getBasePlan().values()){
-                    dayRepository.delete(day);
-                }
-                for (Day day: newCalendar.getBasePlan().values()){
-                    day.setTeamCalendar(oldCalendar);
-                    for (Event event: day.getEvents()){
-                        event.setDay(day);
-                        for(Schedule schedule:event.getSchedules()){
-                            schedule.setEvent(event);
-                            Optional<User> user = userRepository.findById(schedule.getUser().getId());
-                            if (user.isPresent()){
-                                User foundUser = user.get();
-                                foundUser.addSchedule(schedule);
-                                schedule.setUser(foundUser);
-                            }
-                            else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-                        };
-
-                    }
-                    oldCalendar.addDay(day);
-                }
-
-                newCalendar = teamCalendarRepository.save(oldCalendar);
-                teamCalendarRepository.flush();
-
-
+                teamCalendarRepository.delete(oldCalendar);
             }
 
             return (createTeamCalendar2(id, newCalendar));
