@@ -9,17 +9,18 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@IdClass(DayKey.class)
+
 public class Day implements Serializable {
 
     // define composite key
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @ManyToOne
-    @MapsId
     @JoinColumn(name = "team_calendar_id", updatable = true, insertable = true)
     private TeamCalendar teamCalendar;
 
-    @Id
     private int weekday;
 
     @JsonIgnore
@@ -55,7 +56,7 @@ public class Day implements Serializable {
     public void setEvents(Set<Event> events){
         this.events = events;}
 
-/*
+
     public Long getId() {
         return id;
     }
@@ -63,6 +64,6 @@ public class Day implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-     */
+
 }
 

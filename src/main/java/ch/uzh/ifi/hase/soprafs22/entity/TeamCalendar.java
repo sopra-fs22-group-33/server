@@ -40,6 +40,11 @@ public class TeamCalendar implements Serializable {
 
     public Map<Integer, Day> getBasePlan() { return basePlan; }
 
+    public void addDay(Day day){
+        this.basePlan.put(day.getWeekday(), day);
+
+    }
+
     public void setBasePlan(Map<Integer, Day> basePlan) { this.basePlan = basePlan;}
 
     public Long getId() { return id;}
