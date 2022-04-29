@@ -85,7 +85,7 @@ public class TeamCalendarService {
                     oldCalendar.addDay(day);
                 }
 
-                newCalendar = teamCalendarRepository.save(newCalendar);
+                newCalendar = teamCalendarRepository.save(oldCalendar);
                 teamCalendarRepository.flush();
 
 
