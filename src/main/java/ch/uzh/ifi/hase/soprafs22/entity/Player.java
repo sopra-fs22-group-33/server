@@ -17,6 +17,9 @@ public class Player {
     @Column
     private String status;
 
+    @Column
+    private int rank;
+
     public Long getId() {
         return id;
     }
@@ -39,5 +42,13 @@ public class Player {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
     }
 }
