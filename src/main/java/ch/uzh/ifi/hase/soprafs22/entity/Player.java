@@ -14,6 +14,9 @@ public class Player {
     @ElementCollection
     private List<Location> chunks;
 
+    @Column
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -28,5 +31,13 @@ public class Player {
 
     public void setChunks(List<Location> chunks) {
         this.chunks = chunks;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

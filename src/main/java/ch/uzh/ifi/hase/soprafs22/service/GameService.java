@@ -1,6 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.Location;
 import ch.uzh.ifi.hase.soprafs22.entity.Player;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
@@ -75,7 +76,8 @@ public class GameService {
         return game;
     }
 
-    public Game updateGame() {
+    public Game updateGame(Game game, Player player) {
+
 
         // if they opted out set status to inactive/optedout/Whatever
 
@@ -85,23 +87,54 @@ public class GameService {
         return null;
     }
 
-    public Game updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
-        Game game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist"));
+    public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
+        Optional<Game> game = gameRepository.findById(gameId);
+        if (!game.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
+        }
 
-        Player player = playerRepository.findById(playerId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist"));
+        Optional<Player> player = playerRepository.findById(playerId);
+        if (!player.isPresent()){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist");
+        }
+        Player foundPlayer =  player.get();
+        Game foundGame = game.get();
 
-        // todo: check whether playerId is in game
+        foundPlayer.setChunks(playerInput.getChunks());
 
-        player.setChunks(playerInput.getChunks());
+        makeMove(foundGame, foundPlayer);
 
-        playerRepository.save(player);
+        //playerRepository.save(foundPlayer);
+        //playerRepository.flush();
+        gameRepository.save(foundGame); // should propagate by cascade to players
         playerRepository.flush();
 
-        game = gameRepository.findById(gameId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Game used to exist, but does not exist anymore"));
 
-        return game;
     }
+
+    public void makeMove(Game game, Player currentPlayer){
+        List<Location> chunks = currentPlayer.getChunks();
+        Location head = chunks.get(0);
+
+        for (int i = 0; i< game.getApples().size(); i++){
+             Location appleLocation = game.getApples().get(i);
+                if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
+                    currentPlayer.setStatus("ate");
+                    game.getApples().remove(i);
+
+                }
+            }
+
+        for (Player player:game.getPlayers()){
+            List<Location> playerChunks = player.getChunks();
+            for (Location chunkLocation: playerChunks){
+                if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))){
+                    currentPlayer.setStatus("dead");
+                }
+                // handle the case when two heads meet
+
+            }
+        }
+    }
+
 }
