@@ -28,6 +28,7 @@ public class MembershipService {
     this.membershipRepository = membershipRepository;
   }
 
+  //TODO check if membership already exists
   public Membership createMembership(Team team, User user, Boolean isAdmin) {    
     Membership membership = new Membership();
     membership.setUser(user);
@@ -46,7 +47,7 @@ public class MembershipService {
         if (membership.getUser().getId() == userId){
           return membership;
         }
-      }
+      }throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user's membership not found");
     }
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "membership not found");
   }
