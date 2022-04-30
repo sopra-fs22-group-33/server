@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Game;
-import ch.uzh.ifi.hase.soprafs22.entity.Location;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
 import org.slf4j.Logger;
@@ -61,7 +59,9 @@ public class GameService {
         return game;
     }
 
-    public Game startGame(Game game) {
+
+
+    public Game startGame(Game game) { // this one is for API to call from front end
         // check if a game for this shift has been started already
 
         // if it has, return the game information of that game
