@@ -157,14 +157,16 @@ public class GameService {
                 }
             }
 
-        for (Player player:game.getPlayers()){
-            List<Location> playerChunks = player.getChunks();
-            for (Location chunkLocation: playerChunks){
-                if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))){
-                    currentPlayer.setStatus("dead");
-                }
-                // handle the case when two heads meet
+        for (Player player:game.getPlayers()) {
+            if (player.getId() != currentPlayer.getId()) {
+                List<Location> playerChunks = player.getChunks();
+                for (Location chunkLocation : playerChunks) {
+                    if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                        currentPlayer.setStatus("dead");
+                    }
+                    // handle the case when two heads meet
 
+                }
             }
         }
     }
