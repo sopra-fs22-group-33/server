@@ -56,6 +56,20 @@ public class GameController {
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
     }
 
+    @GetMapping("/users/{userId}/games")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<GameGetDTO> getUserGames(@PathVariable("userId") Long userId) {
+        List<Game> games = gameService.getUserGames(userId);
+        List<GameGetDTO> gameGetDTOs = new ArrayList<>();
+
+        for (Game game : games) {
+            gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(game));
+        }
+        return gameGetDTOs;
+
+    }
+
 
     /* what is  going to be the mapping?
     because as soon as the game is started /game/{gameId}/{userId} makes sense

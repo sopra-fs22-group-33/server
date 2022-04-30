@@ -59,7 +59,9 @@ public class GameService {
         return game;
     }
 
-
+    public List<Game> getUserGames(Long userId) {
+        return this.gameRepository.findAll();
+    }
 
     public Game startGame(Game game) { // this one is for API to call from front end
         // check if a game for this shift has been started already
