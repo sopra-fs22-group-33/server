@@ -158,13 +158,17 @@ public class GameService {
 
                 }
             }
-
+        int rank = 0;
         for (Player player:game.getPlayers()) {
-            if (player.getId() != currentPlayer.getId()) {
+            if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
+                    // if that player is not dead and igt is not us
+            if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                 List<Location> playerChunks = player.getChunks();
                 for (Location chunkLocation : playerChunks) {
                     if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                         currentPlayer.setStatus("dead");
+                        currentPlayer.setRank(rank+1);
+
                     }
                     // handle the case when two heads meet
 
