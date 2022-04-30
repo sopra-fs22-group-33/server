@@ -53,28 +53,28 @@ public class MembershipServiceIntegrationTest {
     userRepository.deleteAll();
   }
 
-  @Test
-  public void createMembership_validInputs_success() {
-    // given
-    assertTrue(membershipRepository.findAll().isEmpty());
+  // @Test
+  // public void createMembership_validInputs_success() {
+  //   // given
+  //   assertTrue(membershipRepository.findAll().isEmpty());
 
-    Team testTeam = new Team();
-    testTeam.setName("team1");
-    User testUser = new User();
-    testUser.setEmail("firstname@lastname");
-    testUser.setPassword("password");
-    User testUser2 = new User();
-    testUser2.setEmail("2@test");
-    testUser2.setPassword("password");
+  //   Team testTeam = new Team();
+  //   testTeam.setName("team1");
+  //   User testUser = new User();
+  //   testUser.setEmail("firstname@lastname");
+  //   testUser.setPassword("password");
+  //   User testUser2 = new User();
+  //   testUser2.setEmail("2@test");
+  //   testUser2.setPassword("password");
     
-    // when
-    User createdUser = userService.createUser(testUser);
-    User createdUser2 = userService.createUser(testUser2);
-    Team createdTeam = teamService.createTeam(testTeam, createdUser);
-    membershipService.createMembership(testTeam, testUser2, false);
+  //   // when
+  //   User createdUser = userService.createUser(testUser);
+  //   User createdUser2 = userService.createUser(testUser2);
+  //   Team createdTeam = teamService.createTeam(testTeam, createdUser);
+  //   membershipService.createMembership(testTeam, testUser2, false);
 
-    // then
-    assertFalse(membershipRepository.findAll().isEmpty());
-    // assertEquals(testTeam.getName(), createdTeam.getName());
-  }
+  //   // then
+  //   assertFalse(membershipRepository.findAll().isEmpty());
+  //   // assertEquals(testTeam.getName(), createdTeam.getName());
+  // }
 }

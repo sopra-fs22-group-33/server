@@ -56,22 +56,22 @@ public class TeamServiceIntegrationTest {
     userRepository.deleteAll();
   }
 
-  @Test
-  public void createTeam_validInputs_success() {
-    // given
-    assertNull(teamRepository.findByName("team1"));
+  // @Test
+  // public void createTeam_validInputs_success() {
+  //   // given
+  //   assertNull(teamRepository.findByName("team1"));
 
-    Team testTeam = new Team();
-    testTeam.setName("team1");
-    User testUser = new User();
-    testUser.setEmail("firstname@lastname");
-    testUser.setPassword("password");
-    // when
-    User createdUser = userService.createUser(testUser);
-    Team createdTeam = teamService.createTeam(testTeam, createdUser);
+  //   Team testTeam = new Team();
+  //   testTeam.setName("team1");
+  //   User testUser = new User();
+  //   testUser.setEmail("firstname@lastname");
+  //   testUser.setPassword("password");
+  //   // when
+  //   User createdUser = userService.createUser(testUser);
+  //   Team createdTeam = teamService.createTeam(testTeam, createdUser);
 
-    // then
-    assertEquals(testTeam.getId(), createdTeam.getId());
-    assertEquals(testTeam.getName(), createdTeam.getName());
-  }
+  //   // then
+  //   assertEquals(testTeam.getId(), createdTeam.getId());
+  //   assertEquals(testTeam.getName(), createdTeam.getName());
+  // }
 }
