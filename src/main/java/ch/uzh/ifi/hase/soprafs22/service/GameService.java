@@ -139,6 +139,8 @@ public class GameService {
     }
 
     public void makeMove(Game game, Player currentPlayer){
+
+        currentPlayer.setStatus(null);
         List<Location> chunks = currentPlayer.getChunks();
         Location head = chunks.get(0);
 
