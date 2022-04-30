@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 /**
  * Game Service
@@ -70,6 +72,19 @@ public class GameService {
 
         // problem: what to set the other users at (-> if they clicked just a little bit after that?)
 
+        // random chunks generation
+        Random rand = new Random();
+        for (Player player:game.getPlayers()){
+            Location chunck = new Location();
+            int x = rand.nextInt((10) + 1) + 0;
+            int y = rand.nextInt((10) + 1) + 0;
+            chunck.setX(x);
+            chunck.setY(y);
+            List<Location> chunks = new ArrayList<>();
+            chunks.add(chunck);
+            player.setChunks(chunks);
+        }
+
         game = gameRepository.save(game);
         gameRepository.flush();
 
@@ -120,7 +135,13 @@ public class GameService {
              Location appleLocation = game.getApples().get(i);
                 if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
                     currentPlayer.setStatus("ate");
-                    game.getApples().remove(i);
+
+                    // change location  of apple to random
+                    Random rand = new Random();
+                    int x = rand.nextInt((10) + 1) + 0;
+                    int y = rand.nextInt((10) + 1) + 0;
+                    appleLocation.setX(x);
+                    appleLocation.setY(y);
 
                 }
             }
