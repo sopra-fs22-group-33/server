@@ -85,6 +85,17 @@ public class GameService {
             player.setChunks(chunks);
         }
 
+        List<Location> apples = new ArrayList<>();
+        for (int j = 0; j<5; j++){
+            Location apple = new Location();
+            int x = rand.nextInt((10) + 1) + 0;
+            int y = rand.nextInt((10) + 1) + 0;
+            apple.setX(x);
+            apple.setY(y);
+            apples.add(j, apple);
+        }
+        game.setApples(apples);
+
         game = gameRepository.save(game);
         gameRepository.flush();
 
