@@ -1,11 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.Optimizer;
-import ch.uzh.ifi.hase.soprafs22.controller.TeamCalendarController;
-import ch.uzh.ifi.hase.soprafs22.controller.TeamController;
+
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,25 +39,15 @@ public class TeamCalendarControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+
     @MockBean
     private TeamCalendarService teamCalendarService;
 
-    @MockBean
-    private TeamService teamService;
-
-    @MockBean
-    private MembershipService membershipService;
-
-    @MockBean
-    private InvitationService invitationService;
 
     @Test
     public void givenTeamCalendar_whenGetTeamCalendar_thenReturnJsonArray() throws Exception {
         // given
         TeamCalendar teamCalendar = new TeamCalendar();
-        Team team = new Team();
         teamCalendar.setStartingDate("123");
 
         List<TeamCalendar> allTeamCalendars = Collections.singletonList(teamCalendar);
