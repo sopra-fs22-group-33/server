@@ -43,6 +43,10 @@ public class TeamCalendarController {
            log.debug("Probably there is no possible solution");
            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
+        catch (NullPointerException ex2){
+            log.debug("Something was null");
+            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
+        }
     }
 
     @PutMapping("/teams/{teamId}/calendars")
@@ -59,6 +63,10 @@ public class TeamCalendarController {
         // TODO: catch exception that cplex lib is not found
         catch (IloException ex){
             log.debug("Probably there is no possible solution");
+        }
+
+        catch (NullPointerException ex2){
+            log.debug("Something was null");
         }
 
     }
