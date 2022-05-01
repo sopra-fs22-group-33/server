@@ -81,10 +81,11 @@ public class TeamCalendarControllerTest {
         teamCalendar.setBasePlan(days);
         teamCalendar.setStartingDate("123");
 
+        //creating teamCalendarPostDTO
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
         teamCalendarPostDTO.setStartingDate("123");
 
-
+        //defining mocks
         given(teamCalendarService.createTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
 
         // when/then -> do the request + validate the result
