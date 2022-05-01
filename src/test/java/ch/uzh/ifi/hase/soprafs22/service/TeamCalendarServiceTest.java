@@ -57,8 +57,8 @@ public class TeamCalendarServiceTest {
     }
 
     @Test
-    public void createTeam_validInputs_success_empty_calendar() {
-        // when -> any object is being save in the TeamRepository -> return the dummy
+    public void createTeamCalendar_validInputs_success_empty_calendar() {
+        // when -> any object is being save in the TeamCalendarRepository -> return the dummy
         // testTeam
 
         TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
@@ -72,7 +72,7 @@ public class TeamCalendarServiceTest {
     }
 
     @Test
-    public void createTeam_validInputs_success_nonEmpty_calendar() {
+    public void createTeamCalendar_validInputs_success_nonEmpty_calendar() {
 
 
         Day day = new Day ();
@@ -104,7 +104,7 @@ public class TeamCalendarServiceTest {
     }
 
     @Test
-    public void modifyTeam_validInputs_success_nonEmpty_calendar() {
+    public void modifyTeamCalendar_validInputs_success_nonEmpty_calendar() {
         testTeam.setTeamCalendar(testTeamCalendar);
 
         Day day = new Day ();
