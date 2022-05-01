@@ -31,10 +31,10 @@ public class Schedule implements Serializable {
     private String role;
 
     @Column
-    private Long base;
+    private int base;
 
     @Column
-    private Long special;
+    private int special;
 
     @Column
     private int assigned = 0;
@@ -56,19 +56,19 @@ public class Schedule implements Serializable {
         this.role = role;
     }
 
-    public Long getBase() {
+    public int getBase() {
         return base;
     }
 
-    public void setBase(Long base) {
+    public void setBase(int base) {
         this.base = base;
     }
 
-    public Long getSpecial() {
+    public int getSpecial() {
         return special;
     }
 
-    public void setSpecial(Long special) {
+    public void setSpecial(int special) {
         this.special = special;
     }
 
