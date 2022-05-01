@@ -107,8 +107,9 @@ public class UserServiceTest {
     User loggedInUser = userService.loginUser(testUser);
     assertEquals(UserStatus.ONLINE, loggedInUser.getStatus()); 
   }
-
+/*
   @Test
+
   public void authorizeUser_validInputs_success(){
     testUser.setToken("token");
     User createdUser = userService.createUser(testUser);
@@ -120,4 +121,6 @@ public class UserServiceTest {
     User loggedInUser = userService.loginUser(testUser);
     assertEquals(UserStatus.ONLINE, loggedInUser.getStatus()); 
   }
+
+ */
 }

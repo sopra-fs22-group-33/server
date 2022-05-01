@@ -39,11 +39,8 @@ public class TeamCalendarController {
             return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
         // TODO: catch exception that cplex lib is not found
-       catch (IloException ex){
-           log.debug("Probably there is no possible solution");
-           return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
-        }
-        catch (NullPointerException ex2){
+
+        catch (NullPointerException ex){
             log.debug("Something was null");
             return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
@@ -61,11 +58,8 @@ public class TeamCalendarController {
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
         }
         // TODO: catch exception that cplex lib is not found
-        catch (IloException ex){
-            log.debug("Probably there is no possible solution");
-        }
 
-        catch (NullPointerException ex2){
+        catch (NullPointerException ex){
             log.debug("Something was null");
         }
 
