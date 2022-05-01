@@ -1,12 +1,12 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.Optimizer;
+
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
-import ilog.concert.IloException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -33,7 +33,7 @@ public class TeamCalendarController {
 
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
-        try {
+        /*try {
             Optimizer optimizer = new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
             return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
@@ -44,6 +44,9 @@ public class TeamCalendarController {
             log.debug("Something was null");
             return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
+
+         */
+        return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
     @PutMapping("/teams/{teamId}/calendars")
@@ -53,6 +56,8 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
+
+        /*
         try {
             Optimizer optimizer = new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
@@ -62,6 +67,8 @@ public class TeamCalendarController {
         catch (NullPointerException ex){
             log.debug("Something was null");
         }
+
+         */
 
     }
 
