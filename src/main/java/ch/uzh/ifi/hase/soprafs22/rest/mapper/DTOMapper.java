@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
-import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import org.mapstruct.*;
 import org.mapstruct.factory.Mappers;
@@ -50,9 +48,20 @@ public interface DTOMapper {
   @Mapping(source = "days", target = "basePlan")
   TeamCalendar convertTeamCalendarPostDTOtoEntity(TeamCalendarPostDTO teamCalendarPostDTO);
 
-  @Mapping(source = "id", target = "id")
   @Mapping(source = "startingDate", target = "startingDate")
   @Mapping(source = "basePlan", target = "days")
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
+
+  @Mapping(source = "apples", target = "apples")
+  @Mapping(source = "players", target = "players")
+  Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);
+
+  @Mapping(source = "id", target = "id")
+  @Mapping(source = "apples", target = "apples")
+  @Mapping(source = "players", target = "players")
+  GameGetDTO convertEntityToGameGetDTO(Game game);
+
+  @Mapping(source = "chunks", target = "chunks")
+  Player convertPlayerPutDTOtoEntity(PlayerPutDTO playerPutDTO);
 }
 

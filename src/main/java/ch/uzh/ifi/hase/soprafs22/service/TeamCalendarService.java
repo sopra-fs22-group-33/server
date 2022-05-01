@@ -27,18 +27,14 @@ public class TeamCalendarService {
 
     private final TeamCalendarRepository teamCalendarRepository;
     private final TeamRepository teamRepository;
-    private final DayRepository dayRepository;
-    private final EventRepository eventRepository;
     private final UserRepository userRepository;
 
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
-                               @Qualifier("eventRepository") EventRepository eventRepository, @Qualifier("dayRepository") DayRepository dayRepository, @Qualifier("userRepository") UserRepository userRepository) {
+                               @Qualifier("userRepository") UserRepository userRepository) {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
-        this.dayRepository = dayRepository;
-        this.eventRepository = eventRepository;
         this.userRepository = userRepository;
     }
 
@@ -55,9 +51,47 @@ public class TeamCalendarService {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+
+            oldCalendar.setBasePlan(newCalendar.getBasePlan());
+            oldCalendar.setStartingDate(newCalendar.getStartingDate());
+
+            for (Day day : oldCalendar.getBasePlan()) {
+                day.setTeamCalendar(oldCalendar);
+
+                if (day.getSlots() != null) {
+                    for (Slot slot : day.getSlots()) {
+                        slot.setDay(day);
+                        if (slot.getSchedules() != null) {
+                            for (Schedule schedule : slot.getSchedules()) {
+                                schedule.setSlot(slot);
+                                Optional<User> user = userRepository.findById(schedule.getUser().getId());
+                                if (user.isPresent()) {
+                                    User foundUser = user.get();
+                                    foundUser.addSchedule(schedule);
+                                    schedule.setUser(foundUser);
+                                }
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                            }
+                        }
+                    }
+                }
+            }
+
+            TeamCalendar savedCalendar = teamCalendarRepository.save(oldCalendar);
+            teamCalendarRepository.flush();
+
+            return savedCalendar;
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 
 
-    public TeamCalendar createTeamCalendar2(long id, TeamCalendar newCalendar) {
+    public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
 
         //checkIfTeamHasCalendar(id);
@@ -70,25 +104,27 @@ public class TeamCalendarService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        for (Day day: newCalendar.getBasePlan().values()){
+        for (Day day : newCalendar.getBasePlan()) {
             day.setTeamCalendar(newCalendar);
 
-            for (Event event: day.getEvents()){
-                event.setDay(day);
-                for(Schedule schedule:event.getSchedules()){
-                    schedule.setEvent(event);
-                    Optional<User> user = userRepository.findById(schedule.getId());
-                    if (user.isPresent()){
-                        User foundUser = user.get();
-                        foundUser.addSchedule(schedule);
-                        schedule.setUser(foundUser);
+            if (day.getSlots() != null) {
+                for (Slot slot : day.getSlots()) {
+                    slot.setDay(day);
+                    if (slot.getSchedules() != null) {
+                        for (Schedule schedule : slot.getSchedules()) {
+                            schedule.setSlot(slot);
+                            Optional<User> user = userRepository.findById(schedule.getUser().getId());
+                            if (user.isPresent()) {
+                                User foundUser = user.get();
+                                foundUser.addSchedule(schedule);
+                                schedule.setUser(foundUser);
+                            }
+                            else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                        }
                     }
-                    else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
-                };
-
+                }
             }
-            }
+        }
 
         newCalendar = teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();

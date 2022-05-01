@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
@@ -13,8 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
+
+import javax.transaction.Transactional;
 
 
 /**
@@ -57,6 +61,7 @@ public class TeamServiceIntegrationTest {
   }
 
   @Test
+  @Transactional
   public void createTeam_validInputs_success() {
     // given
     assertNull(teamRepository.findByName("team1"));
@@ -66,6 +71,7 @@ public class TeamServiceIntegrationTest {
     User testUser = new User();
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
+
     // when
     User createdUser = userService.createUser(testUser);
     Team createdTeam = teamService.createTeam(testTeam, createdUser);
@@ -73,5 +79,53 @@ public class TeamServiceIntegrationTest {
     // then
     assertEquals(testTeam.getId(), createdTeam.getId());
     assertEquals(testTeam.getName(), createdTeam.getName());
+  }
+
+  @Test
+  @Transactional
+  public void updateTeam_validInputs_success() {
+    // given
+    assertNull(teamRepository.findByName("team1"));
+
+    Team testTeam = new Team();
+    testTeam.setName("team1");
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setPassword("password");
+
+    // when
+    User createdUser = userService.createUser(testUser);
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
+
+    // then
+    assertEquals(testTeam.getName(), createdTeam.getName());
+    testTeam.setName("changed");
+    Team updatedTeam = teamService.updateTeam(testTeam, createdTeam.getId(), createdUser.getToken());
+
+    assertEquals(testTeam.getName(), updatedTeam.getName());
+  }
+
+  @Test
+  @Transactional
+  public void deleteTeam_userNotDeleted_success() {
+    // given
+    assertNull(teamRepository.findByName("team1"));
+
+    Team testTeam = new Team();
+    testTeam.setName("team1");
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setPassword("password");
+
+    // when
+    User createdUser = userService.createUser(testUser);
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
+    assertEquals(testTeam.getId(), createdTeam.getId());
+    assertEquals(testTeam.getName(), createdTeam.getName());
+
+    // then
+    teamService.deleteTeam(createdTeam.getId(), createdUser.getToken());
+    assertThrows(ResponseStatusException.class, () -> teamService.findTeamById(createdTeam.getId()));
+    assertNotNull(userService.findUserById(createdUser.getId()));
   }
 }

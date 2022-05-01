@@ -1,26 +1,25 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @Entity
-@IdClass(DayKey.class)
+
 public class Day implements Serializable {
 
     // define composite key
+    @Id
+    @GeneratedValue
+    private Long id;
 
     @ManyToOne
-    @MapsId
     @JoinColumn(name = "team_calendar_id", updatable = true, insertable = true)
     private TeamCalendar teamCalendar;
 
-    @Id
-    private Weekday weekday;
+    private int weekday;
 
     @JsonIgnore
     public TeamCalendar getTeamCalendar() {
@@ -32,30 +31,26 @@ public class Day implements Serializable {
         this.teamCalendar = teamcalendar;
     }
 
-    public Weekday getWeekday() {
+    public int getWeekday() {
         return weekday;
     }
 
-    public void setWeekday(Weekday weekday) {
+    public void setWeekday(int weekday) {
         this.weekday = weekday;
     }
 
-
-
-
-
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    private Set<Event> events = new HashSet<Event>();
+    private List<Slot> slots;
 
 
-    public Set<Event> getEvents(){
-        return events;
+    public List<Slot> getSlots(){
+        return slots;
     }
 
-    public void setEvents(Set<Event> events){
-        this.events = events;}
+    public void setSlots(List<Slot> slots){
+        this.slots = slots;}
 
-/*
+
     public Long getId() {
         return id;
     }
@@ -63,6 +58,6 @@ public class Day implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-     */
+
 }
 

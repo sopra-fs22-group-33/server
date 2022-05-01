@@ -17,6 +17,8 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import javax.transaction.Transactional;
+
 
 /**
  * Test class for the TeamResource REST resource.
@@ -58,7 +60,8 @@ public class InvitationServiceIntegrationTest {
   }
 
   @Test
-  public void createTeam_validInputs_success() {
+  @Transactional
+  public void createInvitation_validInputs_success() {
     // given
     assertTrue(invitationRepository.findAll().isEmpty());
 
@@ -79,6 +82,33 @@ public class InvitationServiceIntegrationTest {
 
     // then
     assertEquals(testTeam.getId(), invitation.getTeam().getId());
-    // assertEquals(testTeam.getName(), createdTeam.getName());
+    assertEquals(testTeam.getName(), createdTeam.getName());
+  }
+
+  @Test
+  @Transactional
+  public void deleteInvitation_success() {
+    // given
+    assertTrue(invitationRepository.findAll().isEmpty());
+
+    Team testTeam = new Team();
+    testTeam.setName("team1");
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setPassword("password");
+    User testUser2 = new User();
+    testUser2.setEmail("2@test");
+    testUser2.setPassword("password");
+    
+    // when
+    User createdUser = userService.createUser(testUser);
+    User createdUser2 = userService.createUser(testUser2);
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
+    Invitation invitation = invitationService.createInvitation(testTeam, testUser2);
+    assertNotNull(invitationRepository.findAll());
+
+    // then
+    invitationService.deleteInvitation(invitation.getId());
+    assertTrue(invitationRepository.findAll().isEmpty());
   }
 }

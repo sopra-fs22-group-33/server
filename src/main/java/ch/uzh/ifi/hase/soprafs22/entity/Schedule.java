@@ -13,25 +13,28 @@ public class Schedule implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue
     private Long id;
 
-    @ManyToOne (cascade = CascadeType.ALL)
-    @JoinColumn(name = "event_id")
+    @ManyToOne ()
+    @JoinColumn(name = "slot_id")
     @JsonIgnore
-    private Event event;
+    private Slot slot;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
+
+
 
     @Column
     private String role;
 
     @Column
-    private Long basePreference;
+    private Long base;
 
     @Column
-    private Long specialPreference;
+    private Long special;
 
     @Column
     private int assigned = 0;
@@ -53,28 +56,28 @@ public class Schedule implements Serializable {
         this.role = role;
     }
 
-    public Long getBasePreference() {
-        return basePreference;
+    public Long getBase() {
+        return base;
     }
 
-    public void setBasePreference(Long basePreference) {
-        this.basePreference = basePreference;
+    public void setBase(Long base) {
+        this.base = base;
     }
 
-    public Long getSpecialPreference() {
-        return specialPreference;
+    public Long getSpecial() {
+        return special;
     }
 
-    public void setSpecialPreference(Long specialPreference) {
-        this.specialPreference = specialPreference;
+    public void setSpecial(Long special) {
+        this.special = special;
     }
 
-    public Event getEvent() {
-        return event;
+    public Slot getSlot() {
+        return slot;
     }
 
-    public void setEvent(Event event) {
-        this.event = event;
+    public void setSlot(Slot slot) {
+        this.slot = slot;
     }
 
     public User getUser() {
@@ -92,4 +95,5 @@ public class Schedule implements Serializable {
     public void setAssigned(int assigned) {
         this.assigned = assigned;
     }
+
 }

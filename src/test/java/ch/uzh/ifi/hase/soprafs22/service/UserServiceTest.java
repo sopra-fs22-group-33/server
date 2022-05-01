@@ -13,6 +13,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.Optional;
+
 public class UserServiceTest {
 
   @Mock
@@ -32,6 +34,7 @@ public class UserServiceTest {
     testUser.setId(1L);
     testUser.setEmail("firstname@lastname");
     testUser.setUsername("testUsername");
+    testUser.setPassword("123");
 
     // when -> any object is being save in the userRepository -> return the dummy
     // testUser
@@ -79,6 +82,30 @@ public class UserServiceTest {
     // then -> attempt to create second user with same user -> check that an error
     // is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser));
+  }
+
+  @Test
+  public void updateUser_validInputs_success(){
+    userService.createUser(testUser);
+    Mockito.when(userRepository.findByToken(Mockito.any())).thenReturn(testUser);
+    Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(testUser));
+
+    User userToUpdate = new User();
+    userToUpdate.setUsername("new Username");
+
+    User updatedUser = userService.updateUser(userToUpdate, testUser.getId(), "token");
+    assertEquals(updatedUser.getUsername(), testUser.getUsername());
+  }
+
+  @Test
+  public void loginUser_validInputs_success(){
+    testUser.setStatus(UserStatus.OFFLINE);
+    userService.createUser(testUser);
+    Mockito.when(userRepository.findByEmail(Mockito.any())).thenReturn(testUser);
+
+    // User userToLogin = new User();
+    User loggedInUser = userService.loginUser(testUser);
+    assertEquals(UserStatus.ONLINE, loggedInUser.getStatus()); 
   }
 
 }

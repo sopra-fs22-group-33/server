@@ -20,7 +20,7 @@ public class Team implements Serializable {
   @Column(nullable = false)
   private String name;
 
-  @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Membership> memberships;
 
@@ -28,7 +28,7 @@ public class Team implements Serializable {
   @JoinColumn
   private TeamCalendar teamCalendar;
   
-  @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Invitation> invitations;
 

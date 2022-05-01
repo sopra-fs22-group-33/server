@@ -17,11 +17,11 @@ public class Membership implements Serializable {
   private Long id;
 
   @JsonIgnore
-  @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "team_id", nullable = false)
   private Team team;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "user_id", nullable = false)
   private User user; 
   

@@ -29,6 +29,7 @@ public class InvitationService {
     this.invitationRepository = invitationRepository;
   }
 
+  //TODO check if user is invited or member already
   public Invitation createInvitation(Team team, User user) {    
     Invitation invitation = new Invitation();
     invitation.setUser(user);

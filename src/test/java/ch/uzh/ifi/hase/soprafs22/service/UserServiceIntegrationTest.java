@@ -91,4 +91,46 @@ public class UserServiceIntegrationTest {
     // check that an error is thrown
     assertThrows(ResponseStatusException.class, () -> userService.createUser(testUser2));
   }
+
+  @Test
+  public void updateUser_validInputs_success() {
+    // given
+    assertNull(userRepository.findByEmail("firstname@lastname"));
+
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+
+    // when
+    User createdUser = userService.createUser(testUser);
+    testUser.setUsername("changed");
+    User updatedUser = userService.updateUser(testUser, createdUser.getId(), createdUser.getToken());
+
+    // then
+    assertEquals(testUser.getId(), updatedUser.getId());
+    assertEquals(testUser.getEmail(), updatedUser.getEmail());
+    assertEquals(testUser.getUsername(), updatedUser.getUsername());
+    assertNotNull(updatedUser.getToken());
+    assertEquals(UserStatus.ONLINE, updatedUser.getStatus());
+  }
+
+  @Test
+  public void deleteUser_validInputs_success() {
+    // given
+    assertNull(userRepository.findByEmail("firstname@lastname"));
+
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setUsername("testUsername");
+    testUser.setPassword("password");
+
+    // when
+    User createdUser = userService.createUser(testUser);
+    assertEquals(testUser.getId(), createdUser.getId());    
+
+    // then
+    userService.deleteUser(createdUser.getId(), createdUser.getToken());
+    assertThrows(ResponseStatusException.class, () -> userService.findUserById(createdUser.getId()));
+  }
 }

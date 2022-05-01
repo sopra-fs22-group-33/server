@@ -8,14 +8,14 @@ public class DayKey implements Serializable {  //part of the composite key defin
 
     private TeamCalendar teamCalendar;
 
-    private Weekday weekday;
+    private int weekday;
 
 
-    public Weekday getWeekday() {
+    public int getWeekday() {
         return weekday;
     }
 
-    public void setWeekday(Weekday weekday) {
+    public void setWeekday(int weekday) {
         this.weekday = weekday;
     }
 
