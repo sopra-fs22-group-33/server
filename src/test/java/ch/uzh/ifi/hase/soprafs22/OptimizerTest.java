@@ -1,20 +1,18 @@
 package ch.uzh.ifi.hase.soprafs22;
 
-import ch.uzh.ifi.hase.soprafs22.controller.TeamCalendarController;
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
 import ch.uzh.ifi.hase.soprafs22.entity.Slot;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@WebMvcTest(Optimizer.class)
+
 public class OptimizerTest {
 
     @Test
@@ -35,7 +33,7 @@ public class OptimizerTest {
         teamCalendar.setStartingDate("123");
 
         Optimizer optimizer = new Optimizer (teamCalendar);
-        assertEquals(true, optimizer.isFeasible());
+        assertTrue(optimizer.isFeasible());
         assertEquals(1, schedule.getAssigned());
     }
 
@@ -64,7 +62,7 @@ public class OptimizerTest {
         teamCalendar.setStartingDate("123");
 
         Optimizer optimizer = new Optimizer (teamCalendar);
-        assertEquals(true, optimizer.isFeasible());
+        assertTrue(optimizer.isFeasible());
         assertEquals(0, schedule.getAssigned());
         assertEquals(1, schedule2.getAssigned());
     }
