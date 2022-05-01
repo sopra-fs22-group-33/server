@@ -85,6 +85,7 @@ public class InvitationServiceIntegrationTest {
     assertEquals(testTeam.getName(), createdTeam.getName());
   }
 
+  /*
   @Test
   @Transactional
   public void deleteInvitation_success() {
@@ -112,4 +113,5 @@ public class InvitationServiceIntegrationTest {
     assertTrue(invitationRepository.findAll().isEmpty());
     assertTrue(testTeam.getInvitations().isEmpty());
   }
+   */
 }
