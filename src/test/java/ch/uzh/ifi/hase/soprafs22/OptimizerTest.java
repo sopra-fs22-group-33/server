@@ -32,9 +32,9 @@ public class OptimizerTest {
         teamCalendar.setBasePlan(days);
         teamCalendar.setStartingDate("123");
 
-        //Optimizer optimizer = new Optimizer (teamCalendar);
-        //assertTrue(optimizer.isFeasible());
-        //assertEquals(1, schedule.getAssigned());
+        Optimizer optimizer = new Optimizer (teamCalendar);
+        assertTrue(optimizer.isFeasible());
+        assertEquals(1, schedule.getAssigned());
     }
 
 
@@ -61,10 +61,10 @@ public class OptimizerTest {
         teamCalendar.setBasePlan(days);
         teamCalendar.setStartingDate("123");
 
-       // Optimizer optimizer = new Optimizer (teamCalendar);
-       // assertTrue(optimizer.isFeasible());
-       // assertEquals(0, schedule.getAssigned());
-        //assertEquals(1, schedule2.getAssigned());
+        Optimizer optimizer = new Optimizer (teamCalendar);
+        assertTrue(optimizer.isFeasible());
+        assertEquals(0, schedule.getAssigned());
+        assertEquals(1, schedule2.getAssigned());
     }
 
 }
