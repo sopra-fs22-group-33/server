@@ -59,6 +59,6 @@ public class InvitationService {
 
   public Invitation findInvitationById(@PathVariable Long id){    
     return invitationRepository.findById(id)
-    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));
+    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "no invitation found"));
   }
 }

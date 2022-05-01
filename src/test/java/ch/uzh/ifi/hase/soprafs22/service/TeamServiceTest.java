@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.web.server.ResponseStatusException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TeamServiceTest {
@@ -52,4 +54,5 @@ public class TeamServiceTest {
     assertEquals(testTeam.getId(), createdTeam.getId());
     assertEquals(testTeam.getName(), createdTeam.getName());
   }
+
 }

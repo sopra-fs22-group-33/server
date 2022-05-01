@@ -111,21 +111,67 @@ public class TeamServiceIntegrationTest {
     // given
     assertNull(teamRepository.findByName("team1"));
 
-    Team testTeam = new Team();
-    testTeam.setName("team1");
+    //create user
     User testUser = new User();
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
-
-    // when
     User createdUser = userService.createUser(testUser);
+    
+    //create team
+    Team testTeam = new Team();
+    testTeam.setName("team1");
     Team createdTeam = teamService.createTeam(testTeam, createdUser);
+    
+    //verify that team and user are created properly
     assertEquals(testTeam.getId(), createdTeam.getId());
     assertEquals(testTeam.getName(), createdTeam.getName());
+    assertEquals(testUser.getEmail(), createdUser.getEmail());
+
+    //check if membership is created
+    assertNotNull(membershipRepository.findAll());
+    assertEquals(createdUser, createdTeam.getMemberships().iterator().next().getUser());
 
     // then
     teamService.deleteTeam(createdTeam.getId(), createdUser.getToken());
+
+    //check if team and membership are deleted
+    //user must not be deleted
     assertThrows(ResponseStatusException.class, () -> teamService.findTeamById(createdTeam.getId()));
     assertNotNull(userService.findUserById(createdUser.getId()));
+  }
+
+
+  //TODO use for report
+  @Test
+  @Transactional
+  public void deleteTeam_noAdmin_throwsException() {
+
+    //create user
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setPassword("password");
+    User createdUser = userService.createUser(testUser);
+    
+    //create team
+    Team testTeam = new Team();
+    testTeam.setName("team1");
+    Team createdTeam = teamService.createTeam(testTeam, createdUser);
+    
+    //verify that team and user are created properly
+    assertEquals(testTeam.getId(), createdTeam.getId());
+    assertEquals(testTeam.getName(), createdTeam.getName());
+    assertEquals(testUser.getEmail(), createdUser.getEmail());
+
+    //check if membership is created
+    assertEquals(createdUser, createdTeam.getMemberships().iterator().next().getUser());
+
+    // then
+    assertThrows(ResponseStatusException.class, () -> teamService.deleteTeam(createdTeam.getId(), "invalid_token"));
+    
+    //delete team with valid token
+    teamService.deleteTeam(createdTeam.getId(), createdUser.getToken());
+
+    //check if team is deleted
+    assertThrows(ResponseStatusException.class, () -> teamService.findTeamById(createdTeam.getId()));
   }
 }
