@@ -18,6 +18,7 @@ public class Slot implements Serializable {
     @Column(nullable = false)
     private int timeTo;
 
+
     @ManyToOne
     @JoinColumns(value = {
             @JoinColumn(
@@ -36,6 +37,9 @@ public class Slot implements Serializable {
     })
     @JsonIgnore
     private Day day;
+
+    @Column
+    private int requirement;
 
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
@@ -78,6 +82,14 @@ public class Slot implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getRequirement() {
+        return this.requirement;
+    }
+
+    public void setRequirement(int requirement) {
+        this.requirement = requirement;
     }
 
 /*

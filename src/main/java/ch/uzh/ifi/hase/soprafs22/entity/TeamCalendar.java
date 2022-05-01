@@ -23,6 +23,8 @@ public class TeamCalendar implements Serializable {
     @Column
     private String startingDate;
 
+
+
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Day> basePlan;
