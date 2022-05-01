@@ -108,4 +108,16 @@ public class UserServiceTest {
     assertEquals(UserStatus.ONLINE, loggedInUser.getStatus()); 
   }
 
+  @Test
+  public void authorizeUser_validInputs_success(){
+    testUser.setToken("token");
+    User createdUser = userService.createUser(testUser);
+    Mockito.when(userRepository.findByEmail(Mockito.any())).thenReturn(testUser);
+
+    // User userToLogin = new User();
+    userService.authorizeUser(createdUser.getId(), createdUser.getToken());
+
+    User loggedInUser = userService.loginUser(testUser);
+    assertEquals(UserStatus.ONLINE, loggedInUser.getStatus()); 
+  }
 }

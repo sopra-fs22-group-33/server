@@ -28,7 +28,7 @@ public class Team implements Serializable {
   @JoinColumn
   private TeamCalendar teamCalendar;
   
-  @OneToMany(mappedBy = "team", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "team", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
   @JsonIgnore
   private Set<Invitation> invitations;
 

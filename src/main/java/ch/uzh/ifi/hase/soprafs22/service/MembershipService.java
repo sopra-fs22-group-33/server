@@ -47,7 +47,7 @@ public class MembershipService {
         if (membership.getUser().getId() == userId){
           return membership;
         }
-      }throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user's membership not found");
+      }
     }
     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "membership not found");
   }

@@ -46,6 +46,17 @@ public class InvitationService {
     invitationRepository.flush();
   }
 
+  public Invitation findInvitation(Team team, long userId){
+    if (team.getInvitations() != null){
+      for (Invitation invitation : team.getInvitations()){
+        if (invitation.getUser().getId() == userId){
+          return invitation;
+        }
+      }
+    }
+    throw new ResponseStatusException(HttpStatus.NOT_FOUND, "invitation not found");
+  }
+
   public Invitation findInvitationById(@PathVariable Long id){    
     return invitationRepository.findById(id)
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Team not found"));

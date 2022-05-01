@@ -16,12 +16,12 @@ public class Invitation implements Serializable {
   @GeneratedValue
   private Long id;
 
-  @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "team", nullable = false)
   @JsonIgnore
   private Team team;
 
-  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+  @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
   @JoinColumn(name = "user", nullable = false)
   @JsonIgnore
   private User user; 
