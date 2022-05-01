@@ -11,8 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,12 +36,13 @@ public class TeamCalendarController {
         try {
             Optimizer optimizer = new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
+            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
         // TODO: catch exception that cplex lib is not found
        catch (IloException ex){
-           log.debug("Probably there is no possible solution ",id);
+           log.debug("Probably there is no possible solution");
+           return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
-        finally {return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);}
     }
 
     @PutMapping("/teams/{teamId}/calendars")
@@ -59,7 +58,7 @@ public class TeamCalendarController {
         }
         // TODO: catch exception that cplex lib is not found
         catch (IloException ex){
-            log.debug("Probably there is no possible solution ",id);;
+            log.debug("Probably there is no possible solution");
         }
 
     }
@@ -97,16 +96,6 @@ public class TeamCalendarController {
         return;
     }
 
-
-/*
-
-    @GetMapping(value = "/teamCalendar", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String helloWorld() {
-        return "The application is running.";
-    }
- */
 }
 
 
