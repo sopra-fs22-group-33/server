@@ -102,6 +102,38 @@ public class TeamCalendarServiceTest {
         assertEquals(testTeamCalendar.getBasePlan().size(), createdTeamCalendar.getBasePlan().size());
 
     }
+
+    @Test
+    public void modifyTeam_validInputs_success_nonEmpty_calendar() {
+        testTeam.setTeamCalendar(testTeamCalendar);
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate("123");
+
+        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
+        teamCalendarPostDTO.setStartingDate("123");
+
+        TeamCalendar createdTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testTeamCalendar );
+
+        // then
+        Mockito.verify(teamCalendarRepository, Mockito.times(1)).save(Mockito.any());
+
+        assertEquals(testTeamCalendar.getStartingDate(), createdTeamCalendar.getStartingDate());
+        assertEquals(testTeamCalendar.getBasePlan().size(), createdTeamCalendar.getBasePlan().size());
+
+    }
 }
 
 
