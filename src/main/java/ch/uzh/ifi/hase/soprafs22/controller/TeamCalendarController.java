@@ -7,6 +7,8 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
 import ilog.concert.IloException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,6 +19,7 @@ import java.util.List;
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
+    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
     TeamCalendarController(TeamCalendarService teamCalendarService) {
         this.teamCalendarService = teamCalendarService;
@@ -36,10 +39,11 @@ public class TeamCalendarController {
             Optimizer optimizer = new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
         }
+        // TODO: catch exception that cplex lib is not found
        catch (IloException ex){
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+           log.debug("Probably there is no possible solution ",id);
         }
-        return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
+        finally {return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);}
     }
 
     @PutMapping("/teams/{teamId}/calendars")
@@ -49,6 +53,14 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
+        try {
+            Optimizer optimizer = new Optimizer(createdCalendar);
+            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
+        }
+        // TODO: catch exception that cplex lib is not found
+        catch (IloException ex){
+            log.debug("Probably there is no possible solution ",id);;
+        }
 
     }
 
