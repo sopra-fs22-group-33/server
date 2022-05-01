@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 
 import javax.persistence.*;
@@ -16,10 +18,12 @@ public class Invitation implements Serializable {
 
   @ManyToOne (cascade = {CascadeType.MERGE, CascadeType.REFRESH})
   @JoinColumn(name = "team", nullable = false)
+  @JsonIgnore
   private Team team;
 
   @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH})
   @JoinColumn(name = "user", nullable = false)
+  @JsonIgnore
   private User user; 
   
   public Long getId() {
