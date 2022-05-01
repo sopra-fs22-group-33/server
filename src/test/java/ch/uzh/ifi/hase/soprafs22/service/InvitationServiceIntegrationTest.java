@@ -110,5 +110,6 @@ public class InvitationServiceIntegrationTest {
     // then
     invitationService.deleteInvitation(invitation.getId());
     assertTrue(invitationRepository.findAll().isEmpty());
+    assertTrue(testTeam.getInvitations().isEmpty());
   }
 }

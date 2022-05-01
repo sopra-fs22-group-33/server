@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
@@ -108,36 +109,30 @@ public class MembershipServiceIntegrationTest {
     // then
     createdTeam = teamService.findTeamById(createdTeam.getId());
     assertFalse(membership.getIsAdmin());
-    //TODO
-    // membershipService.updateMembership(testTeam, createdUser2.getId(), true);
-    // assertTrue(membership.getIsAdmin());
   }
 
-  // @Test
-  // @Transactional
-  // public void deleteMembership_success() {
-  //   // given
-  //   assertTrue(membershipRepository.findAll().isEmpty());
+  @Test
+  @Transactional
+  public void deleteMembership_success() {
+    // given
+    assertTrue(membershipRepository.findAll().isEmpty());
 
-  //   Team testTeam = new Team();
-  //   testTeam.setName("team1");
-  //   User testUser = new User();
-  //   testUser.setEmail("firstname@lastname");
-  //   testUser.setPassword("password");
-  //   User testUser2 = new User();
-  //   testUser2.setEmail("2@test");
-  //   testUser2.setPassword("password");
+    Team testTeam = new Team();
+    testTeam.setName("team1");
+    User testUser = new User();
+    testUser.setEmail("firstname@lastname");
+    testUser.setPassword("password");
+    testUser.setStatus(UserStatus.ONLINE);
+    testUser.setToken("token");
     
-  //   // when
-  //   User createdUser = userService.createUser(testUser);
-  //   User createdUser2 = userService.createUser(testUser2);
-  //   Team createdTeam = teamService.createTeam(testTeam, createdUser);
-  //   Membership membership = membershipService.createMembership(testTeam, testUser2, true);
-  //   assertNotNull(membershipRepository.findAll());
+    // // when
 
-  //   // then
-  //   membershipService.deleteMembership(testTeam, testUser2.getId());
-  //   assertTrue(testUser2.getMemberships().isEmpty());
-  // }
+    Membership membership = membershipService.createMembership(testTeam, testUser, true);
+    assertNotNull(membershipRepository.findAll());
+
+    // then
+    membershipRepository.deleteById(membership.getId());
+    assertTrue(membershipRepository.findAll().isEmpty());
+  }
 
 }
