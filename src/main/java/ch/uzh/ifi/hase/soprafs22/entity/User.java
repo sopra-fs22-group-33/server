@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -55,18 +57,14 @@ public class User implements Serializable {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
-  private Set<Schedule> schedules;
+  private List<Schedule> schedules;
 
-  public Set<Schedule> getSchedules() {
+  public List<Schedule> getSchedules() {
         return schedules;
     }
 
-  public void setSchedules(Set<Schedule> schedules) {
+  public void setSchedules(List<Schedule> schedules) {
         this.schedules = schedules;
-  }
-
-  public void addSchedule(Schedule schedule) {
-        this.schedules.add(schedule);
   }
 
   public Long getId() {

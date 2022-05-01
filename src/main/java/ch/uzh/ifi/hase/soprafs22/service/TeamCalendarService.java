@@ -72,7 +72,7 @@ public class TeamCalendarService {
                                 Optional<User> user = userRepository.findById(schedule.getUser().getId());
                                 if (user.isPresent()) {
                                     User foundUser = user.get();
-                                    foundUser.addSchedule(schedule);
+                                    //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
                                 }
                                 else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
@@ -104,26 +104,29 @@ public class TeamCalendarService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 
-        for (Day day : newCalendar.getBasePlan()) {
-            day.setTeamCalendar(newCalendar);
+        if (newCalendar.getBasePlan() != null){
+            for (Day day : newCalendar.getBasePlan()) {
+                day.setTeamCalendar(newCalendar);
 
-            if (day.getSlots() != null) {
-                for (Slot slot : day.getSlots()) {
-                    slot.setDay(day);
-                    if (slot.getSchedules() != null) {
-                        for (Schedule schedule : slot.getSchedules()) {
-                            schedule.setSlot(slot);
-                            Optional<User> user = userRepository.findById(schedule.getUser().getId());
-                            if (user.isPresent()) {
-                                User foundUser = user.get();
-                                foundUser.addSchedule(schedule);
-                                schedule.setUser(foundUser);
+                if (day.getSlots() != null) {
+                    for (Slot slot : day.getSlots()) {
+                        slot.setDay(day);
+                        if (slot.getSchedules() != null) {
+                            for (Schedule schedule : slot.getSchedules()) {
+                                schedule.setSlot(slot);
+                                Optional<User> user = userRepository.findById(schedule.getUser().getId());
+                                if (user.isPresent()) {
+                                    User foundUser = user.get();
+                                    //foundUser.addSchedule(schedule);
+                                    schedule.setUser(foundUser);
+                                }
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                             }
-                            else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                         }
                     }
                 }
-            }
+        }
+
         }
 
         newCalendar = teamCalendarRepository.save(newCalendar);
