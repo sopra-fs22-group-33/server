@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * TeamCalendarControllerTest
  * This is a WebMvcTest which allows to test the TeamCalendarController i.e. GET/POST
  * request without actually sending them over the network.
- * This tests if the UserController works.
+ * This tests if the TeamCalendarController works.
  */
 @WebMvcTest(TeamCalendarController.class)
 public class TeamCalendarControllerTest {
