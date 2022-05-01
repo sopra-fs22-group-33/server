@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 
 import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -59,6 +60,36 @@ public class GameControllerTest {
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id", is(1)));
+    }
+
+    @Test
+    public void postGame_getGame_thenReturnJsonArray() throws Exception {
+        // given
+        Game game = new Game();
+        game.setId(1L);
+
+        given(gameService.startGame(Mockito.any())).willReturn(game);
+
+        GamePostDTO gamePostDTO = new GamePostDTO();
+
+        // when
+        MockHttpServletRequestBuilder postRequest =
+                         post("/games")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJsonString(gamePostDTO));;
+
+        // then
+        mockMvc.perform(postRequest).andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(1)));
+    }
+
+    private String asJsonString(final Object object) {
+        try {
+            return new ObjectMapper().writeValueAsString(object);
+        } catch (JsonProcessingException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    String.format("The request body could not be created.%s", e.toString()));
+        }
     }
 
 }
