@@ -65,29 +65,33 @@ public class InvitationController {
     }return null;
   }
 
-  @PutMapping("/users/{userId}/invitations/{invitationId}")
+  @PutMapping("/users/{userId}/invitations/{teamId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
-  @Transactional
-  public void answerInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestParam String accept, @RequestHeader("token") String token){
+  // @Transactional
+  public void answerInvitation(@PathVariable("userId") long userId, @PathVariable("teamId") long teamId, @RequestParam String accept, @RequestHeader("token") String token){
     if (userService.authorizeUser(userId, token)){
+      Team team = teamService.findTeamById(teamId);
+      Invitation invitation = invitationService.findInvitation(team, userId);
       //creating a new membership if invitation is accepted
       if (accept.matches("true")){
-        Membership membership = membershipService.createMembership(invitationService.findInvitationById(invitationId).getTeam(), invitationService.findInvitationById(invitationId).getUser(), false);
+        Membership membership = membershipService.createMembership(invitationService.findInvitationById(invitation.getId()).getTeam(), invitationService.findInvitationById(invitation.getId()).getUser(), false);
       }
       //deleting the invitation
-      invitationService.deleteInvitation(invitationId);
+      invitationService.deleteInvitation(invitation.getId());
     }
   }
 
-  @DeleteMapping("/users/{userId}/invitations/{invitationId}")
+  @DeleteMapping("/users/{userId}/invitations/{teamId}")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   @Transactional
-  public void declineInvitation(@PathVariable("userId") long userId, @PathVariable("invitationId") long invitationId, @RequestHeader("token") String token){
+  public void declineInvitation(@PathVariable("userId") long userId, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
     if (userService.authorizeUser(userId, token)){
+      Team team = teamService.findTeamById(teamId);
+      Invitation invitation = invitationService.findInvitation(team, userId);
       //deleting the invitation
-      invitationService.deleteInvitation(invitationId);
+      invitationService.deleteInvitation(invitation.getId());
     }
   }
 

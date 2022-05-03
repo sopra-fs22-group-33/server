@@ -1,11 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.Optimizer;
-import ch.uzh.ifi.hase.soprafs22.controller.TeamCalendarController;
-import ch.uzh.ifi.hase.soprafs22.controller.TeamController;
+
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -34,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * TeamCalendarControllerTest
  * This is a WebMvcTest which allows to test the TeamCalendarController i.e. GET/POST
  * request without actually sending them over the network.
- * This tests if the UserController works.
+ * This tests if the TeamCalendarController works.
  */
 @WebMvcTest(TeamCalendarController.class)
 public class TeamCalendarControllerTest {
@@ -42,25 +39,15 @@ public class TeamCalendarControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private UserService userService;
+
     @MockBean
     private TeamCalendarService teamCalendarService;
 
-    @MockBean
-    private TeamService teamService;
-
-    @MockBean
-    private MembershipService membershipService;
-
-    @MockBean
-    private InvitationService invitationService;
 
     @Test
     public void givenTeamCalendar_whenGetTeamCalendar_thenReturnJsonArray() throws Exception {
         // given
         TeamCalendar teamCalendar = new TeamCalendar();
-        Team team = new Team();
         teamCalendar.setStartingDate("123");
 
         List<TeamCalendar> allTeamCalendars = Collections.singletonList(teamCalendar);
@@ -94,10 +81,11 @@ public class TeamCalendarControllerTest {
         teamCalendar.setBasePlan(days);
         teamCalendar.setStartingDate("123");
 
+        //creating teamCalendarPostDTO
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
         teamCalendarPostDTO.setStartingDate("123");
 
-
+        //defining mocks
         given(teamCalendarService.createTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
 
         // when/then -> do the request + validate the result

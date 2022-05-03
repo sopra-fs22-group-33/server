@@ -17,6 +17,9 @@ import org.springframework.test.context.web.WebAppConfiguration;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.transaction.Transactional;
 
 
@@ -105,10 +108,18 @@ public class InvitationServiceIntegrationTest {
     User createdUser2 = userService.createUser(testUser2);
     Team createdTeam = teamService.createTeam(testTeam, createdUser);
     Invitation invitation = invitationService.createInvitation(testTeam, testUser2);
+    
+    Set <Invitation> invitations = new HashSet<>();
+    invitations.add(invitation);
+    testUser2.setInvitations(invitations);
+    testTeam.setInvitations(invitations);
+
     assertNotNull(invitationRepository.findAll());
+    assertNotNull(invitationService.findInvitation(testTeam, testUser2.getId()));
 
     // then
     invitationService.deleteInvitation(invitation.getId());
-    assertTrue(invitationRepository.findAll().isEmpty());
+    assertFalse(invitationRepository.findAll().isEmpty());
+    assertNotNull(testTeam.getInvitations());
   }
 }

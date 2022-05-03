@@ -19,6 +19,7 @@ public class Day implements Serializable {
     @JoinColumn(name = "team_calendar_id", updatable = true, insertable = true)
     private TeamCalendar teamCalendar;
 
+    @Column
     private int weekday;
 
     @JsonIgnore

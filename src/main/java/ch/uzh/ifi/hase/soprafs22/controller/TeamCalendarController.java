@@ -1,22 +1,23 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.Optimizer;
+
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
-import ilog.concert.IloException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
+    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
     TeamCalendarController(TeamCalendarService teamCalendarService) {
         this.teamCalendarService = teamCalendarService;
@@ -32,13 +33,19 @@ public class TeamCalendarController {
 
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
-        try {
+        /*try {
             Optimizer optimizer = new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
+            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
-       catch (IloException ex){
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        // TODO: catch exception that cplex lib is not found
+
+        catch (NullPointerException ex){
+            log.debug("Something was null");
+            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
         }
+
+         */
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
@@ -49,6 +56,19 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
+
+        /*
+        try {
+            Optimizer optimizer = new Optimizer(createdCalendar);
+            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
+        }
+        // TODO: catch exception that cplex lib is not found
+
+        catch (NullPointerException ex){
+            log.debug("Something was null");
+        }
+
+         */
 
     }
 
@@ -85,16 +105,6 @@ public class TeamCalendarController {
         return;
     }
 
-
-/*
-
-    @GetMapping(value = "/teamCalendar", produces = MediaType.TEXT_PLAIN_VALUE)
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public String helloWorld() {
-        return "The application is running.";
-    }
- */
 }
 
 

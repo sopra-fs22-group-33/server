@@ -32,26 +32,23 @@ public class InvitationRepositoryIntegrationTest {
 
   @Test
   public void findById_success() {
-    // given
+    // create User
     User user = new User();
-    // user.setId(2L);
     user.setEmail("firstname@lastname");
     user.setStatus(UserStatus.OFFLINE);
     user.setToken("1");
     user.setPassword("password");
 
+    // create Team
     Team team = new Team();
     team.setName("teamname");
+
+    //create invitation with user and team
     Invitation invitation = new Invitation();
-    // invitation.setId(6L);
     invitation.setTeam(team);
     invitation.setUser(user);
 
-    // invitationRepository.save(invitation);
-    entityManager.persist(user);
-    entityManager.persist(team);
-    invitationRepository.save(invitation);
-    invitationRepository.flush();
+    entityManager.persist(invitation);
 
     // when
     List <Invitation> found = invitationRepository.findAll();
@@ -59,5 +56,6 @@ public class InvitationRepositoryIntegrationTest {
     // then
     assertNotNull(found.get(0).getId());
     assertEquals(found.get(0).getId(), invitation.getId());
+    assertEquals(team, found.get(0).getTeam());
   }
 }
