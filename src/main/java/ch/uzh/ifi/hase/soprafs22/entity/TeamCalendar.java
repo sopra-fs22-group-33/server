@@ -18,15 +18,14 @@ public class TeamCalendar implements Serializable {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "team", updatable = true, insertable = true)
     @MapsId
+    @JsonIgnore
     private Team team;
 
     @Column
     private String startingDate;
 
 
-
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL)
-    @JsonIgnore
     private List<Day> basePlan;
 
     public Team getTeam() {

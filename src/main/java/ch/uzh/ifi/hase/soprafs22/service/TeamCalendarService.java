@@ -64,8 +64,8 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
             for (Day day : oldCalendar.getBasePlan()) {
-                dayRepository.deleteById(day.getId());
-                dayRepository.flush();
+                 dayRepository.deleteById(day.getId());
+                 dayRepository.flush();
             }
 
             oldCalendar.setBasePlan(newCalendar.getBasePlan());
