@@ -25,7 +25,7 @@ public class TeamCalendar implements Serializable {
     private String startingDate;
 
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Day> basePlan;
 
     public Team getTeam() {

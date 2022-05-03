@@ -63,15 +63,17 @@ public class TeamCalendarService {
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
-            for (Day day : oldCalendar.getBasePlan()) {
-                 dayRepository.deleteById(day.getId());
-                 dayRepository.flush();
-            }
+            oldCalendar.getBasePlan().clear();
+            teamCalendarRepository.save(oldCalendar);
+            teamCalendarRepository.flush();}
 
-            oldCalendar.setBasePlan(newCalendar.getBasePlan());
-            oldCalendar.setStartingDate(newCalendar.getStartingDate());
+        Optional<Team> teamagain = teamRepository.findById(id);
+        if (teamagain.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
 
-            for (Day day : oldCalendar.getBasePlan()) {
+            for (Day day : newCalendar.getBasePlan()) {
+                oldCalendar.getBasePlan().add(day);
                 day.setTeamCalendar(oldCalendar);
 
                 if (day.getSlots() != null) {
