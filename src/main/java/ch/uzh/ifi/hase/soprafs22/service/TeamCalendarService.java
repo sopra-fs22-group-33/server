@@ -30,16 +30,19 @@ public class TeamCalendarService {
     private final TeamCalendarRepository teamCalendarRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
-    private final GameRepository gameRepository;
+    private final PlayerRepository playerRepository;
+    private final DayRepository dayRepository;
 
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
-                               @Qualifier("userRepository") UserRepository userRepository,  @Qualifier("gameRepository") GameRepository gameRepository) {
+                               @Qualifier("userRepository") UserRepository userRepository,  @Qualifier("playerRepository") PlayerRepository playerRepository,
+                               @Qualifier("dayRepository") DayRepository dayRepository) {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
-        this.gameRepository= gameRepository;
+        this.playerRepository= playerRepository;
+        this.dayRepository= dayRepository;
     }
 
     public  List<TeamCalendar> getCalendars() {
@@ -60,6 +63,10 @@ public class TeamCalendarService {
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+            for (Day day : oldCalendar.getBasePlan()) {
+                dayRepository.deleteById(day.getId());
+                dayRepository.flush();
+            }
 
             oldCalendar.setBasePlan(newCalendar.getBasePlan());
             oldCalendar.setStartingDate(newCalendar.getStartingDate());
@@ -163,27 +170,7 @@ public class TeamCalendarService {
 
     public void initializeGame(Slot slot) {
         Game game = new Game();
-        List<Player> players = new ArrayList<>();
-        // put the required players into the game
-        for (Schedule schedule:slot.getSchedules()) {
-            if (schedule.getSpecial() != -1) { // user has special preference, he should become player
-                Player player = new Player();
-                player.setId(schedule.getUser().getId());
-                players.add(player);
-            }
-        }
-        game.setPlayers(players);
         Random rand = new Random();
-        for (Player player:game.getPlayers()){
-            Location chunck = new Location();
-            int x = rand.nextInt((10) + 1) + 0;
-            int y = rand.nextInt((10) + 1) + 0;
-            chunck.setX(x);
-            chunck.setY(y);
-            List<Location> chunks = new ArrayList<>();
-            chunks.add(chunck);
-            player.setChunks(chunks);
-        }
 
         List<Location> apples = new ArrayList<>();
         for (int j = 0; j<5; j++){
@@ -196,8 +183,28 @@ public class TeamCalendarService {
         }
         game.setApples(apples);
 
-        gameRepository.save(game);
-        gameRepository.flush();
+        // put the required players into the game
+        for (Schedule schedule:slot.getSchedules()) {
+            if (schedule.getSpecial() != -1) { // user has special preference, he should become player
+                Player player = new Player();
+                player.setUser(schedule.getUser());
+                player.setGame(game);
+                Location chunck = new Location();
+                int x = rand.nextInt((10) + 1) + 0;
+                int y = rand.nextInt((10) + 1) + 0;
+                chunck.setX(x);
+                chunck.setY(y);
+                List<Location> chunks = new ArrayList<>();
+                chunks.add(chunck);
+                player.setChunks(chunks);
+
+                playerRepository.save(player);
+                playerRepository.flush();
+            }
+        }
+
+
+
 
     }
 

@@ -16,10 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+
+
 
 /**
  * User Service
@@ -44,6 +43,15 @@ public class UserService {
   public List<User> getUsers() {
     return this.userRepository.findAll();
   }
+
+  public User getUserById(Long id) {
+
+      Optional<User> user = userRepository.findById(id);
+      if(user.isPresent()){
+          return user.get();
+      }
+      else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
 
   public User createUser(User newUser) {
     checkIfUserExists(newUser);
