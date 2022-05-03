@@ -7,10 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs22.service.UserService;
-import ch.uzh.ifi.hase.soprafs22.service.TeamService;
-import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
-import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
+import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,7 +58,7 @@ public class UserController {
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response) {
+  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response) throws Exception {
     // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
@@ -71,6 +68,8 @@ public class UserController {
     //create header with token
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
+
+      EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
