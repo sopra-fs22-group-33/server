@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22;
 
-import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
+
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 
 
