@@ -26,6 +26,9 @@ public class Game {
     @Column
     private String status;
 
+    @Column
+    private int boardLength;
+
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Player> players;
@@ -71,6 +74,14 @@ public class Game {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getBoardLength() {
+        return boardLength;
+    }
+
+    public void setBoardLength(int boardLength) {
+        this.boardLength = boardLength;
     }
 
     // associated shift

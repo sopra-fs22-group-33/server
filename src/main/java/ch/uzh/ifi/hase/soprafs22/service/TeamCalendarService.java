@@ -179,6 +179,8 @@ public class TeamCalendarService {
         Random rand = new Random();
 
         int size = (int) (50*(1- exp(slot.getSchedules().size()/4)));
+        game.setBoardLength(size);
+
 
         List<Location> apples = new ArrayList<>();
         for (int j = 0; j<5; j++){
