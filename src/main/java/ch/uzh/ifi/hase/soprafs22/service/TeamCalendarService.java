@@ -172,6 +172,7 @@ public class TeamCalendarService {
 
     public void initializeGame(Slot slot) {
         Game game = new Game();
+        game.setStatus("on");
         Random rand = new Random();
 
         List<Location> apples = new ArrayList<>();

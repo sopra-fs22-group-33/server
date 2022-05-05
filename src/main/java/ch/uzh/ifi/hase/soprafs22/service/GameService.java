@@ -192,8 +192,8 @@ public class GameService {
     }
 
     public void finishGame(Game game){
+        game.setStatus("off");
         int requirement = game.getSlot().getRequirement();
-
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
         int possible = 0;
         if (game.getSlot().getSchedules() != null) {

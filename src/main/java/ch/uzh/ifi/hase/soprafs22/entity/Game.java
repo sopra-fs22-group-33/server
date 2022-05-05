@@ -23,6 +23,9 @@ public class Game {
     @OneToOne
     private  Slot slot;
 
+    @Column
+    private String status;
+
 
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Player> players;
@@ -60,6 +63,14 @@ public class Game {
 
     public void setSlot(Slot slot) {
         this.slot = slot;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     // associated shift
