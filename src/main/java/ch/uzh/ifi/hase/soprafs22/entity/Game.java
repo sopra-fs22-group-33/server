@@ -20,6 +20,10 @@ public class Game {
     @GeneratedValue
     private long id;
 
+    @OneToOne
+    private  Slot slot;
+
+
     @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Player> players;
 
@@ -48,6 +52,14 @@ public class Game {
 
     public void setApples(List<Location> apples) {
         this.apples = apples;
+    }
+
+    public Slot getSlot() {
+        return slot;
+    }
+
+    public void setSlot(Slot slot) {
+        this.slot = slot;
     }
 
     // associated shift

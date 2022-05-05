@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.ScheduleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,11 +34,14 @@ public class GameService {
 
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
+    private final ScheduleRepository scheduleRepository;
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("playerRepository") PlayerRepository playerRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
+                       @Qualifier("scheduleRepository") ScheduleRepository scheduleRepository) {
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+        this.scheduleRepository = scheduleRepository;
     }
 
     public List<Game> getGames() {
@@ -135,12 +139,22 @@ public class GameService {
         //playerRepository.save(foundPlayer);
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
-        playerRepository.flush();
+        playerRepository.flush(); // TODO: prob shouod be gamerepo
 
 
     }
 
     public void makeMove(Game game, Player currentPlayer){
+
+        Boolean stop = true;
+        for (Player player:game.getPlayers()) {
+            if (player.getStatus()!= "dead") {
+                stop = false;
+            }
+        }
+        if (stop){
+            finishGame(game);
+        }
 
         currentPlayer.setStatus(null);
         List<Location> chunks = currentPlayer.getChunks();
@@ -169,7 +183,7 @@ public class GameService {
                 for (Location chunkLocation : playerChunks) {
                     if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                         currentPlayer.setStatus("dead");
-                        currentPlayer.setRank(rank+1);
+                        currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
 
                     }
                     // handle the case when two heads meet
@@ -177,6 +191,42 @@ public class GameService {
                 }
             }
         }
+    }
+
+    public void finishGame(Game game){
+        int requirement = game.getSlot().getRequirement();
+
+        int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+        int possible = 0;
+        if (game.getSlot().getSchedules() != null) {
+            for (Schedule schedule :  game.getSlot().getSchedules()) {
+                if (schedule.getSpecial()!=-1){
+                    assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                else{ possible  += 1;} // dont have special preference - could theoretically be asigned
+            }
+        }
+        int mismatch = 0;
+        if (assignment > requirement ){
+            mismatch= assignment - requirement;
+        }
+        else {mismatch = requirement - (assignment+possible);}
+
+        for (Player player:game.getPlayers()) {
+            if (player.getRank()<= mismatch){ // TODO: check that iot is not strict inequality
+                removeSpecialPreference(player.getUser(), game.getSlot());
+            }
+
+        }
+
+    }
+
+    public void removeSpecialPreference(User user, Slot slot){
+        for (Schedule schedule: slot.getSchedules()){
+            if (schedule.getUser().getId() == user.getId()){
+                schedule.setSpecial(-1);
+            }
+        }
+
     }
 
 }
