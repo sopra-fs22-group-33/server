@@ -56,25 +56,12 @@ public class GameService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist"));
 
-        // todo: check whether playerId is in game
-
         return game;
     }
 
-    public List<Game> getUserGames(Long userId) {
-        return this.gameRepository.findAll();
-    }
 
-    public Game startGame(Game game) { // this one is for API to call from front end
-        // check if a game for this shift has been started already
 
-        // if it has, return the game information of that game
-
-        // if it hasn't, create a game and return its game information
-
-        // when creating the game set client that sent api post call to active/participting/whatever
-
-        // problem: what to set the other users at (-> if they clicked just a little bit after that?)
+    public Game startGame(Game game) { // this one is for API to call from front end -only used for DEMO
 
         // random chunks generation
         Random rand = new Random();
@@ -106,16 +93,6 @@ public class GameService {
         return game;
     }
 
-    public Game updateGame(Game game, Player player) {
-
-
-        // if they opted out set status to inactive/optedout/Whatever
-
-        // if they made a move enter it
-
-        // return the current game information (or no response, if we only update through get calls)
-        return null;
-    }
 
     public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
         Optional<Game> game = gameRepository.findById(gameId);
@@ -134,7 +111,7 @@ public class GameService {
 
         makeMove(foundGame, foundPlayer);
 
-        //playerRepository.save(foundPlayer);
+        // playerRepository.save(foundPlayer);
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
         playerRepository.flush(); // TODO: prob shouod be gamerepo
@@ -175,7 +152,7 @@ public class GameService {
         int rank = 0;
         for (Player player:game.getPlayers()) {
             if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
-                    // if that player is not dead and igt is not us
+                    // if that player is not dead and it is not us
             if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                 List<Location> playerChunks = player.getChunks();
                 for (Location chunkLocation : playerChunks) {
@@ -210,12 +187,10 @@ public class GameService {
         else {mismatch = requirement - (assignment+possible);}
 
         for (Player player:game.getPlayers()) {
-            if (player.getRank()<= mismatch){ // TODO: check that iot is not strict inequality
+            if (player.getRank()<= mismatch){ // TODO: check that it is not strict inequality
                 removeSpecialPreference(player.getUser(), game.getSlot());
             }
-
         }
-
     }
 
     public void removeSpecialPreference(User user, Slot slot){

@@ -136,8 +136,7 @@ public class TeamCalendarService {
                         }
                     }
                 }
-        }
-
+            }
         }
 
         newCalendar = teamCalendarRepository.save(newCalendar);
@@ -166,7 +165,6 @@ public class TeamCalendarService {
                     }
                 }
             }
-
         }
     }
 
@@ -206,37 +204,7 @@ public class TeamCalendarService {
             }
         }
 
-
-
-
     }
 
-
-
-    public void deleteCalendar (Long id){
-        //
-    }
-
-    private void checkIfTeamHasCalendar(Long id) {
-        Optional<TeamCalendar> CalendarByTeam = teamCalendarRepository.findById(id);
-
-        String baseErrorMessage = "This team already has base calendar. If you want to update it, make put request";
-       if (CalendarByTeam != null) { // TOD: open up optional correctly
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    String.format(baseErrorMessage));
-        }
-
-    }
-
-    private void checkIfUserExists(Long id) {
-        Optional<User> user = userRepository.findById(id);
-
-        String baseErrorMessage = "This team already has base calendar. If you want to update it, make put request";
-        if (user == null) { // TOD: open up optional correctly
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    String.format(baseErrorMessage));
-        }
-
-    }
 
 }
