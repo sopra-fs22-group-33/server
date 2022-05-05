@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
+
 @Service
 @Transactional
 public class TeamCalendarService {
@@ -146,6 +147,7 @@ public class TeamCalendarService {
     }
 
     public void checkCollisions(TeamCalendar teamCalendar){
+        teamCalendar.setCollisions(0);
         for (Day day : teamCalendar.getBasePlan()) {
             if (day.getSlots() != null) {
                 for (Slot slot : day.getSlots()) {
@@ -161,6 +163,7 @@ public class TeamCalendarService {
                     }
                     if (assignment > requirement || (assignment+possible) < requirement ){
                         initializeGame(slot);
+                        teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
 
                     }
                 }
@@ -173,11 +176,13 @@ public class TeamCalendarService {
         game.setStatus("on");
         Random rand = new Random();
 
+        int size = (int) (50*(1- exp(slot.getSchedules().size()/4)));
+
         List<Location> apples = new ArrayList<>();
         for (int j = 0; j<5; j++){
             Location apple = new Location();
-            int x = rand.nextInt((10) + 1) + 0;
-            int y = rand.nextInt((10) + 1) + 0;
+            int x = rand.nextInt((size) + 1) + 0;
+            int y = rand.nextInt((size) + 1) + 0;
             apple.setX(x);
             apple.setY(y);
             apples.add(j, apple);
@@ -191,8 +196,8 @@ public class TeamCalendarService {
                 player.setUser(schedule.getUser());
                 player.setGame(game);
                 Location chunck = new Location();
-                int x = rand.nextInt((10) + 1) + 0;
-                int y = rand.nextInt((10) + 1) + 0;
+                int x = rand.nextInt((size) + 1) + 0;
+                int y = rand.nextInt((size) + 1) + 0;
                 chunck.setX(x);
                 chunck.setY(y);
                 List<Location> chunks = new ArrayList<>();

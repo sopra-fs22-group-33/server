@@ -24,6 +24,9 @@ public class TeamCalendar implements Serializable {
     @Column
     private String startingDate;
 
+    @Column
+    private int collisions;
+
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Day> basePlan;
@@ -52,6 +55,14 @@ public class TeamCalendar implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getCollisions() {
+        return collisions;
+    }
+
+    public void setCollisions(int collisions) {
+        this.collisions = collisions;
     }
 }
 
