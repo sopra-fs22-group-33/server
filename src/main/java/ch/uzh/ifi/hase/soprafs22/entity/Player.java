@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
@@ -18,6 +19,9 @@ public class Player {
 
     @Column
     private String status;
+
+    @Column
+    private UserStatus statusOnline;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "game_id", nullable = false)
@@ -77,5 +81,13 @@ public class Player {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public UserStatus getStatusOnline() {
+        return statusOnline;
+    }
+
+    public void setStatusOnline(UserStatus statusOnline) {
+        this.statusOnline = statusOnline;
     }
 }
