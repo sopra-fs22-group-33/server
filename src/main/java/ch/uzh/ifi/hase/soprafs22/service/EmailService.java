@@ -5,6 +5,7 @@ import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 
+
 import java.io.IOException;
 
 
@@ -17,7 +18,7 @@ public class EmailService {
         Mail mail = new Mail(from, subject, to, value);
 
         //TODO add key as env var
-        SendGrid sg = new SendGrid();
+        SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
         Request request = new Request();
         try {
             request.setMethod(Method.POST);
