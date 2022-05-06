@@ -9,6 +9,7 @@ public class GameGetDTO {
     private Long id;
     private List<Player> players;
     private List<Location> apples;
+    private int boardLength;
 
     public Long getId() {
         return id;
@@ -32,5 +33,13 @@ public class GameGetDTO {
 
     public void setApples(List<Location> apples) {
         this.apples = apples;
+    }
+
+    public int getBoardLength() {
+        return boardLength;
+    }
+
+    public void setBoardLength(int boardLength) {
+        this.boardLength = boardLength;
     }
 }

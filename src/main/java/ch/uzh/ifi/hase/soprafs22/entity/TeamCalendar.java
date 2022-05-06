@@ -18,15 +18,17 @@ public class TeamCalendar implements Serializable {
     @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "team", updatable = true, insertable = true)
     @MapsId
+    @JsonIgnore
     private Team team;
 
     @Column
     private String startingDate;
 
+    @Column
+    private int collisions;
 
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Day> basePlan;
 
     public Team getTeam() {
@@ -53,6 +55,14 @@ public class TeamCalendar implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public int getCollisions() {
+        return collisions;
+    }
+
+    public void setCollisions(int collisions) {
+        this.collisions = collisions;
     }
 }
 

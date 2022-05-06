@@ -7,11 +7,13 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.PlayerPutDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
+import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Game Controller
@@ -24,9 +26,11 @@ import java.util.List;
 public class GameController {
 
     private final GameService gameService;
+    private final UserService userService;
 
-    GameController(GameService gameService) {
+    GameController(GameService gameService, UserService userService) {
         this.gameService = gameService;
+        this.userService = userService;
     }
 
     @GetMapping("/games")
@@ -54,6 +58,19 @@ public class GameController {
         Game game = gameService.getGame(gameId, playerId);
 
         return DTOMapper.INSTANCE.convertEntityToGameGetDTO(game);
+    }
+
+    @GetMapping("/users/{userId}/games")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public List<GameGetDTO> getUserGames(@PathVariable("userId") Long userId) {
+        List<GameGetDTO> gameGetDTOs = new ArrayList<>();
+        Set<Player> players = userService.getUserById(userId).getPlayers();
+        for (Player player:players){
+            gameGetDTOs.add(DTOMapper.INSTANCE.convertEntityToGameGetDTO(player.getGame()));
+        }
+        return gameGetDTOs;
+
     }
 
 

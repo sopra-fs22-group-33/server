@@ -1,5 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 import java.util.List;
@@ -18,9 +20,18 @@ public class Game {
     @GeneratedValue
     private long id;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "game_id")
-    private List<Player> players;
+    @OneToOne
+    private  Slot slot;
+
+    @Column
+    private String status;
+
+    @Column
+    private int boardLength;
+
+
+    @OneToMany(mappedBy = "game", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Player> players;
 
     @ElementCollection
     private List<Location> apples;
@@ -33,11 +44,11 @@ public class Game {
         this.id = id;
     }
 
-    public List<Player> getPlayers() {
+    public Set<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<Player> players) {
+    public void setPlayers(Set<Player> players) {
         this.players = players;
     }
 
@@ -47,6 +58,30 @@ public class Game {
 
     public void setApples(List<Location> apples) {
         this.apples = apples;
+    }
+
+    public Slot getSlot() {
+        return slot;
+    }
+
+    public void setSlot(Slot slot) {
+        this.slot = slot;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public int getBoardLength() {
+        return boardLength;
+    }
+
+    public void setBoardLength(int boardLength) {
+        this.boardLength = boardLength;
     }
 
     // associated shift

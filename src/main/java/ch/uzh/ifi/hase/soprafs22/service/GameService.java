@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Game;
-import ch.uzh.ifi.hase.soprafs22.entity.Location;
-import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
 import org.slf4j.Logger;
@@ -36,10 +34,12 @@ public class GameService {
     private final GameRepository gameRepository;
     private final PlayerRepository playerRepository;
 
+
     @Autowired
     public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("playerRepository") PlayerRepository playerRepository) {
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+
     }
 
     public List<Game> getGames() {
@@ -56,21 +56,12 @@ public class GameService {
         Player player = playerRepository.findById(playerId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist"));
 
-        // todo: check whether playerId is in game
-
         return game;
     }
 
-    public Game startGame(Game game) {
-        // check if a game for this shift has been started already
 
-        // if it has, return the game information of that game
 
-        // if it hasn't, create a game and return its game information
-
-        // when creating the game set client that sent api post call to active/participting/whatever
-
-        // problem: what to set the other users at (-> if they clicked just a little bit after that?)
+    public Game startGame(Game game) { // this one is for API to call from front end -only used for DEMO
 
         // random chunks generation
         Random rand = new Random();
@@ -102,16 +93,6 @@ public class GameService {
         return game;
     }
 
-    public Game updateGame(Game game, Player player) {
-
-
-        // if they opted out set status to inactive/optedout/Whatever
-
-        // if they made a move enter it
-
-        // return the current game information (or no response, if we only update through get calls)
-        return null;
-    }
 
     public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
         Optional<Game> game = gameRepository.findById(gameId);
@@ -130,15 +111,26 @@ public class GameService {
 
         makeMove(foundGame, foundPlayer);
 
-        //playerRepository.save(foundPlayer);
+        // playerRepository.save(foundPlayer);
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
-        playerRepository.flush();
+        playerRepository.flush(); // TODO: prob shouod be gamerepo
 
 
     }
 
     public void makeMove(Game game, Player currentPlayer){
+        int size = game.getBoardLength();
+
+        Boolean stop = true;
+        for (Player player:game.getPlayers()) {
+            if (player.getStatus()!= "dead") {
+                stop = false;
+            }
+        }
+        if (stop){
+            finishGame(game);
+        }
 
         currentPlayer.setStatus(null);
         List<Location> chunks = currentPlayer.getChunks();
@@ -151,26 +143,64 @@ public class GameService {
 
                     // change location  of apple to random
                     Random rand = new Random();
-                    int x = rand.nextInt((10) + 1) + 0;
-                    int y = rand.nextInt((10) + 1) + 0;
+                    int x = rand.nextInt((size) + 1) + 0;
+                    int y = rand.nextInt((size) + 1) + 0;
                     appleLocation.setX(x);
                     appleLocation.setY(y);
 
                 }
             }
-
+        int rank = 0;
         for (Player player:game.getPlayers()) {
-            if (player.getId() != currentPlayer.getId()) {
+            if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
+                    // if that player is not dead and it is not us
+            if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                 List<Location> playerChunks = player.getChunks();
                 for (Location chunkLocation : playerChunks) {
                     if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                         currentPlayer.setStatus("dead");
+                        currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
+
                     }
                     // handle the case when two heads meet
 
                 }
             }
         }
+    }
+
+    public void finishGame(Game game){
+        game.setStatus("off");
+        int requirement = game.getSlot().getRequirement();
+        int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+        int possible = 0;
+        if (game.getSlot().getSchedules() != null) {
+            for (Schedule schedule :  game.getSlot().getSchedules()) {
+                if (schedule.getSpecial()!=-1){
+                    assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                else{ possible  += 1;} // dont have special preference - could theoretically be asigned
+            }
+        }
+        int mismatch = 0;
+        if (assignment > requirement ){
+            mismatch= assignment - requirement;
+        }
+        else {mismatch = requirement - (assignment+possible);}
+
+        for (Player player:game.getPlayers()) {
+            if (player.getRank()<= mismatch){ // TODO: check that it is not strict inequality
+                removeSpecialPreference(player.getUser(), game.getSlot());
+            }
+        }
+    }
+
+    public void removeSpecialPreference(User user, Slot slot){
+        for (Schedule schedule: slot.getSchedules()){
+            if (schedule.getUser().getId() == user.getId()){
+                schedule.setSpecial(-1);
+            }
+        }
+
     }
 
 }

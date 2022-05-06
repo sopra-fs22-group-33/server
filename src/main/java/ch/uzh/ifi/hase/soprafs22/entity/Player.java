@@ -1,5 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
+import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -16,6 +19,21 @@ public class Player {
 
     @Column
     private String status;
+
+    @Column
+    private UserStatus statusOnline;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "game_id", nullable = false)
+    @JsonIgnore
+    private Game game;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column
+    private int rank;
 
     public Long getId() {
         return id;
@@ -39,5 +57,37 @@ public class Player {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public int getRank() {
+        return rank;
+    }
+
+    public void setRank(int rank) {
+        this.rank = rank;
+    }
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public UserStatus getStatusOnline() {
+        return statusOnline;
+    }
+
+    public void setStatusOnline(UserStatus statusOnline) {
+        this.statusOnline = statusOnline;
     }
 }

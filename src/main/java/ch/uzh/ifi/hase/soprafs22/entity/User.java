@@ -57,6 +57,10 @@ public class User implements Serializable {
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
   @JsonIgnore
+  private Set<Player> players;
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @JsonIgnore
   private List<Schedule> schedules;
 
   public List<Schedule> getSchedules() {
@@ -134,4 +138,12 @@ public class User implements Serializable {
   public void setInvitations(Set<Invitation> invitations) {
       this.invitations = invitations;
   }
+
+    public Set<Player> getPlayers() {
+        return players;
+    }
+
+    public void setPlayers(Set<Player> players) {
+        this.players = players;
+    }
 }
