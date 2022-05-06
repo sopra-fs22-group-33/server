@@ -132,7 +132,6 @@ public class TeamCalendarServiceTest {
 
         assertEquals(testTeamCalendar.getStartingDate(), createdTeamCalendar.getStartingDate());
         assertEquals(testTeamCalendar.getBasePlan().size(), createdTeamCalendar.getBasePlan().size());
-
     }
      */
 }
