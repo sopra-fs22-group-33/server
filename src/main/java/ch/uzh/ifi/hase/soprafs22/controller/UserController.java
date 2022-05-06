@@ -69,11 +69,11 @@ public class UserController {
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
-    try {
-      EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
-    } catch (Exception e) {
-      //do nothing
-    }
+//    try {
+//      EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
+//    } catch (Exception e) {
+//      //do nothing
+//    }
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
