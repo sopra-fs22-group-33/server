@@ -30,7 +30,7 @@ public class EmailServiceTest {
   @Test
   public void sendEmail_validInputs_success() throws Exception {
     //String key = System.getenv("SENDGRID_API_KEY");
-    EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
+    // EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
 
 
   }
