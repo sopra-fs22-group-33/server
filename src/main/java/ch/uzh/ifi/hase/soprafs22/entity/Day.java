@@ -16,13 +16,18 @@ public class Day implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "team_calendar_id", updatable = true, insertable = true)
+    @JoinColumn(name = "team_calendar_id")
+    @JsonIgnore
     private TeamCalendar teamCalendar;
 
-    @Column
+    @JoinColumn
     private int weekday;
 
-    @JsonIgnore
+    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<Slot> slots;
+
+
+
     public TeamCalendar getTeamCalendar() {
         return teamCalendar;
     }
@@ -39,9 +44,6 @@ public class Day implements Serializable {
     public void setWeekday(int weekday) {
         this.weekday = weekday;
     }
-
-    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    private List<Slot> slots;
 
 
     public List<Slot> getSlots(){

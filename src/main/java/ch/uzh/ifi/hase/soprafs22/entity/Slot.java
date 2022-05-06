@@ -18,7 +18,6 @@ public class Slot implements Serializable {
     @Column(nullable = false)
     private int timeTo;
 
-
     @ManyToOne
     @JoinColumns(value = {
             @JoinColumn(
