@@ -40,6 +40,7 @@ public class Slot implements Serializable {
     @Column
     private int requirement;
 
+    //TODO check if slots get deleted by cascade
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
 

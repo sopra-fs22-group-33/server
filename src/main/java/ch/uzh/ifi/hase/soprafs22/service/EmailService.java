@@ -10,14 +10,13 @@ import java.io.IOException;
 
 
 public class EmailService {
-    public static void sendEmail(String toAddress, String subject, String content) throws Exception{
+    public void sendEmail(String toAddress, String subject, String content) throws Exception{
         Email from = new Email("sopra.shiftplanner@gmail.com");
         //String subject = subject;
         Email to = new Email(toAddress);
         Content value = new Content("text/plain", content);
         Mail mail = new Mail(from, subject, to, value);
 
-        //TODO add key as env var
         SendGrid sg = new SendGrid(System.getenv("SENDGRID_API_KEY"));
         Request request = new Request();
         try {

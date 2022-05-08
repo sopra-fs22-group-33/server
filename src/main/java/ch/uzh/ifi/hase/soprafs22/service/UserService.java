@@ -34,10 +34,12 @@ public class UserService {
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
   private final UserRepository userRepository;
+  private final EmailService emailService;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository, EmailService emailService) {
     this.userRepository = userRepository;
+    this.emailService = emailService;
   }
 
   public List<User> getUsers() {
@@ -61,6 +63,12 @@ public class UserService {
 
     newUser = userRepository.save(newUser);
     userRepository.flush();
+
+    try {
+        emailService.sendEmail(newUser.getEmail(), "welcome to shift planner", "Hi " + newUser.getUsername() + "\nWelcome to shift planner.");
+    } catch (Exception e) {
+        //do nothing
+    }
 
     log.debug("Created Information for User: {}", newUser);
     return newUser;
