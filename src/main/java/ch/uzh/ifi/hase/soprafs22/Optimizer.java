@@ -32,17 +32,34 @@ public class Optimizer {
         this.result =  new ArrayList<>();
 
         this.solver = LpSolve.makeLp(0, nCols);
-
         int i = 0;
+
+        // 1) create array obj and define obj function, should be done before constraints for better performance
+        for (Day day:teamCalendar.getBasePlan()){
+            for (Slot slot: day.getSlots()){
+                for (Schedule schedule: slot.getSchedules()){
+                    this.result.add(schedule);
+                    double b =  schedule.getBase();
+                    obj[i] = b;
+                    this.solver.setBinary(i+1,true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
+
+                }
+            }
+        }
+
+        // set objective function
+        solver.setObjFn(obj);
+        solver.setMaxim();
+
+
+        //define constraints
+
         for (Day day:teamCalendar.getBasePlan()){
             for (Slot slot: day.getSlots()){
                 double[] req = new double[nCols];
                 for (Schedule schedule: slot.getSchedules()){
 
-                    this.result.add(schedule);
-                    int b = schedule.getBase(); // cast to double to make sure
-                    obj[i] = b;
-                    this.solver.setBinary(i, true);
+                    //this.solver.setBinary(i, true);
                     req[i] = 1;
 
                     //store schedules for each user
@@ -70,6 +87,8 @@ public class Optimizer {
 
         }
 
+
+
         // number of hours should not exceed 40 h for each week
         for (Long key :usersWeek1.keySet()){
             double[] req = new double[nCols];
@@ -81,9 +100,6 @@ public class Optimizer {
 
         }
 
-        // set objective function
-        solver.setObjFn(obj);
-        solver.setMaxim();
 
         // solve the problem
         solver.solve();
