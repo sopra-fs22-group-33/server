@@ -59,17 +59,31 @@ public class TeamCalendarController {
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
 
+    }
 
 
-        try {
-            new Optimizer(createdCalendar);
-            TeamCalendar modifiedCalendar = teamCalendarService.updateTeamCalendar(id, createdCalendar);
-            // TODO: implement check that there are np collisions
+    @GetMapping("/teams/{teamId}/calendar/optimize")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public TeamCalendarGetDTO getOPtimizedTeamCalendars(@PathVariable("teamId") long id) {
+        TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
+
+        if (teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
+            try {
+                new Optimizer(teamCalendar);
+                TeamCalendar modifiedCalendar = teamCalendarService.updateTeamCalendar(id, teamCalendar);
+                // TODO: implement check that there are np collisions
+            }
+
+            catch (LpSolveException ex) {
+                log.debug("Something did not work with optimizer" + ex);
+
+            }
         }
 
-        catch (LpSolveException ex){
-            log.debug("Something did not work with optimizer");
-        }
+        TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
+
+        return teamCalendarGetDTO;
     }
 
 

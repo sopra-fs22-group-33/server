@@ -148,6 +148,32 @@ public class TeamCalendarService {
         return newCalendar;
     }
 
+    public boolean checkCollisionsWithoutGameStart(TeamCalendar teamCalendar){
+        boolean x = false;
+        for (Day day : teamCalendar.getBasePlan()) {
+            if (day.getSlots() != null) {
+                for (Slot slot : day.getSlots()) {
+                    int requirement = slot.getRequirement();
+                    int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+                    int possible = 0;
+                    if (slot.getSchedules() != null) {
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial()!=-1){
+                                assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                            else{ possible  += 1;} // dont have special preference - could theoretically be asigned
+                        }
+                    }
+                    if (assignment > requirement || (assignment+possible) < requirement ){
+                        x = true;
+
+                    }
+                }
+            }
+        }
+        return x;
+    }
+
+
     public void checkCollisions(TeamCalendar teamCalendar){
         teamCalendar.setCollisions(0);
         for (Day day : teamCalendar.getBasePlan()) {
