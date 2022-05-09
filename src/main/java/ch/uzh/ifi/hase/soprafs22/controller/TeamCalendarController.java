@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
+import lpsolve.LpSolveException;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
@@ -57,19 +59,17 @@ public class TeamCalendarController {
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
 
-        /*
+
+
         try {
-            Optimizer optimizer = new Optimizer(createdCalendar);
+            new Optimizer(createdCalendar);
             TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
-        }
-        // TODO: catch exception that cplex lib is not found
-
-        catch (NullPointerException ex){
-            log.debug("Something was null");
+            // TODO: implement check that there are np collisions
         }
 
-         */
-
+        catch (LpSolveException ex){
+            log.debug("Something did not work with optimizer");
+        }
     }
 
 
