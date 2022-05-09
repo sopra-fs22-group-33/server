@@ -35,19 +35,17 @@ public class TeamCalendarService {
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
-    private final EmailService emailService;
 
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
                                @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                               @Qualifier("dayRepository") DayRepository dayRepository, EmailService emailService) {
+                               @Qualifier("dayRepository") DayRepository dayRepository) {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
-        this.emailService = emailService;
     }
 
     public  List<TeamCalendar> getCalendars() {
@@ -169,6 +167,7 @@ public class TeamCalendarService {
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
+                        EmailService emailService = new EmailService();
                         for (Schedule schedule : slot.getSchedules()) {
                             try {
                                 emailService.sendEmail(schedule.getUser().getEmail(), "collision detected",

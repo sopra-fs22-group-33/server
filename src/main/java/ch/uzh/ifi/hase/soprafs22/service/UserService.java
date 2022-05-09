@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs22.service.EmailService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +35,10 @@ public class UserService {
   private final Logger log = LoggerFactory.getLogger(UserService.class);
 
   private final UserRepository userRepository;
-  private final EmailService emailService;
 
   @Autowired
-  public UserService(@Qualifier("userRepository") UserRepository userRepository, EmailService emailService) {
+  public UserService(@Qualifier("userRepository") UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.emailService = emailService;
   }
 
   public List<User> getUsers() {
@@ -64,11 +63,7 @@ public class UserService {
     newUser = userRepository.save(newUser);
     userRepository.flush();
 
-    try {
-        emailService.sendEmail(newUser.getEmail(), "welcome to shift planner", "Hi " + newUser.getUsername() + "\nWelcome to shift planner.");
-    } catch (Exception e) {
-        //do nothing
-    }
+
 
     log.debug("Created Information for User: {}", newUser);
     return newUser;

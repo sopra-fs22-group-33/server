@@ -23,12 +23,10 @@ public class InvitationService {
   private final Logger log = LoggerFactory.getLogger(TeamService.class);
 
   private final InvitationRepository invitationRepository;
-  private final EmailService emailService;
 
   @Autowired
-  public InvitationService(@Qualifier("invitationRepository") InvitationRepository invitationRepository, EmailService emailService) {
+  public InvitationService(@Qualifier("invitationRepository") InvitationRepository invitationRepository) {
     this.invitationRepository = invitationRepository;
-    this.emailService = emailService;
   }
 
   //TODO check if user is invited or member already
@@ -43,12 +41,6 @@ public class InvitationService {
         invitation = invitationRepository.save(invitation);
         invitationRepository.flush();
 
-        try {
-            emailService.sendEmail(user.getEmail(), "invitation to team " + team.getName(),
-                    "Hi " + user.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations");
-        } catch (Exception e) {
-            //do nothing
-        }
         log.debug("Created Information for invitation: {}", invitation);
         return invitation;
     }

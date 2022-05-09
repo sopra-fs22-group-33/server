@@ -1,15 +1,23 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import com.sendgrid.*;
 import com.sendgrid.helpers.mail.Mail;
 import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 
 import java.io.IOException;
 
 
 public class EmailService {
+
+    @Autowired
+    public EmailService() {
+    }
+
     public void sendEmail(String toAddress, String subject, String content) throws Exception{
         Email from = new Email("sopra.shiftplanner@gmail.com");
         //String subject = subject;
