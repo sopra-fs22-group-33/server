@@ -32,6 +32,7 @@ public class Optimizer {
         this.result =  new ArrayList<>();
 
         this.solver = LpSolve.makeLp(0, nCols);
+
         int i = 0;
         for (Day day:teamCalendar.getBasePlan()){
             for (Slot slot: day.getSlots()){
