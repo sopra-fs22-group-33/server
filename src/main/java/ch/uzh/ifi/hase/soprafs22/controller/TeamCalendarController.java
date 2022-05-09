@@ -68,7 +68,7 @@ public class TeamCalendarController {
     public TeamCalendarGetDTO getOPtimizedTeamCalendars(@PathVariable("teamId") long id) {
         TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
 
-        if (teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
+        if (!teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
             try {
                 new Optimizer(teamCalendar);
                 TeamCalendar modifiedCalendar = teamCalendarService.updateTeamCalendar(id, teamCalendar);
