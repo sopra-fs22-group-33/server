@@ -62,7 +62,7 @@ public class TeamCalendarController {
     }
 
 
-    @GetMapping("/teams/{teamId}/calendar/optimize")
+    @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public TeamCalendarGetDTO getOPtimizedTeamCalendars(@PathVariable("teamId") long id) {
