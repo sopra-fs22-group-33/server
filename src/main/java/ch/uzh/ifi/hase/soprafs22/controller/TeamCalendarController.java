@@ -63,7 +63,7 @@ public class TeamCalendarController {
 
         try {
             new Optimizer(createdCalendar);
-            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
+            TeamCalendar modifiedCalendar = teamCalendarService.updateTeamCalendar(id, createdCalendar);
             // TODO: implement check that there are np collisions
         }
 
