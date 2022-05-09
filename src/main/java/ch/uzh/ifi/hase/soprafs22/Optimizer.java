@@ -11,10 +11,10 @@ public class Optimizer {
 
     int nCols;
     TeamCalendar teamCalendar;
-    ArrayList<Schedule> result= new ArrayList<>();
+    ArrayList<Schedule> result;
     LpSolve solver;
 
-    double[] obj = new double[nCols];
+    double[] obj;
     HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek2 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek3 = new HashMap<>();
@@ -26,6 +26,10 @@ public class Optimizer {
     public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
         this.teamCalendar = teamCalendar;
         computeN();
+
+        // intialize arrays
+        this.obj = new double[nCols];
+        this.result =  new ArrayList<>();
 
         this.solver = LpSolve.makeLp(0, nCols);
         int i = 0;
