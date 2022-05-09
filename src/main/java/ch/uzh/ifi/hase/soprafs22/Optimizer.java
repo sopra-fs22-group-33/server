@@ -9,31 +9,35 @@ import java.util.*;
 
 public class Optimizer {
 
-    int nRows = 4;
+    int nCols;
+    TeamCalendar teamCalendar;
     ArrayList<Schedule> result= new ArrayList<>();
+    LpSolve solver;
 
-    double[] obj = new double[nRows];
-    HashMap<Integer, ArrayList<Integer>> usersWeek1 = new HashMap<>();
+    double[] obj = new double[nCols];
+    HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek2 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek3 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek4 = new HashMap<>();
+
     // TODO:create similar per day
     // TODO: add overlapping constraint or remove such a possibility
 
-    TeamCalendar teamCalendar = new TeamCalendar();
+    public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
+        this.teamCalendar = teamCalendar;
+        computeN();
 
-    public String optimize() throws LpSolveException {
-        LpSolve solver = LpSolve.makeLp(0, nRows);
+        this.solver = LpSolve.makeLp(0, nCols);
         int i = 0;
-        for (Day day:teamCalendar.getDays()){
+        for (Day day:teamCalendar.getBasePlan()){
             for (Slot slot: day.getSlots()){
-                double[] req = new double[nRows];
+                double[] req = new double[nCols];
                 for (Schedule schedule: slot.getSchedules()){
 
-                    result.add(schedule);
+                    this.result.add(schedule);
                     int b = schedule.getBase(); // cast to double to make sure
                     obj[i] = b;
-                    solver.setBinary(i, true);
+                    this.solver.setBinary(i, true);
                     req[i] = 1;
 
                     //store schedules for each user
@@ -42,13 +46,13 @@ public class Optimizer {
                         if (!usersWeek1.containsKey(schedule.getUser())) {
                             ArrayList<Integer> tmp = new ArrayList<>();
                             tmp.add(i);
-                            usersWeek1.put(schedule.getUser(), tmp);
+                            usersWeek1.put(schedule.getUser().getId(), tmp);
                         }
                     }
 
                     // special req whenever they are present should be satisfied
                     if(schedule.getSpecial()!= -1){
-                        double[] special = new double[nRows];
+                        double[] special = new double[nCols];
                         special[i] = 1;
                         solver.addConstraint(special, LpSolve.EQ, schedule.getSpecial());
                     }
@@ -62,10 +66,10 @@ public class Optimizer {
         }
 
         // number of hours should not exceed 40 h for each week
-        for (Integer key :usersWeek1.keySet()){
-            double[] req = new double[nRows];
+        for (Long key :usersWeek1.keySet()){
+            double[] req = new double[nCols];
             for (Integer value: usersWeek1.get(key)){
-                int hours = result.get(value).To - result.get(value).From; // TODO: change this
+                int hours = result.get(value).getSlot().getTimeTo() - result.get(value).getSlot().getTimeFrom(); // TODO: change this
                 req[value] = hours;
             }
             solver.addConstraint(req, LpSolve.EQ, 40);
@@ -78,12 +82,30 @@ public class Optimizer {
 
         // solve the problem
         solver.solve();
+        double [] solution = solver.getPtrPrimalSolution();
 
-        // print solution
+
+        // add solution to assigned
+        for ( int j = 0; j< solution.length; j++){
+           this.result.get(j).setAssigned((int)solution[j]);
+        }
+
+
+        // print resulting value of the objective function
         System.out.println("Value of objective function: " + solver.getObjective());
 
-        return "works The application is running" + Double.toString(solver.getObjective());
+    }
 
+    public void computeN(){
+        int i = 0;
+        for (Day day:this.teamCalendar.getBasePlan()){
+            for (Slot slot: day.getSlots()){
+                for (Schedule schedule: slot.getSchedules()){
+                    i+=1;
+                }
+            }
+        }
+        this.nCols =i;
     }
 
 }
