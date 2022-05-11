@@ -180,7 +180,7 @@ public class UserController {
     }
   }
 
-  @GetMapping("/users/{userId}/calendar")
+  @GetMapping("/users/{userId}/calendars")
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){

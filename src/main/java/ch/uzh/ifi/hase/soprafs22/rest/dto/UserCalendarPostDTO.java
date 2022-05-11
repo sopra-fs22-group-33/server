@@ -6,14 +6,15 @@ import java.util.List;
 
 public class UserCalendarPostDTO {
 
-    private String startingDate;
+    private long startingDate;
+
     private List<UserDay> userDays;
 
-    public String getStartingDate() {
+    public long getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(String startingDate) {
+    public void setStartingDate(long startingDate) {
         this.startingDate = startingDate;
     }
 

@@ -21,7 +21,7 @@ public class UserCalendar implements Serializable {
     private User user;
 
     @Column
-    private String startingDate;
+    private long startingDate;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<UserDay> userPlan;
@@ -34,9 +34,9 @@ public class UserCalendar implements Serializable {
         this.id = id;
     }
 
-    public String getStartingDate() { return startingDate;}
+    public long getStartingDate() { return startingDate;}
 
-    public void setStartingDate(String startingDate) {
+    public void setStartingDate(long startingDate) {
         this.startingDate = startingDate;
     }
 

@@ -37,24 +37,6 @@ public class Slot implements Serializable {
     @JsonIgnore
     private Day day;
 
-    @ManyToOne
-    @JoinColumns(value = {
-            @JoinColumn(
-                    name = "weekday",
-                    referencedColumnName = "weekday",
-                    updatable = true,
-                    insertable = true
-
-            ),
-            @JoinColumn(
-                    name = "userCalendar",
-                    referencedColumnName = "userCalendar",
-                    insertable = true,
-                    updatable = true
-            )
-    })
-    @JsonIgnore
-    private UserDay userDay;
 
     @Column
     private int requirement;
@@ -111,13 +93,6 @@ public class Slot implements Serializable {
         this.requirement = requirement;
     }
 
-    public UserDay getUserDay() {
-        return userDay;
-    }
-
-    public void setUserDay(UserDay userDay) {
-        this.userDay = userDay;
-    }
 
 /*
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

@@ -7,6 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,17 +34,37 @@ public class UserCalendarService {
     }
 
     public UserCalendar getUserCalendar (User user){
-//        List<Schedule> userSchedules = user.getSchedules();
-//        for (Schedule schedule : user.getSchedules()){
-//            Slot slot = schedule.getSlot();
-//            UserDay userDay = new UserDay();
-//            userDay.setWeekday(slot.getDay().getWeekday());
-//        }
+        int differenceInDays;
+        int i;
+
         UserCalendar userCalendar = new UserCalendar();
+        userCalendar.setStartingDate(new Date().getTime());
         for (Membership membership : user.getMemberships()){
+            //TODO refactor startingdate of teamcalendar
+            differenceInDays = (int) userCalendar.getStartingDate() - membership.getTeam().getTeamCalendar().getStartingDate())/86’400’000;
+
+            for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
+                i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
+
+                //only future slots will be considered
+                if (i-differenceInDays >= 0){
+                    for (Slot slot : day.getSlots()){
+                        UserSlot userSlot = new UserSlot();
+                        for (Schedule schedule : slot.getSchedules()){
+                            if (schedule.getUser() == user){
+                                UserSchedule userSchedule = new UserSchedule();
+                                userSchedule.setTeam(membership.getTeam());
+                                userSlot.getUserSchedules().add(userSchedule);
+                            }
+                        }
+                        userCalendar.getUserPlan().get(i - differenceInDays).getUserSlots().add(userSlot);
+                    }
+
+                }
+            }
 
         }
-        return null;
+        return userCalendar;
     }
 
 }

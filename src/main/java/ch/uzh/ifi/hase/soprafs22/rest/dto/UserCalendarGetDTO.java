@@ -8,7 +8,7 @@ public class UserCalendarGetDTO {
 
     private Long id;
 
-    private String startingDate;
+    private long startingDate;
 
     private List <UserDay> userDays;
 
@@ -28,11 +28,11 @@ public class UserCalendarGetDTO {
         this.id = id;
     }
 
-    public String getStartingDate() {
+    public long getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(String startingDate) {
+    public void setStartingDate(long startingDate) {
         this.startingDate = startingDate;
     }
 }
