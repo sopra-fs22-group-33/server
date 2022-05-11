@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity
 
-public class Day implements Serializable {
+public class UserDay implements Serializable {
 
     // define composite key
     @Id
@@ -16,22 +16,22 @@ public class Day implements Serializable {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "team_calendar_id")
+    @JoinColumn(name = "userCalendar")
     @JsonIgnore
-    private TeamCalendar teamCalendar;
+    private UserCalendar userCalendar;
 
     @JoinColumn
     private int weekday;
 
-    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany (mappedBy = "userDay",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<Slot> slots;
 
-    public TeamCalendar getTeamCalendar() {
-        return teamCalendar;
+    public UserCalendar getUserCalendar() {
+        return userCalendar;
     }
 
-    public void setTeamCalendar(TeamCalendar teamcalendar) {
-        this.teamCalendar = teamcalendar;
+    public void setUserCalendar(UserCalendar userCalendar) {
+        this.userCalendar = userCalendar;
     }
 
     public int getWeekday() {

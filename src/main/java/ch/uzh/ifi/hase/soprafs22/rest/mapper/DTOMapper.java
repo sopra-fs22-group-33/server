@@ -56,6 +56,14 @@ public interface DTOMapper {
   @Mapping(source = "basePlan", target = "days")
   TeamCalendarGetDTO convertEntityToTeamCalendarGetDTO(TeamCalendar teamCalendar);
 
+  @Mapping(source = "startingDate", target = "startingDate")
+  @Mapping(source = "userDays", target = "userPlan")
+  UserCalendar convertUserCalendarPostDTOtoEntity(UserCalendarPostDTO userCalendarPostDTO);
+
+  @Mapping(source = "startingDate", target = "startingDate")
+  @Mapping(source = "userPlan", target = "userDays")
+  UserCalendarGetDTO convertEntityToUserCalendarGetDTO(UserCalendar userCalendar);
+
   @Mapping(source = "apples", target = "apples")
   @Mapping(source = "players", target = "players")
   Game convertGamePostDTOtoEntity(GamePostDTO gamePostDTO);

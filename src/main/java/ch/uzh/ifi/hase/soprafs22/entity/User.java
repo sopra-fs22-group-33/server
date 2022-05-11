@@ -63,6 +63,11 @@ public class User implements Serializable {
   @JsonIgnore
   private List<Schedule> schedules;
 
+  @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn
+  @JsonIgnore
+  private UserCalendar userCalendar;
+
   public List<Schedule> getSchedules() {
         return schedules;
     }
@@ -145,5 +150,13 @@ public class User implements Serializable {
 
     public void setPlayers(Set<Player> players) {
         this.players = players;
+    }
+
+    public UserCalendar getUserCalendar() {
+        return userCalendar;
+    }
+
+    public void setUserCalendar(UserCalendar userCalendar) {
+        this.userCalendar = userCalendar;
     }
 }

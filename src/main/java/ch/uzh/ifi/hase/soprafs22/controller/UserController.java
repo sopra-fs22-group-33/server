@@ -3,7 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.entity.UserCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
@@ -11,10 +13,7 @@ import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,12 +31,14 @@ public class UserController {
   private final TeamService teamService;
   private final MembershipService membershipService;
   private final InvitationService invitationService;
+  private final UserCalendarService userCalendarService;
 
-  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService) {
+  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
     this.invitationService = invitationService;
+    this.userCalendarService = userCalendarService;
   }
 
   @GetMapping("/users")
@@ -177,5 +178,16 @@ public class UserController {
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
     }
+  }
+
+  @GetMapping("/users/{userId}/calendar")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){
+      if (userService.authorizeUser(userId, token)) {
+          User user = userService.findUserById(userId);
+          UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
+      }
+      return null;
   }
 }
