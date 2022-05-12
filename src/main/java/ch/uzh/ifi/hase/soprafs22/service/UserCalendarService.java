@@ -48,18 +48,21 @@ public class UserCalendarService {
 
                 //only future slots will be considered
                 if (i-differenceInDays >= 0){
-                    for (Slot slot : day.getSlots()){
+                    for (Slot slot : day.getSlots()) {
                         UserSlot userSlot = new UserSlot();
-                        for (Schedule schedule : slot.getSchedules()){
-                            if (schedule.getUser() == user){
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getUser() == user) {
                                 UserSchedule userSchedule = new UserSchedule();
                                 userSchedule.setTeam(membership.getTeam());
                                 userSlot.getUserSchedules().add(userSchedule);
                             }
                         }
-                        userCalendar.getUserPlan().get(i - differenceInDays).getUserSlots().add(userSlot);
+                        if (!userSlot.getUserSchedules().isEmpty()) {
+                            userSlot.setTimeFrom(slot.getTimeFrom());
+                            userSlot.setTimeTo(slot.getTimeTo());
+                            userCalendar.getUserPlan().get(i - differenceInDays).getUserSlots().add(userSlot);
+                        }
                     }
-
                 }
             }
 
