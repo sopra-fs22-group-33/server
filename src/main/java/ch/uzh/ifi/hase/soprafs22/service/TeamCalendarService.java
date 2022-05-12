@@ -190,14 +190,17 @@ public class TeamCalendarService {
 
         // set board size based on number of players
         int size = (int) (100*(1- exp(-slot.getSchedules().size()/4.0)));
+        if (size == 0) {
+            return;
+        }
         game.setBoardLength(size);
 
 
         List<Location> apples = new ArrayList<>();
         for (int j = 0; j<5; j++){
             Location apple = new Location();
-            int x = rand.nextInt((size) + 1) + 0;
-            int y = rand.nextInt((size) + 1) + 0;
+            int x = rand.nextInt(size);
+            int y = rand.nextInt(size);
             apple.setX(x);
             apple.setY(y);
             apples.add(j, apple);
@@ -211,8 +214,8 @@ public class TeamCalendarService {
                 player.setUser(schedule.getUser());
                 player.setGame(game);
                 Location chunck = new Location();
-                int x = rand.nextInt((size) + 1) + 0;
-                int y = rand.nextInt((size) + 1) + 0;
+                int x = rand.nextInt(size);
+                int y = rand.nextInt(size);
                 chunck.setX(x);
                 chunck.setY(y);
                 List<Location> chunks = new ArrayList<>();

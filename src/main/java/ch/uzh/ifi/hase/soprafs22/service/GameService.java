@@ -143,8 +143,8 @@ public class GameService {
 
                     // change location  of apple to random
                     Random rand = new Random();
-                    int x = rand.nextInt((size) + 1) + 0;
-                    int y = rand.nextInt((size) + 1) + 0;
+                    int x = rand.nextInt(size);
+                    int y = rand.nextInt(size);
                     appleLocation.setX(x);
                     appleLocation.setY(y);
 
