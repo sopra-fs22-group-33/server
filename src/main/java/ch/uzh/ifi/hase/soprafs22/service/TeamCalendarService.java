@@ -188,7 +188,8 @@ public class TeamCalendarService {
         game.setStatus("on");
         Random rand = new Random();
 
-        int size = (int) (50*(1- exp(slot.getSchedules().size()/4)));
+        // set board size based on number of players
+        int size = (int) (100*(1- exp(-slot.getSchedules().size()/4.0)));
         game.setBoardLength(size);
 
 
