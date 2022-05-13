@@ -151,18 +151,30 @@ public class GameService {
                 }
             }
         int rank = 0;
+        Location playerHead;
         for (Player player:game.getPlayers()) {
             if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
                     // if that player is not dead and it is not us
             if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                 List<Location> playerChunks = player.getChunks();
                 for (Location chunkLocation : playerChunks) {
-                    if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                    // handle the case when two heads meet
+                    playerHead = player.getChunks().get(0);
+                    if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
+                        currentPlayer.setStatus("dead");
+                        player.setStatus("dead"); /* todo: make sure this is saved */
+                        // todo: update ranks
+                    }
+                    else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                         currentPlayer.setStatus("dead");
                         currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
 
                     }
-                    // handle the case when two heads meet
+                    else if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
+                        currentPlayer.setStatus("dead");
+                        // todo: update rank
+                    }
+
 
                 }
             }
