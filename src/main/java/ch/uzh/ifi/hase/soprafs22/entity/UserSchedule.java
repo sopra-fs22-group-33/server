@@ -16,9 +16,9 @@ public class UserSchedule implements Serializable {
     private Long id;
 
     @ManyToOne ()
-    @JoinColumn(name = "userSlot")
+    @JoinColumn(name = "slot")
     @JsonIgnore
-    private UserSlot userSlot;
+    private UserSlot slot;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "team")
@@ -32,12 +32,12 @@ public class UserSchedule implements Serializable {
         this.id = id;
     }
 
-    public UserSlot getUserSlot() {
-        return userSlot;
+    public UserSlot getSlot() {
+        return slot;
     }
 
-    public void setUserSlot(UserSlot userSlot) {
-        this.userSlot = userSlot;
+    public void setSlot(UserSlot slot) {
+        this.slot = slot;
     }
 
     public Team getTeam() {

@@ -6,17 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -68,13 +61,13 @@ public class UserCalendarService {
                         if (schedule.getUser() == user) {
                             UserSchedule userSchedule = new UserSchedule();
                             userSchedule.setTeam(membership.getTeam());
-                            userSlot.getUserSchedules().add(userSchedule);
+                            userSlot.getSchedules().add(userSchedule);
                         }
                     }
-                    if (!userSlot.getUserSchedules().isEmpty()) {
+                    if (!userSlot.getSchedules().isEmpty()) {
                         userSlot.setTimeFrom(slot.getTimeFrom());
                         userSlot.setTimeTo(slot.getTimeTo());
-                        userCalendar.getUserPlan().get(i - differenceInDays).getUserSlots().add(userSlot);
+                        userCalendar.getUserPlan().get(i - differenceInDays).getSlots().add(userSlot);
                     }
                 }
             }

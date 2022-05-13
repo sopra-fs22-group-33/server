@@ -20,8 +20,8 @@ public class UserDay implements Serializable {
     @JsonIgnore
     private UserCalendar userCalendar;
 
-    @OneToMany (mappedBy = "userDay",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    private List<UserSlot> userSlots;
+    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<UserSlot> slots;
 
     public UserCalendar getUserCalendar() {
         return userCalendar;
@@ -31,12 +31,12 @@ public class UserDay implements Serializable {
         this.userCalendar = userCalendar;
     }
 
-    public List<UserSlot> getUserSlots(){
-        return userSlots;
+    public List<UserSlot> getSlots(){
+        return slots;
     }
 
-    public void setUserSlots(List<UserSlot> userSlots){
-        this.userSlots = userSlots;}
+    public void setSlots(List<UserSlot> slots){
+        this.slots = slots;}
 
 
     public Long getId() {

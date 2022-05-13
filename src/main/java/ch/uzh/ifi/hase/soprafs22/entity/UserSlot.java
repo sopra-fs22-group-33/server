@@ -28,10 +28,10 @@ public class UserSlot implements Serializable {
             )
     })
     @JsonIgnore
-    private UserDay userDay;
+    private UserDay day;
 
-    @OneToMany(mappedBy = "userSlot", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
-    private List<UserSchedule> UserSchedules;
+    @OneToMany(mappedBy = "slot", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    private List<UserSchedule> schedules;
 
     public int getTimeFrom() {
         return timeFrom;
@@ -57,19 +57,19 @@ public class UserSlot implements Serializable {
         this.id = id;
     }
 
-    public UserDay getUserDay() {
-        return userDay;
+    public UserDay getDay() {
+        return day;
     }
 
-    public void setUserDay(UserDay userDay) {
-        this.userDay = userDay;
+    public void setDay(UserDay day) {
+        this.day = day;
     }
 
-    public List<UserSchedule> getUserSchedules() {
-        return UserSchedules;
+    public List<UserSchedule> getSchedules() {
+        return schedules;
     }
 
-    public void setUserSchedules(List<UserSchedule> userSchedules) {
-        UserSchedules = userSchedules;
+    public void setSchedules(List<UserSchedule> schedules) {
+        this.schedules = schedules;
     }
 }

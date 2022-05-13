@@ -11,14 +11,14 @@ public class UserCalendarGetDTO {
 
     private LocalDate startingDate;
 
-    private List <UserDay> userDays;
+    private List <UserDay> days;
 
-    public void setUserDays(List<UserDay> userDays) {
-        this.userDays = userDays;
+    public void setDays(List<UserDay> days) {
+        this.days = days;
     }
 
-    public  List <UserDay> getUserDays() {
-        return userDays;
+    public  List <UserDay> getDays() {
+        return days;
     }
 
     public Long getId() {

@@ -9,7 +9,7 @@ public class UserCalendarPostDTO {
 
     private LocalDate startingDate;
 
-    private List<UserDay> userDays;
+    private List<UserDay> days;
 
     public LocalDate getStartingDate() {
         return startingDate;
@@ -19,11 +19,11 @@ public class UserCalendarPostDTO {
         this.startingDate = startingDate;
     }
 
-    public  List<UserDay> getUserDays() {
-        return this.userDays;
+    public  List<UserDay> getDays() {
+        return this.days;
     }
 
-    public void setUserDays(List<UserDay> userDays) {
-        this.userDays = userDays;
+    public void setDays(List<UserDay> days) {
+        this.days = days;
     }
 }
