@@ -68,6 +68,11 @@ public class User implements Serializable {
   @JsonIgnore
   private UserCalendar userCalendar;
 
+  @OneToOne(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @JoinColumn
+  @JsonIgnore
+  private PreferenceCalendar preferenceCalendar;
+
   public List<Schedule> getSchedules() {
         return schedules;
     }
@@ -158,5 +163,13 @@ public class User implements Serializable {
 
     public void setUserCalendar(UserCalendar userCalendar) {
         this.userCalendar = userCalendar;
+    }
+
+    public PreferenceCalendar getPreferenceCalendar() {
+        return preferenceCalendar;
+    }
+
+    public void setPreferenceCalendar(PreferenceCalendar preferenceCalendar) {
+        this.preferenceCalendar = preferenceCalendar;
     }
 }

@@ -190,4 +190,26 @@ public class UserController {
       }
       return null;
   }
+
+    @GetMapping("/users/{userId}/preferences")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){
+        if (userService.authorizeUser(userId, token)) {
+            User user = userService.findUserById(userId);
+            UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
+        }
+        return null;
+    }
+
+    @PutMapping("/users/{userId}/preferences")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){
+        if (userService.authorizeUser(userId, token)) {
+            User user = userService.findUserById(userId);
+            UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
+        }
+        return null;
+    }
 }
