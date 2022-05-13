@@ -88,7 +88,7 @@ public class TeamCalendarServiceTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         testTeamCalendar.setBasePlan(days);
-        testTeamCalendar.setStartingDate("123");
+        //testTeamCalendar.setStartingDate("123");
 
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
         teamCalendarPostDTO.setStartingDate("123");

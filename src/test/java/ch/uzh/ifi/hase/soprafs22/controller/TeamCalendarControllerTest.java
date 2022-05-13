@@ -48,7 +48,7 @@ public class TeamCalendarControllerTest {
     public void givenTeamCalendar_whenGetTeamCalendar_thenReturnJsonArray() throws Exception {
         // given
         TeamCalendar teamCalendar = new TeamCalendar();
-        teamCalendar.setStartingDate("123");
+        //teamCalendar.setStartingDate("123");
 
         List<TeamCalendar> allTeamCalendars = Collections.singletonList(teamCalendar);
 
@@ -79,7 +79,7 @@ public class TeamCalendarControllerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        teamCalendar.setStartingDate("123");
+        //teamCalendar.setStartingDate("123");
 
         //creating teamCalendarPostDTO
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
@@ -115,7 +115,7 @@ public class TeamCalendarControllerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        teamCalendar.setStartingDate("123");
+        //teamCalendar.setStartingDate("123");
 
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
         teamCalendarPostDTO.setStartingDate("123");
