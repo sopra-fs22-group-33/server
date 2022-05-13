@@ -3,10 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
-import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
-import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
-import ch.uzh.ifi.hase.soprafs22.service.TeamService;
-import ch.uzh.ifi.hase.soprafs22.service.UserService;
+import ch.uzh.ifi.hase.soprafs22.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -54,6 +51,12 @@ public class UserControllerTest {
 
   @MockBean
   private InvitationService invitationService;
+
+  @MockBean
+  private UserCalendarService userCalendarService;
+
+  @MockBean
+  private PreferenceCalendarService preferenceCalendarService;
 
   @Test
   public void givenUsers_whenGetUsers_thenReturnJsonArray() throws Exception {
