@@ -33,14 +33,12 @@ public class Optimizer {
 
         this.solver = LpSolve.makeLp(0, nCols);
         int i = 0;
-
         // 1) create array obj and define obj function, should be done before constraints for better performance
         for (Day day:teamCalendar.getBasePlan()){
             for (Slot slot: day.getSlots()){
                 for (Schedule schedule: slot.getSchedules()){
                     this.result.add(schedule);
-                    double b =  schedule.getBase();
-                    obj[i] = b;
+                    obj[i] = schedule.getBase();
                     this.solver.setBinary(i+1,true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
                     i++;
                 }
@@ -60,7 +58,6 @@ public class Optimizer {
             for (Slot slot: day.getSlots()){
                 double[] req = new double[nCols];
                 for (Schedule schedule: slot.getSchedules()){
-
                     //this.solver.setBinary(i, true);
                     req[i] = 1;
 
@@ -104,18 +101,25 @@ public class Optimizer {
 
 
         // solve the problem
-        solver.solve();
+
+        int sol = solver.solve();
+        if(sol == LpSolve.OPTIMAL){
+
+
         double [] solution = solver.getPtrPrimalSolution();
 
 
-        // add solution to assigned
-        for ( int j = 0; j< solution.length; j++){
-           this.result.get(j).setAssigned((int)solution[j]);
+        solver.getVariables(obj);
+            for(int j = 0; j < nCols; j++)
+                this.result.get(j).setAssigned((int)obj[j]);
+
         }
 
 
         // print resulting value of the objective function
         System.out.println("Value of objective function: " + solver.getObjective());
+
+        solver.deleteLp();
 
     }
 
