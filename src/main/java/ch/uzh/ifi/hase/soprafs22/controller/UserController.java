@@ -1,13 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.entity.UserCalendar;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserCalendarGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
@@ -32,14 +26,16 @@ public class UserController {
   private final MembershipService membershipService;
   private final InvitationService invitationService;
   private final UserCalendarService userCalendarService;
+  private final PreferenceCalendarService preferenceCalendarService;
 
-  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService) {
+    UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService, PreferenceCalendarService preferenceCalendarService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
     this.invitationService = invitationService;
     this.userCalendarService = userCalendarService;
-  }
+    this.preferenceCalendarService = preferenceCalendarService;
+    }
 
   @GetMapping("/users")
   @ResponseStatus(HttpStatus.OK)
@@ -194,22 +190,21 @@ public class UserController {
     @GetMapping("/users/{userId}/preferences")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){
-        if (userService.authorizeUser(userId, token)) {
-            User user = userService.findUserById(userId);
-            UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
-        }
-        return null;
+    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId){
+        User user = userService.findUserById(userId);
+        PreferenceCalendar preferenceCalendar = preferenceCalendarService.getPreferenceCalendar(user);
+
+        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
     }
 
     @PutMapping("/users/{userId}/preferences")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId, @RequestHeader("token") String token){
-        if (userService.authorizeUser(userId, token)) {
-            User user = userService.findUserById(userId);
-            UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
-        }
-        return null;
+    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO){
+        User user = userService.findUserById(userId);
+        PreferenceCalendar updatedCalendar = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
+        PreferenceCalendar preferenceCalendar = preferenceCalendarService.updatePreferenceCalendar(user, updatedCalendar);
+
+        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
     }
 }

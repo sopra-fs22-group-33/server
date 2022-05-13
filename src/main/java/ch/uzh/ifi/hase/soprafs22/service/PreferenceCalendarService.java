@@ -7,31 +7,49 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Date;
-
 public class PreferenceCalendarService {
-    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
+    private final Logger log = LoggerFactory.getLogger(PreferenceCalendarService.class);
 
-    private final TeamCalendarRepository teamCalendarRepository;
-    private final TeamRepository teamRepository;
+    private final PreferenceCalendarRepository preferenceCalendarRepository;
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
-    private final DayRepository dayRepository;
+    private final PreferenceDayRepository preferenceDayRepository;
+    private final PreferenceSlotRepository preferenceSlotRepository;
 
 
     @Autowired
-    public PreferenceCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
+    public PreferenceCalendarService(@Qualifier("preferenceCalendarRepository") PreferenceCalendarRepository preferenceCalendarRepository,
                                      @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                                     @Qualifier("dayRepository") DayRepository dayRepository) {
-        this.teamCalendarRepository = teamCalendarRepository;
-        this.teamRepository = teamRepository;
+                                     @Qualifier("preferenceDayRepository") PreferenceDayRepository preferenceDayRepository, PreferenceSlotRepository preferenceSlotRepository) {
+
+        this.preferenceCalendarRepository = preferenceCalendarRepository;
+        this.preferenceSlotRepository = preferenceSlotRepository;
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
-        this.dayRepository= dayRepository;
+        this.preferenceDayRepository= preferenceDayRepository;
     }
 
     public PreferenceCalendar getPreferenceCalendar (User user){
-        return user.get
+        return user.getPreferenceCalendar();
+    }
+
+    public PreferenceCalendar updatePreferenceCalendar (User user, PreferenceCalendar updatedCalendar){
+        PreferenceCalendar oldCalendar = user.getPreferenceCalendar();
+        oldCalendar.getPreferencePlan().clear();
+        preferenceCalendarRepository.save(oldCalendar);
+        preferenceCalendarRepository.flush();
+
+        for (PreferenceDay day : updatedCalendar.getPreferencePlan()){
+            oldCalendar.getPreferencePlan().add(day);
+            day.setPreferenceCalendar(oldCalendar);
+
+            for (PreferenceSlot slot : day.getPreferenceSlots()){
+                slot.setPreferenceDay(day);
+            }
+        }
+        PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(oldCalendar);
+        preferenceCalendarRepository.flush();
+        return savedCalendar;
     }
 
 }
