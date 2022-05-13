@@ -29,17 +29,17 @@ public class Optimizer {
 
         // intialize arrays
         this.obj = new double[nCols];
-        this.result =  new ArrayList<>();
+        this.result = new ArrayList<>();
 
         this.solver = LpSolve.makeLp(0, nCols);
         int i = 0;
         // 1) create array obj and define obj function, should be done before constraints for better performance
-        for (Day day:teamCalendar.getBasePlan()){
-            for (Slot slot: day.getSlots()){
-                for (Schedule schedule: slot.getSchedules()){
+        for (Day day : teamCalendar.getBasePlan()) {
+            for (Slot slot : day.getSlots()) {
+                for (Schedule schedule : slot.getSchedules()) {
                     this.result.add(schedule);
                     obj[i] = schedule.getBase();
-                    this.solver.setBinary(i+1,true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
+                    this.solver.setBinary(i + 1, true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
                     i++;
                 }
             }
@@ -51,19 +51,17 @@ public class Optimizer {
 
 
         //define constraints
-
-
         i = 0;
-        for (Day day:teamCalendar.getBasePlan()){
-            for (Slot slot: day.getSlots()){
+        for (Day day : teamCalendar.getBasePlan()) {
+            for (Slot slot : day.getSlots()) {
                 double[] req = new double[nCols];
-                for (Schedule schedule: slot.getSchedules()){
+                for (Schedule schedule : slot.getSchedules()) {
                     //this.solver.setBinary(i, true);
                     req[i] = 1;
 
                     //store schedules for each user
                     // TODO:add similar for 2-3-4 weeks
-                    if (day.getId()<7) {
+                    if (day.getId() < 7) {
                         if (!usersWeek1.containsKey(schedule.getUser())) {
                             ArrayList<Integer> tmp = new ArrayList<>();
                             tmp.add(i);
@@ -72,12 +70,12 @@ public class Optimizer {
                     }
 
                     // special req whenever they are present should be satisfied
-                    if(schedule.getSpecial()!= -1){
+                    if (schedule.getSpecial() != -1) {
                         double[] special = new double[nCols];
                         special[i] = 1;
                         solver.addConstraint(special, LpSolve.EQ, schedule.getSpecial());
                     }
-                    i+=1;
+                    i += 1;
                 }
 
                 // add constraint that for each slot requirements should be satisfied
@@ -87,11 +85,10 @@ public class Optimizer {
         }
 
 
-
         // number of hours should not exceed 40 h for each week
-        for (Long key :usersWeek1.keySet()){
+        for (Long key : usersWeek1.keySet()) {
             double[] req = new double[nCols];
-            for (Integer value: usersWeek1.get(key)){
+            for (Integer value : usersWeek1.get(key)) {
                 int hours = result.get(value).getSlot().getTimeTo() - result.get(value).getSlot().getTimeFrom(); // TODO: change this
                 req[value] = hours;
             }
@@ -103,22 +100,15 @@ public class Optimizer {
         // solve the problem
 
         int sol = solver.solve();
-        if(sol == LpSolve.OPTIMAL){
-
-
-        double [] solution = solver.getPtrPrimalSolution();
-
-
+        //double [] solution = solver.getPtrPrimalSolution();
         solver.getVariables(obj);
-            for(int j = 0; j < nCols; j++)
-                this.result.get(j).setAssigned((int)obj[j]);
 
+        for (int j = 0; j < nCols; j++) {
+            this.result.get(j).setAssigned((int) obj[j]);
         }
-
 
         // print resulting value of the objective function
         System.out.println("Value of objective function: " + solver.getObjective());
-
         solver.deleteLp();
 
     }
