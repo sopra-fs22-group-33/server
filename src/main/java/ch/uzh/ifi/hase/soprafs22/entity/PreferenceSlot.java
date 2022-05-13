@@ -20,16 +20,10 @@ public class PreferenceSlot implements Serializable {
 
     @ManyToOne
     @JoinColumns(value = {
-            @JoinColumn(
-                    name = "weekday",
-                    referencedColumnName = "weekday",
-                    updatable = true,
-                    insertable = true
 
-            ),
             @JoinColumn(
-                    name = "userCalendar",
-                    referencedColumnName = "userCalendar",
+                    name = "preferenceCalendar",
+                    referencedColumnName = "preferenceCalendar",
                     insertable = true,
                     updatable = true
             )

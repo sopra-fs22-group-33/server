@@ -7,30 +7,27 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Optional;
 
 public class UserCalendarService {
     private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
-    private final TeamCalendarRepository teamCalendarRepository;
+    private final UserCalendarRepository userCalendarRepository;
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
-    private final DayRepository dayRepository;
+    private final UserDayRepository userDayRepository;
 
 
     @Autowired
-    public UserCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
+    public UserCalendarService(@Qualifier UserCalendarRepository userCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
                                @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                               @Qualifier("dayRepository") DayRepository dayRepository) {
-        this.teamCalendarRepository = teamCalendarRepository;
+                               @Qualifier UserDayRepository userDayRepository) {
+        this.userCalendarRepository = userCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
-        this.dayRepository= dayRepository;
+        this.userDayRepository = userDayRepository;
     }
 
     public UserCalendar getUserCalendar (User user){

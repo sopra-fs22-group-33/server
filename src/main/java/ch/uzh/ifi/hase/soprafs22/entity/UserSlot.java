@@ -21,13 +21,6 @@ public class UserSlot implements Serializable {
     @ManyToOne
     @JoinColumns(value = {
             @JoinColumn(
-                    name = "weekday",
-                    referencedColumnName = "weekday",
-                    updatable = true,
-                    insertable = true
-
-            ),
-            @JoinColumn(
                     name = "userCalendar",
                     referencedColumnName = "userCalendar",
                     insertable = true,

@@ -1,8 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs22.entity.PreferenceDay;
-import ch.uzh.ifi.hase.soprafs22.entity.UserDay;
-
 import java.util.List;
 
 public class PreferenceCalendarGetDTO {
