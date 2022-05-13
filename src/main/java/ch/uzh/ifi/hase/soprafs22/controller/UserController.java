@@ -69,11 +69,13 @@ public class UserController {
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
-//    try {
-//      EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
-//    } catch (Exception e) {
-//      //do nothing
-//    }
+    try {
+        EmailService emailService = new EmailService();
+        emailService.sendEmail(createdUser.getEmail(), "welcome to shift planner", "Hi " + createdUser.getUsername() + "\nWelcome to shift planner.\n" +
+                "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+    } catch (Exception e) {
+        //do nothing
+    }
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
@@ -85,7 +87,7 @@ public class UserController {
   public UserGetDTO getUser(@PathVariable("id") long id) {
     User user = userService.findUserById(id);
     UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-    
+
     return userGetDTO;
   }
 
@@ -144,6 +146,14 @@ public class UserController {
     if (userService.authorizeAdmin(team, token)){
       User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
       Invitation invitation = invitationService.createInvitation(team, userToAdd);
+        try {
+            EmailService emailService = new EmailService();
+            emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
+                    "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
+                            "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+        } catch (Exception e) {
+            //do nothing
+        }
       return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
     return null;

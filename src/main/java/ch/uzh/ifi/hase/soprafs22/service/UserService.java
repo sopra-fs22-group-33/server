@@ -5,6 +5,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs22.service.EmailService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,6 +62,8 @@ public class UserService {
 
     newUser = userRepository.save(newUser);
     userRepository.flush();
+
+
 
     log.debug("Created Information for User: {}", newUser);
     return newUser;
