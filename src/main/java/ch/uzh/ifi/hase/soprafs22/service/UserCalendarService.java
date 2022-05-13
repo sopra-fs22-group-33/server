@@ -6,8 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Date;
 
@@ -36,16 +38,22 @@ public class UserCalendarService {
 
     public UserCalendar getUserCalendar (User user){
         int differenceInDays;
+        long startingDate = new Date().getTime();
         int i;
 
+        for (Membership membership : user.getMemberships()) {
+            if (startingDate > membership.getTeam().getTeamCalendar().getStartingDate()){
+                startingDate = membership.getTeam().getTeamCalendar().getStartingDate();
+            }
+        }
+
         UserCalendar userCalendar = new UserCalendar();
-        userCalendar.setStartingDate(new Date().getTime());
+        userCalendar.setStartingDate(startingDate);
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) ((userCalendar.getStartingDate() - membership.getTeam().getTeamCalendar().getStartingDate())/86400);
 
             for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
-
                 //only future slots will be considered
                 if (i-differenceInDays >= 0){
                     for (Slot slot : day.getSlots()) {
