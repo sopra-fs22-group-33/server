@@ -6,9 +6,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
+@Service
+@Transactional
 public class UserCalendarService {
     private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
@@ -20,9 +24,9 @@ public class UserCalendarService {
 
 
     @Autowired
-    public UserCalendarService(@Qualifier UserCalendarRepository userCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
+    public UserCalendarService(@Qualifier ("userCalendarRepository") UserCalendarRepository userCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
                                @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                               @Qualifier UserDayRepository userDayRepository) {
+                               @Qualifier ("userDayRepository") UserDayRepository userDayRepository) {
         this.userCalendarRepository = userCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
