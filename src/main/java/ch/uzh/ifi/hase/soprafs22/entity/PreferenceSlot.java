@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
 
 @Entity
 public class PreferenceSlot implements Serializable {
@@ -29,7 +28,7 @@ public class PreferenceSlot implements Serializable {
             )
     })
     @JsonIgnore
-    private PreferenceDay preferenceDay;
+    private PreferenceDay day;
 
     public int getTimeFrom() {
         return timeFrom;
@@ -55,11 +54,11 @@ public class PreferenceSlot implements Serializable {
         this.id = id;
     }
 
-    public PreferenceDay getPreferenceDay() {
-        return preferenceDay;
+    public PreferenceDay getDay() {
+        return day;
     }
 
-    public void setPreferenceDay(PreferenceDay preferenceDay) {
-        this.preferenceDay = preferenceDay;
+    public void setDay(PreferenceDay day) {
+        this.day = day;
     }
 }

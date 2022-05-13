@@ -7,7 +7,7 @@ public class PreferenceCalendarGetDTO {
 
     private Long id;
 
-    private List <PreferenceDay> preferenceDays;
+    private List <PreferenceDay> days;
 
     public Long getId() {
         return id;
@@ -17,11 +17,11 @@ public class PreferenceCalendarGetDTO {
         this.id = id;
     }
 
-    public List<PreferenceDay> getPreferenceDays() {
-        return preferenceDays;
+    public List<PreferenceDay> getDays() {
+        return days;
     }
 
-    public void setPreferenceDays(List<PreferenceDay> preferenceDays) {
-        this.preferenceDays = preferenceDays;
+    public void setDays(List<PreferenceDay> days) {
+        this.days = days;
     }
 }

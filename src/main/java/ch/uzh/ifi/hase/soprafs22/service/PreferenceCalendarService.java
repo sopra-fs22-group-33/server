@@ -47,8 +47,8 @@ public class PreferenceCalendarService {
             oldCalendar.getPreferencePlan().add(day);
             day.setPreferenceCalendar(oldCalendar);
 
-            for (PreferenceSlot slot : day.getPreferenceSlots()){
-                slot.setPreferenceDay(day);
+            for (PreferenceSlot slot : day.getSlots()){
+                slot.setDay(day);
             }
         }
         PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(oldCalendar);

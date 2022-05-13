@@ -20,8 +20,8 @@ public class PreferenceDay implements Serializable {
     @JsonIgnore
     private PreferenceCalendar preferenceCalendar;
 
-    @OneToMany (mappedBy = "preferenceDay",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    private List<PreferenceSlot> preferenceSlots;
+    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    private List<PreferenceSlot> slots;
 
     public Long getId() {
         return id;
@@ -39,12 +39,12 @@ public class PreferenceDay implements Serializable {
         this.preferenceCalendar = preferenceCalendar;
     }
 
-    public List<PreferenceSlot> getPreferenceSlots() {
-        return preferenceSlots;
+    public List<PreferenceSlot> getSlots() {
+        return slots;
     }
 
-    public void setPreferenceSlots(List<PreferenceSlot> preferenceSlots) {
-        this.preferenceSlots = preferenceSlots;
+    public void setSlots(List<PreferenceSlot> slots) {
+        this.slots = slots;
     }
 }
 
