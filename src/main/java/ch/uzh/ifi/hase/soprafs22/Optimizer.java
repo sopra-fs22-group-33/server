@@ -42,7 +42,7 @@ public class Optimizer {
                     double b =  schedule.getBase();
                     obj[i] = b;
                     this.solver.setBinary(i+1,true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
-
+                    i++;
                 }
             }
         }
@@ -54,6 +54,8 @@ public class Optimizer {
 
         //define constraints
 
+
+        i = 0;
         for (Day day:teamCalendar.getBasePlan()){
             for (Slot slot: day.getSlots()){
                 double[] req = new double[nCols];
