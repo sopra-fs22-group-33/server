@@ -40,8 +40,7 @@ public class UserCalendarService {
         UserCalendar userCalendar = new UserCalendar();
         userCalendar.setStartingDate(new Date().getTime());
         for (Membership membership : user.getMemberships()){
-            //TODO refactor startingdate of teamcalendar
-            differenceInDays = (int) userCalendar.getStartingDate() - membership.getTeam().getTeamCalendar().getStartingDate())/86’400’000;
+            differenceInDays = (int) ((userCalendar.getStartingDate() - membership.getTeam().getTeamCalendar().getStartingDate())/86400);
 
             for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
