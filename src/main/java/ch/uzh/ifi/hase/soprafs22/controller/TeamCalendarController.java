@@ -71,7 +71,7 @@ public class TeamCalendarController {
         if (!teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
             try {
                 new Optimizer(teamCalendar);
-                TeamCalendar modifiedCalendar = teamCalendarService.updateTeamCalendar(id, teamCalendar);
+                 //teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
                 // TODO: implement check that there are np collisions
             }
 

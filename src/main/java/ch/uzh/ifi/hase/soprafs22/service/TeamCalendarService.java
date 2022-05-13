@@ -61,6 +61,12 @@ public class TeamCalendarService {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
+        teamCalendarRepository.save(newCalendar);
+        teamCalendarRepository.flush();
+
+    }
+
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
