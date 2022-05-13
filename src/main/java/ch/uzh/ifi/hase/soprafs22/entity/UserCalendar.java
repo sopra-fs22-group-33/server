@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -21,7 +22,7 @@ public class UserCalendar implements Serializable {
     private User user;
 
     @Column
-    private long startingDate;
+    private LocalDate startingDate;
 
     @OneToMany(mappedBy = "userCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<UserDay> userPlan;
@@ -34,9 +35,9 @@ public class UserCalendar implements Serializable {
         this.id = id;
     }
 
-    public long getStartingDate() { return startingDate;}
+    public LocalDate getStartingDate() { return startingDate;}
 
-    public void setStartingDate(long startingDate) {
+    public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 

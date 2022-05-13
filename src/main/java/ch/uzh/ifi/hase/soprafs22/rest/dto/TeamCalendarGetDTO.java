@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
+import java.time.LocalDate;
 import java.util.*;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
@@ -8,7 +9,7 @@ public class TeamCalendarGetDTO {
 
     private Long id;
 
-    private String startingDate;
+    private LocalDate startingDate;
 
     private List <Day> days;
 
@@ -28,11 +29,11 @@ public class TeamCalendarGetDTO {
         this.id = id;
     }
 
-    public String getStartingDate() {
+    public LocalDate getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(String startingDate) {
+    public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 }

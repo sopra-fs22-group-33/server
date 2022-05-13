@@ -2,13 +2,14 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs22.entity.UserDay;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class UserCalendarGetDTO {
 
     private Long id;
 
-    private long startingDate;
+    private LocalDate startingDate;
 
     private List <UserDay> userDays;
 
@@ -28,11 +29,11 @@ public class UserCalendarGetDTO {
         this.id = id;
     }
 
-    public long getStartingDate() {
+    public LocalDate getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(long startingDate) {
+    public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 }

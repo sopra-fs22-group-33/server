@@ -2,19 +2,20 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
 import ch.uzh.ifi.hase.soprafs22.entity.UserDay;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class UserCalendarPostDTO {
 
-    private long startingDate;
+    private LocalDate startingDate;
 
     private List<UserDay> userDays;
 
-    public long getStartingDate() {
+    public LocalDate getStartingDate() {
         return startingDate;
     }
 
-    public void setStartingDate(long startingDate) {
+    public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 

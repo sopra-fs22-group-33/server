@@ -116,7 +116,7 @@ public class TeamCalendarService {
             foundTeam.setTeamCalendar(newCalendar);
             newCalendar.setTeam(foundTeam);
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find team");
 
         if (newCalendar.getBasePlan() != null){
             for (Day day : newCalendar.getBasePlan()) {
