@@ -30,7 +30,7 @@ public class OptimizerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        teamCalendar.setStartingDate("123");
+        //teamCalendar.setStartingDate("123");
 
         //Optimizer optimizer = new Optimizer (teamCalendar);
         //assertTrue(optimizer.isFeasible());
@@ -59,7 +59,7 @@ public class OptimizerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        teamCalendar.setStartingDate("123");
+        //teamCalendar.setStartingDate("123");
 
        // Optimizer optimizer = new Optimizer (teamCalendar);
        // assertTrue(optimizer.isFeasible());

@@ -22,7 +22,7 @@ public class TeamCalendar implements Serializable {
     private Team team;
 
     @Column
-    private String startingDate;
+    private Long startingDate;
 
     @Column
     private int collisions;
@@ -43,9 +43,9 @@ public class TeamCalendar implements Serializable {
 
     public void setBasePlan(List<Day> basePlan) { this.basePlan = basePlan;}
 
-    public String getStartingDate() { return startingDate;}
+    public Long getStartingDate() { return startingDate;}
 
-    public void setStartingDate(String startingDate) {
+    public void setStartingDate(Long startingDate) {
         this.startingDate = startingDate;
     }
 
