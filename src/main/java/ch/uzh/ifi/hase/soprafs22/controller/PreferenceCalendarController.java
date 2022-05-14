@@ -29,15 +29,18 @@ public class PreferenceCalendarController {
     @PostMapping("/users/{userId}/preferences")
     @ResponseStatus(HttpStatus.CREATED)
     @ResponseBody
-    public PreferenceCalendarGetDTO createPreferenceCalendar(@RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO, @PathVariable("userId") long userId) {
-        // convert API team to internal representation
-        PreferenceCalendar userInput = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
-        User user = userService.findUserById(userId);
+    public PreferenceCalendarGetDTO createPreferenceCalendar(@RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO, @PathVariable("userId") long userId, @RequestHeader("token") String token) {
+        if (userService.authorizeUser(userId, token)) {
+            // convert API team to internal representation
+            PreferenceCalendar userInput = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
+            User user = userService.findUserById(userId);
 
-        // create preferenceCalendar
-        PreferenceCalendar createdCalendar = preferenceCalendarService.createPreferenceCalendar(userId, userInput);
+            // create preferenceCalendar
+            PreferenceCalendar createdCalendar = preferenceCalendarService.createPreferenceCalendar(userId, userInput);
 
-        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(createdCalendar);
+            return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(createdCalendar);
+        }
+        return null;
     }
 
     @GetMapping("/users/{userId}/preferences")
@@ -53,12 +56,15 @@ public class PreferenceCalendarController {
     @PutMapping("/users/{userId}/preferences")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO){
-        User user = userService.findUserById(userId);
-        PreferenceCalendar updatedCalendar = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
-        PreferenceCalendar preferenceCalendar = preferenceCalendarService.updatePreferenceCalendar(user, updatedCalendar);
+    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO, @RequestHeader("token") String token) {
+        if (userService.authorizeUser(userId, token)) {
+            User user = userService.findUserById(userId);
+            PreferenceCalendar updatedCalendar = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
+            PreferenceCalendar preferenceCalendar = preferenceCalendarService.updatePreferenceCalendar(user, updatedCalendar);
 
-        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
+            return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
+        }
+        return null;
     }
 }
 
