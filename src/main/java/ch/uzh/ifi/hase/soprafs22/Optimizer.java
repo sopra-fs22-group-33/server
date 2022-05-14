@@ -28,17 +28,19 @@ public class Optimizer {
         computeN();
 
         // intialize arrays
-        this.obj = new double[nCols];
+        this.obj = new double[nCols+1];
         this.result = new ArrayList<>();
 
         this.solver = LpSolve.makeLp(0, nCols);
         int i = 0;
+        obj[i] = 0;
+
         // 1) create array obj and define obj function, should be done before constraints for better performance
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
                     this.result.add(schedule);
-                    obj[i] = schedule.getBase();
+                    obj[i+1] = schedule.getBase();
                     this.solver.setBinary(i + 1, true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
                     i++;
                 }
@@ -79,7 +81,7 @@ public class Optimizer {
                 }
 
                 // add constraint that for each slot requirements should be satisfied
-                // solver.addConstraint(req, LpSolve.EQ, slot.getRequirement());
+                 //solver.addConstraint(req, LpSolve.EQ, slot.getRequirement());
             }
 
         }
@@ -98,13 +100,14 @@ public class Optimizer {
 
 
         // solve the problem
+        solver.setMaxim();
 
         int sol = solver.solve();
         //double [] solution = solver.getPtrPrimalSolution();
-        solver.getVariables(obj);
+        double[] var = solver.getPtrVariables();
 
-        for (int j = 0; j < nCols; j++) {
-            this.result.get(j).setAssigned((int) obj[j]);
+        for (int j = 0; j < var.length; j++) {
+            this.result.get(j).setAssigned((int) var[j]);
         }
 
         // print resulting value of the objective function
