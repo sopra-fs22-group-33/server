@@ -186,25 +186,4 @@ public class UserController {
 //      }
       return DTOMapper.INSTANCE.convertEntityToUserCalendarGetDTO(userCalendar);
   }
-
-    @GetMapping("/users/{userId}/preferences")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId){
-        User user = userService.findUserById(userId);
-        PreferenceCalendar preferenceCalendar = preferenceCalendarService.getPreferenceCalendar(user);
-
-        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
-    }
-
-    @PutMapping("/users/{userId}/preferences")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO){
-        User user = userService.findUserById(userId);
-        PreferenceCalendar updatedCalendar = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
-        PreferenceCalendar preferenceCalendar = preferenceCalendarService.updatePreferenceCalendar(user, updatedCalendar);
-
-        return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
-    }
 }

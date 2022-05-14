@@ -6,8 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -37,18 +43,58 @@ public class PreferenceCalendarService {
         return user.getPreferenceCalendar();
     }
 
+    public PreferenceCalendar createPreferenceCalendar(long userId, PreferenceCalendar newCalendar) {
+
+        //checkIfTeamHasCalendar(id);
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()){
+            User foundUser = user.get();
+            foundUser.setPreferenceCalendar(newCalendar);
+            newCalendar.setUser(foundUser);
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find user");
+
+        if (newCalendar.getPreferencePlan() != null){
+            for (PreferenceDay day : newCalendar.getPreferencePlan()) {
+                day.setPreferenceCalendar(newCalendar);
+
+                if (day.getSlots() != null) {
+                    for (PreferenceSlot slot : day.getSlots()) {
+                        slot.setDay(day);
+                    }
+                }
+            }
+        }
+
+        newCalendar = preferenceCalendarRepository.save(newCalendar);
+        preferenceCalendarRepository.flush();
+        log.debug("Created preferenceCalendar for user: {}",userId);
+        return newCalendar;
+    }
+
     public PreferenceCalendar updatePreferenceCalendar (User user, PreferenceCalendar updatedCalendar){
-        PreferenceCalendar oldCalendar = user.getPreferenceCalendar();
-        oldCalendar.getPreferencePlan().clear();
+        PreferenceCalendar oldCalendar = new PreferenceCalendar();
+        //check if user has PreferenceCalendar
+        if (user.getPreferenceCalendar() == null){
+            PreferenceDay preferenceDay = new PreferenceDay();
+            List<PreferenceDay> preferencePlan = new ArrayList<>();
+            oldCalendar.setPreferencePlan(preferencePlan);
+            oldCalendar.setUser(user);
+            user.setPreferenceCalendar(oldCalendar);
+        }else {
+            oldCalendar = user.getPreferenceCalendar();
+            oldCalendar.getPreferencePlan().clear();
+        }
         preferenceCalendarRepository.save(oldCalendar);
         preferenceCalendarRepository.flush();
 
         for (PreferenceDay day : updatedCalendar.getPreferencePlan()){
             oldCalendar.getPreferencePlan().add(day);
             day.setPreferenceCalendar(oldCalendar);
-
-            for (PreferenceSlot slot : day.getSlots()){
-                slot.setDay(day);
+            if (day.getSlots() != null) {
+                for (PreferenceSlot slot : day.getSlots()) {
+                    slot.setDay(day);
+                }
             }
         }
         PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(oldCalendar);
