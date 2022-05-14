@@ -38,10 +38,10 @@ public class UserCalendarService {
 
     public UserCalendar getUserCalendar (User user){
         int differenceInDays;
-        LocalDate startingDate = LocalDate.of(2022,5,10);
-        LocalDate today = LocalDate.now();
+        LocalDate startingDate = LocalDate.now();
         int i;
 
+        //set startingDate to lowest date of all teamCalendars
         for (Membership membership : user.getMemberships()) {
             if (startingDate.isAfter(membership.getTeam().getTeamCalendar().getStartingDate())){
                 startingDate = membership.getTeam().getTeamCalendar().getStartingDate();
@@ -49,9 +49,9 @@ public class UserCalendarService {
         }
 
         UserCalendar userCalendar = new UserCalendar();
-//        userCalendar.setStartingDate(startingDate);
+        userCalendar.setStartingDate(startingDate);
         for (Membership membership : user.getMemberships()){
-            differenceInDays = (int) (DAYS.between(startingDate, today));
+            differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
 
             for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
@@ -64,7 +64,7 @@ public class UserCalendarService {
                             userSlot.getSchedules().add(userSchedule);
                         }
                     }
-                    if (!userSlot.getSchedules().isEmpty()) {
+                    if (!(userSlot.getSchedules() == null)) {
                         userSlot.setTimeFrom(slot.getTimeFrom());
                         userSlot.setTimeTo(slot.getTimeTo());
                         userCalendar.getUserPlan().get(i - differenceInDays).getSlots().add(userSlot);
