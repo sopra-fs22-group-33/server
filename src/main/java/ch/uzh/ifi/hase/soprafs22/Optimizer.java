@@ -20,7 +20,7 @@ public class Optimizer {
     HashMap<Integer, ArrayList<Integer>> usersWeek3 = new HashMap<>();
     HashMap<Integer, ArrayList<Integer>> usersWeek4 = new HashMap<>();
 
-    // TODO:create similar per day
+    // TODO:creat similar per day
     // TODO: add overlapping constraint or remove such a possibility
 
     public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
