@@ -2,12 +2,9 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 
 import ch.uzh.ifi.hase.soprafs22.entity.PreferenceCalendar;
-import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.PreferenceCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.PreferenceCalendarPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.PreferenceCalendarService;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
@@ -15,9 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 public class PreferenceCalendarController {

@@ -80,11 +80,10 @@ public class TeamCalendarControllerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        //teamCalendar.setStartingDate("123");
+        teamCalendar.setStartingDate(LocalDate.parse("2000-10-10"));
 
         //creating teamCalendarPostDTO
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate(LocalDate.now());
 
         //defining mocks
         given(teamCalendarService.createTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
@@ -119,7 +118,6 @@ public class TeamCalendarControllerTest {
         teamCalendar.setStartingDate(LocalDate.now());
 
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate(LocalDate.now());
 
 
         given(teamCalendarService.updateTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
