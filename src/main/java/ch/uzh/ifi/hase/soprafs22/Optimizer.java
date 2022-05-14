@@ -79,7 +79,7 @@ public class Optimizer {
                 }
 
                 // add constraint that for each slot requirements should be satisfied
-                solver.addConstraint(req, LpSolve.EQ, slot.getRequirement());
+                // solver.addConstraint(req, LpSolve.EQ, slot.getRequirement());
             }
 
         }
@@ -92,7 +92,7 @@ public class Optimizer {
                 int hours = result.get(value).getSlot().getTimeTo() - result.get(value).getSlot().getTimeFrom(); // TODO: change this
                 req[value] = hours;
             }
-            solver.addConstraint(req, LpSolve.EQ, 40);
+            // solver.addConstraint(req, LpSolve.EQ, 40);
 
         }
 
