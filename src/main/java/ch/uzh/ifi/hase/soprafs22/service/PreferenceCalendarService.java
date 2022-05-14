@@ -61,15 +61,16 @@ public class PreferenceCalendarService {
                 if (day.getSlots() != null) {
                     for (PreferenceSlot slot : day.getSlots()) {
                         slot.setDay(day);
-                    }
+                   }
                 }
             }
         }
 
-        newCalendar = preferenceCalendarRepository.save(newCalendar);
+        PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(newCalendar);
         preferenceCalendarRepository.flush();
+//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "hoi");
         log.debug("Created preferenceCalendar for user: {}",userId);
-        return newCalendar;
+        return savedCalendar;
     }
 
     public PreferenceCalendar updatePreferenceCalendar (User user, PreferenceCalendar updatedCalendar){

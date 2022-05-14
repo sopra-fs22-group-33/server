@@ -7,8 +7,9 @@ import java.io.Serializable;
 
 @Entity
 public class PreferenceSlot implements Serializable {
+    private static final long serialVersionUID = 2L;
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -17,7 +18,7 @@ public class PreferenceSlot implements Serializable {
     @Column(nullable = false)
     private int timeTo;
 
-    @ManyToOne
+    @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumns(value = {
 
             @JoinColumn(

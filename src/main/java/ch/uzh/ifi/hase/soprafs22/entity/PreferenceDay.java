@@ -9,13 +9,13 @@ import java.util.List;
 @Entity
 
 public class PreferenceDay implements Serializable {
-
+    private static final long serialVersionUID = 1L;
     // define composite key
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Long id;
 
-    @ManyToOne
+    @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "preferenceCalendar")
     @JsonIgnore
     private PreferenceCalendar preferenceCalendar;

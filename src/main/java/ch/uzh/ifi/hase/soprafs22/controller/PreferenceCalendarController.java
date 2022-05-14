@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class PreferenceCalendarController {
@@ -34,9 +35,8 @@ public class PreferenceCalendarController {
             // convert API team to internal representation
             PreferenceCalendar userInput = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
             User user = userService.findUserById(userId);
-
             // create preferenceCalendar
-            PreferenceCalendar createdCalendar = preferenceCalendarService.createPreferenceCalendar(userId, userInput);
+            PreferenceCalendar createdCalendar = preferenceCalendarService.createPreferenceCalendar(user.getId(), userInput);
 
             return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(createdCalendar);
         }
