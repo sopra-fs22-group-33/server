@@ -66,7 +66,11 @@ public class TeamCalendarController {
 
             catch (LpSolveException ex) {
                 log.debug("Something did not work with optimizer (I dont know what)" + ex);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something did not work with optimizer, it though an error" );
+            }
+
+            catch (Exception ex) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "lp_solve is not supported (probably)");
             }
         }
 

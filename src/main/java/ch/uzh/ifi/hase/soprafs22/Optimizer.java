@@ -345,6 +345,5 @@ public class Optimizer {
         }
         this.nCols =i;
     }
-
 }
 
