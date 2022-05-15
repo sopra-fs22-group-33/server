@@ -156,6 +156,7 @@ public class TeamCalendarService {
                     int requirement = slot.getRequirement();
                     int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
                     int possible = 0;
+
                     if (slot.getSchedules() != null) {
                         for (Schedule schedule : slot.getSchedules()) {
                            if (schedule.getSpecial()!=-1){
@@ -163,18 +164,41 @@ public class TeamCalendarService {
                            else{ possible  += 1;} // dont have special preference - could theoretically be asigned
                         }
                     }
-                    if (assignment > requirement || (assignment+possible) < requirement ){
+
+                    if (assignment > requirement) {
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
                         EmailService emailService = new EmailService();
                         for (Schedule schedule : slot.getSchedules()) {
-                            try {
-                                emailService.sendEmail(schedule.getUser().getEmail(), "collision detected",
-                                        "Hi " + schedule.getUser().getUsername() + "\nSomeone is trying to steal you highly preferred slot. \nLog in to your shift planner account to fight for it.");
+
+                            if (schedule.getSpecial()==1){ // only send e-mail to affected users - who WANT to work
+                                try {
+                                    emailService.sendEmail(schedule.getUser().getEmail(), "collision detected",
+                                            "Hi " + schedule.getUser().getUsername() + "\nSomeone is trying to steal your highly preferred slot. \nLog in to your shift planner account to fight for it.");
+                                }
+                                catch (Exception e) {
+                                    //do nothing
+                                }
                             }
-                            catch (Exception e) {
-                                //do nothing
+                        }
+                    }
+
+                    if ((assignment+possible) < requirement ){
+                        initializeGame(slot);
+                        teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
+                        //send email notification
+                        EmailService emailService = new EmailService();
+                        for (Schedule schedule : slot.getSchedules()) {
+
+                            if (schedule.getSpecial()==0){ // only send e-mail to affected users - who DONT want to work
+                                try {
+                                    emailService.sendEmail(schedule.getUser().getEmail(), "collision detected",
+                                            "Hi " + schedule.getUser().getUsername() + "\nSomeone is trying to steal your highly preferred slot. \nLog in to your shift planner account to fight for it.");
+                                }
+                                catch (Exception e) {
+                                    //do nothing
+                                }
                             }
                         }
                     }

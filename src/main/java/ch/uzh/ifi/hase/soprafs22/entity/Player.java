@@ -8,7 +8,7 @@ import java.util.List;
 
 @Entity(name = "Player")
 @Table(name = "player")
-public class Player {
+public class Player{
 
     @Id
     @GeneratedValue
@@ -19,6 +19,9 @@ public class Player {
 
     @Column
     private String status;
+
+    @Column
+    private int special;
 
     @Column
     private UserStatus statusOnline;
@@ -63,6 +66,7 @@ public class Player {
         return rank;
     }
 
+
     public void setRank(int rank) {
         this.rank = rank;
     }
@@ -90,4 +94,13 @@ public class Player {
     public void setStatusOnline(UserStatus statusOnline) {
         this.statusOnline = statusOnline;
     }
+
+    public int getSpecial() {
+        return special;
+    }
+
+    public void setSpecial(int special) {
+        this.special = special;
+    }
+
 }
