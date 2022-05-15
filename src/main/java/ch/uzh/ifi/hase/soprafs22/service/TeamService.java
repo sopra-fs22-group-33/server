@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @Transactional
@@ -26,10 +25,12 @@ public class TeamService {
   private final Logger log = LoggerFactory.getLogger(TeamService.class);
 
   private final TeamRepository teamRepository;
+  private final UserRepository userRepository;
 
   @Autowired
-  public TeamService(@Qualifier("teamRepository") TeamRepository teamRepository) {
+  public TeamService(@Qualifier("teamRepository") TeamRepository teamRepository, @Qualifier("userRepository")UserRepository userRepository) {
     this.teamRepository = teamRepository;
+    this.userRepository = userRepository;
   }
 
   public List<Team> getTeams() {
@@ -89,6 +90,25 @@ public class TeamService {
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there are no users in this team");
     }
     return users;
+  }
+
+  public void notifyUsersToUpdatePreferences(ArrayList<Long> userIds, Long id){
+      Team team  = findTeamById(id);
+      EmailService emailService = new EmailService();
+      for (Long userId:userIds){
+          Optional<User> user = userRepository.findById(userId);
+          if(user.isPresent()){
+            User foundUser = user.get(); // TODO: check if the user belongs to this team, optionally
+              try {
+                  emailService.sendEmail(foundUser.getEmail(), "Fill out your preferences!",
+                          "Hi " + foundUser.getUsername() + "\nYour team" + team.getName()+" is waiting for your input! \nLog in to your shift planner account to provide it.");
+              }
+              catch (Exception e) {
+                  //do nothing
+              }
+          }
+          else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+      }
   }
 
   //helpers

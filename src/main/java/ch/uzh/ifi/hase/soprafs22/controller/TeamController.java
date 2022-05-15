@@ -83,6 +83,14 @@ public class TeamController {
     return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(updatedTeam);
   }
 
+    @PutMapping("/teams/{teamId}/notify")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void notifyUsersToProvidePreferences( @RequestBody ArrayList<Long> userIds,@PathVariable("teamId") long id) {
+        teamService.notifyUsersToUpdatePreferences(userIds, id);
+
+    }
+
   @DeleteMapping("/teams/{id}")
   @ResponseStatus(HttpStatus.OK)
   public void deleteTeam(@PathVariable("id") long id, @RequestHeader("token") String token){
