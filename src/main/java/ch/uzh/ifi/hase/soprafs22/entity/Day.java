@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Day implements Serializable {
 
-    // define composite key
+
     @Id
     @GeneratedValue
     private Long id;
@@ -30,7 +30,6 @@ public class Day implements Serializable {
         return teamCalendar;
     }
 
-
     public void setTeamCalendar(TeamCalendar teamcalendar) {
         this.teamCalendar = teamcalendar;
     }
@@ -47,9 +46,7 @@ public class Day implements Serializable {
         return slots;
     }
 
-    public void setSlots(List<Slot> slots){
-        this.slots = slots;}
-
+    public void setSlots(List<Slot> slots){ this.slots = slots;}
 
     public Long getId() {
         return id;
