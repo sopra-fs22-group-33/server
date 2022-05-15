@@ -45,7 +45,7 @@ public class PreferenceCalendarService {
 
     public PreferenceCalendar createPreferenceCalendar(long userId, PreferenceCalendar newCalendar) {
 
-        //checkIfTeamHasCalendar(id);
+        //check if user exists and has a preferenceCalendar
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()){
             User foundUser = user.get();
@@ -54,6 +54,7 @@ public class PreferenceCalendarService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find user");
 
+        //fill new calendar
         if (newCalendar.getPreferencePlan() != null){
             for (PreferenceDay day : newCalendar.getPreferencePlan()) {
                 day.setPreferenceCalendar(newCalendar);
@@ -64,11 +65,17 @@ public class PreferenceCalendarService {
                    }
                 }
             }
+        }else{
+            List<PreferenceDay> preferencePlan = new ArrayList<>();
+            for (int i = 0; i < 7; i++){
+                PreferenceDay preferenceDay = new PreferenceDay();
+                preferencePlan.add(preferenceDay);
+            }
+            newCalendar.setPreferencePlan(preferencePlan);
         }
 
         PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(newCalendar);
         preferenceCalendarRepository.flush();
-//        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "hoi");
         log.debug("Created preferenceCalendar for user: {}",userId);
         return savedCalendar;
     }
