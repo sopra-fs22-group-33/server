@@ -51,7 +51,7 @@ public class TeamCalendarController {
     @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public TeamCalendarGetDTO getOPtimizedTeamCalendars(@PathVariable("teamId") long id) {
+    public TeamCalendarGetDTO getOptimizedTeamCalendars(@PathVariable("teamId") long id) {
         TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
 
         // if there are no collisions

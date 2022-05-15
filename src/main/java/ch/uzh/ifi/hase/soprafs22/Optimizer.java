@@ -1,6 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22;
 
-import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
+
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.*;
 
 
@@ -33,7 +32,8 @@ public class Optimizer {
         addSpecialPreferenceConstraint();
         addHourLimitConstraintWeekly();
         addInternalCollisionsConstraint();
-        //TODO:add daily and collisions external
+        addExternalCollisionsConstraint();
+        //TODO:add daily
 
         // solve the problem
         this.solver.setMaxim();
@@ -58,7 +58,8 @@ public class Optimizer {
         addHourLimitConstraintWeekly();
         addInternalCollisionsConstraint();
 
-        // TODO: add daily, add collisions internal
+        // TODO: add daily
+
         // solve the problem
         this.solver.setMaxim();
         int sol = this.solver.solve();
@@ -143,7 +144,7 @@ public class Optimizer {
                     if (schedule.getSpecial() != -1) {
                         double[] special = new double[nCols+1];
                         special[i] = 1;
-                        this.solver.addConstraint(special, LpSolve.EQ, schedule.getSpecial());
+                        this.solver.addConstraint(special, LpSolve.EQ, schedule.getSpecial()); // exactly equal to value in special
                     }
                     i += 1;
                 }
@@ -215,7 +216,7 @@ public class Optimizer {
                 int hours = result.get(idx-1).getSlot().getTimeTo() - result.get(idx-1).getSlot().getTimeFrom(); // here -1 because I store the result normally ( starting from 0, and in lp_solve they start with 1........)
                 req[idx] = hours;
             }
-            this.solver.addConstraint(req, LpSolve.EQ, 40);
+            this.solver.addConstraint(req, LpSolve.LE, 40); // work not more than 40 h
         }
     }
 
@@ -249,7 +250,7 @@ public class Optimizer {
                     for (int j: overlappingSlots){
                         row[j] = 1;
                     }
-                    this.solver.addConstraint(row, LpSolve.EQ, 1);
+                    this.solver.addConstraint(row, LpSolve.LE, 1);
                 }
             }
         }
@@ -264,6 +265,38 @@ public class Optimizer {
             }
         }
         return overlappingSlots;
+    }
+
+    private void addExternalCollisionsConstraint() throws LpSolveException {
+        int i = 1;
+        for (Day day : teamCalendar.getBasePlan()) {
+            for (Slot slot : day.getSlots()) {
+                for (Schedule schedule : slot.getSchedules()) {
+                    if (checkExternalCollisions(schedule)){ // is the user already has slots assigned at this time, dont assign him here
+                        double[] row = new double[nCols +1];
+                        row[i] = 1;
+                        this.solver.addConstraint(row, LpSolve.EQ, 0);
+                    }
+                    i += 1;
+                }
+            }
+        }
+    }
+
+    private boolean checkExternalCollisions(Schedule schedule){
+        boolean res = false;
+        for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
+            if (anotherSchedule.getSlot().getDay().getTeamCalendar().getId() != schedule.getSlot().getDay().getTeamCalendar().getId()){ // if the slot belongs to another calendar
+                if (schedule.getAssigned() == 1){ // if the user is already assigned there
+                    // TODO: add if day overlaps using this starting day thing
+                    if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
+                        res = true;
+                    }
+                }
+            }
+        }
+        return res;
+
     }
 
 
