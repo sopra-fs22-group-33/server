@@ -25,6 +25,11 @@ public class TeamCalendar implements Serializable {
     @Column
     private LocalDate startingDate;
 
+
+    @Column
+    private Long version;
+
+
     @Column
     private int collisions;
 
@@ -63,6 +68,14 @@ public class TeamCalendar implements Serializable {
 
     public void setCollisions(int collisions) {
         this.collisions = collisions;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }
 

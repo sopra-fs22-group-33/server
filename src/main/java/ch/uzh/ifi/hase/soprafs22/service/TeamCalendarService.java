@@ -69,6 +69,10 @@ public class TeamCalendarService {
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+
+            if (oldCalendar.getVersion()!= newCalendar.getVersion()){
+                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you have an old version, send me get request receive fresh version and then put then show user like there is updated version");
+            }
             oldCalendar.getBasePlan().clear();
             teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();}
