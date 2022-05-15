@@ -78,7 +78,7 @@ public class TeamCalendarController {
         }
 
         log.debug("There are still collisions, you need to play games" );
-        throw new ResponseStatusException(HttpStatus.TOO_EARLY);
+        throw new ResponseStatusException(HttpStatus.TOO_EARLY, "There are still collisions, you need to play games" );
 
     }
 
