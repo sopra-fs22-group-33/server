@@ -18,6 +18,8 @@ public class Optimizer {
     TeamCalendar teamCalendar;
     ArrayList<Schedule> result;
     LpSolve solver;
+    int weeklyLimit = 40;
+    int dailyLimit = 12;
 
 
 
@@ -28,12 +30,15 @@ public class Optimizer {
         this.solver = LpSolve.makeLp(0, nCols);
 
         defineObjective();
+
         addRequirementConstraint();
         addSpecialPreferenceConstraint();
-        addHourLimitConstraintWeekly();
+
         addInternalCollisionsConstraint();
         addExternalCollisionsConstraint();
-        //TODO:add daily
+
+        addHourLimitConstraintWeekly();
+        addHourLimitConstraintDaily();
 
         // solve the problem
         this.solver.setMaxim();
@@ -53,12 +58,14 @@ public class Optimizer {
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException {
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
+
         addRequirementConstraint();
         addSpecialPreferenceConstraint();
-        addHourLimitConstraintWeekly();
+
         addInternalCollisionsConstraint();
 
-        // TODO: add daily
+        addHourLimitConstraintWeekly();
+        addHourLimitConstraintDaily();
 
         // solve the problem
         this.solver.setMaxim();
@@ -76,12 +83,14 @@ public class Optimizer {
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException {
         this.solver = LpSolve.makeLp(0, nCols);
-        defineObjective();
         addRequirementConstraint();
-        addHourLimitConstraintWeekly();
+
+
         addInternalCollisionsConstraint();
 
-        // TODO: add daily
+
+        addHourLimitConstraintWeekly();
+        addHourLimitConstraintDaily();
 
         // solve the problem
         this.solver.setMaxim();
@@ -153,7 +162,7 @@ public class Optimizer {
     }
 
     private void addHourLimitConstraintWeekly() throws LpSolveException {
-        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // key: id of the user, value: indices of columns related to him
+        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // key: id of the user, value: indices of columns related to him in this particular week
         HashMap<Long, ArrayList<Integer>> usersWeek2 = new HashMap<>();
         HashMap<Long, ArrayList<Integer>> usersWeek3 = new HashMap<>();
         HashMap<Long, ArrayList<Integer>> usersWeek4 = new HashMap<>();
@@ -188,10 +197,10 @@ public class Optimizer {
             }
         }
 
-        addConstraintWeekly(usersWeek1);
-        addConstraintWeekly(usersWeek2);
-        addConstraintWeekly(usersWeek3);
-        addConstraintWeekly(usersWeek4);
+        addHourlyConstraint(usersWeek1, this.weeklyLimit);
+        addHourlyConstraint(usersWeek2, this.weeklyLimit);
+        addHourlyConstraint(usersWeek3, this.weeklyLimit);
+        addHourlyConstraint(usersWeek4, this.weeklyLimit);
 
     }
 
@@ -208,7 +217,7 @@ public class Optimizer {
         }
     }
 
-    private void addConstraintWeekly(HashMap<Long, ArrayList<Integer>> usersWeek) throws LpSolveException {
+    private void addHourlyConstraint(HashMap<Long, ArrayList<Integer>> usersWeek, int limit) throws LpSolveException {
         // number of hours should not exceed 40 h for each week
         for (Long key : usersWeek.keySet()) {
             double[] req = new double[nCols +1];
@@ -216,13 +225,27 @@ public class Optimizer {
                 int hours = result.get(idx-1).getSlot().getTimeTo() - result.get(idx-1).getSlot().getTimeFrom(); // here -1 because I store the result normally ( starting from 0, and in lp_solve they start with 1........)
                 req[idx] = hours;
             }
-            this.solver.addConstraint(req, LpSolve.LE, 40); // work not more than 40 h
+            this.solver.addConstraint(req, LpSolve.LE, limit); // work not more than 40 h
         }
     }
 
-    public void addHourLimitConstraintDaily(){
+    public void addHourLimitConstraintDaily() throws LpSolveException {
+        int i = 1;
 
+
+        for (Day day : teamCalendar.getBasePlan()) {
+            HashMap<Long, ArrayList<Integer>> usersDay = new HashMap<>(); // key: id of the user, value: indices of columns related to him in this particular day
+            for (Slot slot : day.getSlots()) {
+                for (Schedule schedule : slot.getSchedules()) {
+                    addToUserHashmap(usersDay,schedule, i);
+                    i += 1;
+                }
+            }
+            addHourlyConstraint(usersDay,  this.dailyLimit);
+
+        }
     }
+
 
     private void addInternalCollisionsConstraint() throws LpSolveException {
         HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots

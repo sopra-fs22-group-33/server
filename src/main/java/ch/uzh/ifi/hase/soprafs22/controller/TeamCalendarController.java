@@ -33,6 +33,7 @@ public class TeamCalendarController {
     public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
+
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
 
@@ -64,7 +65,7 @@ public class TeamCalendarController {
             }
 
             catch (LpSolveException ex) {
-                log.debug("Something did not work with optimizer" + ex);
+                log.debug("Something did not work with optimizer (I dont know what)" + ex);
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }
@@ -97,7 +98,7 @@ public class TeamCalendarController {
         return teamCalendarGetDTOs;
     }
 
-    @DeleteMapping("/teams/{teamId}/calendars")
+    @DeleteMapping("/teams/{teamId}/calendars")  // TODO: ask Nikita if he needs delete endpoint
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     void deleteTeamCalendar(@PathVariable("teamId") long id) {
