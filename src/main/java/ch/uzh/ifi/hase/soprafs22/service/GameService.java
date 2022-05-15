@@ -175,8 +175,6 @@ public class GameService {
                         player.setStatus("dead");
                         player.setChunks(null);
                         player.setRank(rank+1);
-
-
                     }
                     else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                         currentPlayer.setStatus("dead");
