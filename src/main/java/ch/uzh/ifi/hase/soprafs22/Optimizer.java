@@ -187,11 +187,11 @@ public class Optimizer {
                         addToUserHashmap( usersWeek3, schedule, i);
                     }
 
-                    // if week three
+                    // if week four
                     else if (day.getWeekday() < 28) {
                         addToUserHashmap( usersWeek4, schedule, i);
                     }
-
+                    // event if there is some more for week 5, it will be taken into account in daily constraint. 12 by 3 is not exceeding 40
                     i += 1;
                 }
             }
