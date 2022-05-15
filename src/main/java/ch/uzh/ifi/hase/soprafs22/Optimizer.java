@@ -23,7 +23,7 @@ public class Optimizer {
 
 
 
-    public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
+    public Optimizer(TeamCalendar teamCalendar) throws LpSolveException, ArithmeticException {
         this.teamCalendar = teamCalendar;
         computeN();
         this.result = new ArrayList<>();
@@ -55,7 +55,7 @@ public class Optimizer {
         }
     }
 
-    private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException {
+    private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
 
@@ -81,7 +81,7 @@ public class Optimizer {
         }
     }
 
-    private void  solveReducedProblemIgnoreSpecial() throws LpSolveException {
+    private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
         addRequirementConstraint();
 
@@ -102,8 +102,8 @@ public class Optimizer {
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
-            log.debug("Not possible to optimize, ask the admin to change his requirements" );
-            throw new ResponseStatusException(HttpStatus.CONFLICT);
+
+            throw new ArithmeticException("Not possible to optimize, ask the admin to change his requirements");
         }
     }
 

@@ -68,6 +68,10 @@ public class TeamCalendarController {
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something did not work with optimizer, it though an error" );
             }
 
+            catch (ArithmeticException ex) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "no solution found, ask admin to change requirements");
+            }
+
             catch (Exception ex) {
                 throw new ResponseStatusException(HttpStatus.NOT_FOUND, "lp_solve is not supported (probably)");
             }

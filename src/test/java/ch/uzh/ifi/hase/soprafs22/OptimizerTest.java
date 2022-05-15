@@ -1,7 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22;
 
 import ch.uzh.ifi.hase.soprafs22.entity.*;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -92,5 +94,71 @@ public class OptimizerTest {
         assertEquals(0, schedule1.getAssigned());
         assertEquals(1, schedule2.getAssigned());
     }
+
+    @Test
+    public void OptimizerTest_Special_Preference_Collision() throws Exception { // should ignore the special preference to stick to the requirements
+        TeamCalendar teamCalendar = new TeamCalendar();
+        teamCalendar.setId(1L);
+        Day day = new Day();
+        day.setTeamCalendar(teamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        slot.setTimeFrom(11);
+        slot.setTimeTo(14);
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(0);
+        schedule.setBase(1);
+        User user = new User();
+        user.setId(1L);
+        schedule.setUser(user);
+        schedule.setSlot(slot);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        user.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        teamCalendar.setBasePlan(days);
+        teamCalendar.setStartingDate(LocalDate.now());
+
+        Optimizer optimizer = new Optimizer (teamCalendar);
+        assertEquals(1, schedule.getAssigned());
+    }
+
+    @Test
+    public void OptimizerTest_Daily_Hour_Collision() throws Exception {
+        TeamCalendar teamCalendar = new TeamCalendar();
+        teamCalendar.setId(1L);
+        Day day = new Day();
+        day.setTeamCalendar(teamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        slot.setTimeFrom(1);
+        slot.setTimeTo(19);
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(0);
+        schedule.setBase(1);
+        User user = new User();
+        user.setId(1L);
+        schedule.setUser(user);
+        schedule.setSlot(slot);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        user.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        teamCalendar.setBasePlan(days);
+        teamCalendar.setStartingDate(LocalDate.now());
+
+
+        ArithmeticException thrown = Assertions.assertThrows(ArithmeticException.class, () -> {
+            new Optimizer (teamCalendar);
+        }, "Not possible to optimize, ask the admin to change his requirements");
+
+    }
+
 
 }
