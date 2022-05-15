@@ -111,7 +111,7 @@ public class GameService {
 
         makeMove(foundGame, foundPlayer);
 
-        // playerRepository.save(foundPlayer);
+        //playerRepository.save(foundPlayer);
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
         gameRepository.flush();
@@ -209,7 +209,7 @@ public class GameService {
         else {mismatch = requirement - (assignment+possible);}
 
         for (Player player:game.getPlayers()) {
-            if (player.getRank()<= mismatch){ // TODO: check that it is not strict inequality
+            if (player.getRank()< mismatch){
                 removeSpecialPreference(player.getUser(), game.getSlot());
             }
         }
