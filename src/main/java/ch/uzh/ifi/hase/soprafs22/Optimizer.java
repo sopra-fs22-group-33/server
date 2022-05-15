@@ -320,7 +320,6 @@ public class Optimizer {
                             res = true;
                         }
                     }
-
                 }
             }
         }
