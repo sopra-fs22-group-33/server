@@ -13,6 +13,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,16 +70,16 @@ public class TeamCalendarController {
     public TeamCalendarGetDTO getOPtimizedTeamCalendars(@PathVariable("teamId") long id) {
         TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
 
+        // if there are no collisions
         if (!teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
             try {
                 new Optimizer(teamCalendar);
-                 //teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
-                // TODO: implement check that there are np collisions
+                 teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
             }
 
             catch (LpSolveException ex) {
                 log.debug("Something did not work with optimizer" + ex);
-
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }
 

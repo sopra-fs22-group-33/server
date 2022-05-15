@@ -21,7 +21,7 @@ public class Day implements Serializable {
     private TeamCalendar teamCalendar;
 
     @JoinColumn
-    private int weekday;
+    private int weekday; // 0-6 - 1 st week, 7- 13 - 2nd week, 14 - 20 - 3rd week, 21 - 27 - 4th week
 
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<Slot> slots;

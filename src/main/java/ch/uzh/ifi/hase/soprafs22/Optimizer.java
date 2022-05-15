@@ -19,13 +19,13 @@ public class Optimizer {
     public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
         this.teamCalendar = teamCalendar;
         computeN();
-        // intialize arrays
-
         this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
+
         defineObjective();
-        addRequirementConsraint();
+        addRequirementConstraint();
         addSpecialPreferenceConstraint();
+        addHourLimitConstraintWeekly();
 
         // solve the problem
         this.solver.setMaxim();
@@ -38,16 +38,17 @@ public class Optimizer {
 
 
     private void defineObjective() throws LpSolveException {
-        double[] obj = new double[nCols+1];
+        double[] obj = new double[nCols+1]; // should be 1 longer because 0 element is reserved for the rhs
         obj[0] = 0;
         int i = 1;
         // 1) create array obj and define obj function, should be done before constraints for better performance
+
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
                     this.result.add(schedule);
                     obj[i] = schedule.getBase();
-                    this.solver.setBinary(i, true); // if this does not work change to i, because I dont know yet exactly at which point 0 column is reserved for rhs
+                    this.solver.setBinary(i, true);
                     i++;
                 }
             }
@@ -58,7 +59,7 @@ public class Optimizer {
         this.solver.setMaxim();
     }
 
-    private void addRequirementConsraint() throws LpSolveException {
+    private void addRequirementConstraint() throws LpSolveException {
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
@@ -93,39 +94,71 @@ public class Optimizer {
             }
         }
     }
-    private void addHourLimitConstraint() throws LpSolveException {
-        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>();
-        HashMap<Integer, ArrayList<Integer>> usersWeek2 = new HashMap<>();
-        HashMap<Integer, ArrayList<Integer>> usersWeek3 = new HashMap<>();
-        HashMap<Integer, ArrayList<Integer>> usersWeek4 = new HashMap<>();
+    private void addHourLimitConstraintWeekly() throws LpSolveException {
+        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // id of the user, indices of columns related to him
+        HashMap<Long, ArrayList<Integer>> usersWeek2 = new HashMap<>();
+        HashMap<Long, ArrayList<Integer>> usersWeek3 = new HashMap<>();
+        HashMap<Long, ArrayList<Integer>> usersWeek4 = new HashMap<>();
 
-        // TODO:creat similar per day
 
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
-                    //store schedules for each user
-                    // TODO:add similar for 2-3-4 weeks and check this
-                    if (day.getId() < 7) {
-                        if (!usersWeek1.containsKey(schedule.getUser())) {
-                            ArrayList<Integer> tmp = new ArrayList<>();
-                            tmp.add(i);
-                            usersWeek1.put(schedule.getUser().getId(), tmp);
-                        }
+
+                    // if week one
+                    if (day.getWeekday() < 7) {
+                        addToUserHashmap( usersWeek1, schedule, i);
                     }
+
+                    // if week two
+                    else if (day.getWeekday() < 14) {
+                        addToUserHashmap( usersWeek2, schedule, i);
+                    }
+
+                    // if week three
+                    else if (day.getWeekday() < 21) {
+                        addToUserHashmap( usersWeek3, schedule, i);
+                    }
+
+                    // if week three
+                    else if (day.getWeekday() < 28) {
+                        addToUserHashmap( usersWeek4, schedule, i);
+                    }
+
                     i += 1;
                 }
             }
         }
 
+        addConstraintWeekly(usersWeek1);
+        addConstraintWeekly(usersWeek2);
+        addConstraintWeekly(usersWeek3);
+        addConstraintWeekly(usersWeek4);
 
+    }
+
+    private void addToUserHashmap(HashMap<Long, ArrayList<Integer>> usersWeek, Schedule schedule, int i){
+        // if the user is not present in the dictionary, add him and his first index
+        if (!usersWeek.containsKey(schedule.getUser())) {
+            ArrayList<Integer> tmp = new ArrayList<>();
+            tmp.add(i);
+            usersWeek.put(schedule.getUser().getId(), tmp);
+        }
+        else{
+            // if the user is already there, just add a new index into the list
+            usersWeek.get(schedule.getUser().getId()).add(i);
+        }
+    }
+
+    public void addConstraintWeekly(HashMap<Long, ArrayList<Integer>> usersWeek) throws LpSolveException {
         // number of hours should not exceed 40 h for each week
-        for (Long key : usersWeek1.keySet()) {
-            double[] req = new double[nCols];
-            for (Integer value : usersWeek1.get(key)) {
-                int hours = result.get(value).getSlot().getTimeTo() - result.get(value).getSlot().getTimeFrom(); // TODO: change this
-                req[value] = hours;
+        for (Long key : usersWeek.keySet()) {
+            double[] req = new double[nCols +1]; // check that in java array is initialized with 0
+
+            for (Integer idx : usersWeek.get(key)) {
+                int hours = result.get(idx).getSlot().getTimeTo() - result.get(idx).getSlot().getTimeFrom();
+                req[idx] = hours;
             }
             this.solver.addConstraint(req, LpSolve.EQ, 40);
         }
