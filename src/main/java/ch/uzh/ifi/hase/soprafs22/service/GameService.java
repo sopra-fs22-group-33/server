@@ -12,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.lang.reflect.Array;
+import java.util.*;
 
 /**
  * Game Service
@@ -205,15 +203,39 @@ public class GameService {
         }
         int mismatch = 0;
         if (assignment > requirement ){
+            ArrayList<Player> sortedPlayers = sortPlayersByRank(game.getPlayers(), 1); // if too many get assigned, block special of 1
             mismatch= assignment - requirement;
-        }
-        else {mismatch = requirement - (assignment+possible);}
-
-        for (Player player:game.getPlayers()) {
-            if (player.getRank()< mismatch){
-                removeSpecialPreference(player.getUser(), game.getSlot());
+            int i = 0;
+            while(mismatch >0 && i< sortedPlayers.size()){
+                removeSpecialPreference(sortedPlayers.get(i).getUser(), game.getSlot());
+                i+=1;
+                mismatch -=1;
             }
         }
+        else {
+            ArrayList<Player> sortedPlayers = sortPlayersByRank(game.getPlayers(), 0); // if too little of players get assigned, block special of 0
+            mismatch = requirement - (assignment+possible);
+            int i = 0;
+            while(mismatch >0 && i< sortedPlayers.size()){
+                removeSpecialPreference(sortedPlayers.get(i).getUser(), game.getSlot());
+                i+=1;
+                mismatch -=1;
+            }
+            //TODO: some error is mismatch is positive meaning that collision is unresolvable and requireements of team leader are stupid
+        }
+    }
+
+    private ArrayList<Player>  sortPlayersByRank(Set<Player> players, int i){
+
+        ArrayList<Player> selectedPlayers = new ArrayList<>();
+        for (Player player: players){
+            if (player.getSpecial() == i){
+                selectedPlayers.add(player);
+            }
+        }
+
+        Collections.sort(selectedPlayers, (o1, o2) -> Integer.valueOf(o1.getRank()).compareTo(Integer.valueOf(o2.getRank()))); // TODO: make sure that it works
+        return selectedPlayers;
     }
 
     private void removeSpecialPreference(User user, Slot slot){
