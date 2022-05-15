@@ -220,6 +220,10 @@ public class Optimizer {
         }
     }
 
+    public void addHourLimitConstraintDaily(){
+
+    }
+
     private void addInternalCollisionsConstraint() throws LpSolveException {
         HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
 
@@ -296,7 +300,6 @@ public class Optimizer {
             }
         }
         return res;
-
     }
 
 

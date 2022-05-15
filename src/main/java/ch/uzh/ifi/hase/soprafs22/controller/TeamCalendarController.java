@@ -59,6 +59,8 @@ public class TeamCalendarController {
             try {
                 new Optimizer(teamCalendar);
                  teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
+                 TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
+                 return teamCalendarGetDTO;
             }
 
             catch (LpSolveException ex) {
@@ -67,9 +69,9 @@ public class TeamCalendarController {
             }
         }
 
-        TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
+        log.debug("There are still collisions, you need to play games" );
+        throw new ResponseStatusException(HttpStatus.TOO_EARLY);
 
-        return teamCalendarGetDTO;
     }
 
     @GetMapping("/teams/{teamId}/calendars")
