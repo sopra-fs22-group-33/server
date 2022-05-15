@@ -21,8 +21,7 @@ import java.util.List;
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
-    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
-
+    private final Logger log = LoggerFactory.getLogger(TeamCalendarController.class);
     TeamCalendarController(TeamCalendarService teamCalendarService) {
         this.teamCalendarService = teamCalendarService;
     }
@@ -34,22 +33,9 @@ public class TeamCalendarController {
     public TeamCalendarGetDTO createTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
-
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
-        /*try {
-            Optimizer optimizer = new Optimizer(createdCalendar);
-            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
-            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
-        }
-        // TODO: catch exception that cplex lib is not found
 
-        catch (NullPointerException ex){
-            log.debug("Something was null");
-            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
-        }
-
-         */
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
@@ -60,9 +46,7 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
 
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
-
     }
-
 
     @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
@@ -88,7 +72,6 @@ public class TeamCalendarController {
         return teamCalendarGetDTO;
     }
 
-
     @GetMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -98,7 +81,6 @@ public class TeamCalendarController {
 
         return teamCalendarGetDTOs;
     }
-
 
     @GetMapping("/teamCalendars")
     @ResponseStatus(HttpStatus.OK)

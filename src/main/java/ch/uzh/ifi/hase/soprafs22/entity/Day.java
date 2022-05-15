@@ -26,8 +26,6 @@ public class Day implements Serializable {
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<Slot> slots;
 
-
-
     public TeamCalendar getTeamCalendar() {
         return teamCalendar;
     }
@@ -44,7 +42,6 @@ public class Day implements Serializable {
     public void setWeekday(int weekday) {
         this.weekday = weekday;
     }
-
 
     public List<Slot> getSlots(){
         return slots;
