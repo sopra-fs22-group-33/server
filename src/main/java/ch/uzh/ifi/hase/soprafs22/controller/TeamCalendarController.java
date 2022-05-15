@@ -45,7 +45,6 @@ public class TeamCalendarController {
     public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
-
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
     }
 

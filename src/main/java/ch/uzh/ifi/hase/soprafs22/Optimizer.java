@@ -315,10 +315,12 @@ public class Optimizer {
         for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
             if (anotherSchedule.getSlot().getDay().getTeamCalendar().getId() != schedule.getSlot().getDay().getTeamCalendar().getId()){ // if the slot belongs to another calendar
                 if (schedule.getAssigned() == 1){ // if the user is already assigned there
-                    // TODO: add if day overlaps using this starting day thing
-                    if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
-                        res = true;
+                    if (anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day, TODO: check this once again
+                        if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
+                            res = true;
+                        }
                     }
+
                 }
             }
         }
