@@ -94,6 +94,7 @@ public class GameService {
     }
 
 
+    @Transactional
     public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
         Optional<Game> game = gameRepository.findById(gameId);
         if (!game.isPresent()){
@@ -115,8 +116,6 @@ public class GameService {
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
         gameRepository.flush();
-
-
     }
 
     public void makeMove(Game game, Player currentPlayer){
