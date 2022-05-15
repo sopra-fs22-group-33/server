@@ -26,8 +26,6 @@ import static java.lang.Math.exp;
 @Transactional
 public class TeamCalendarService {
 
-
-
     private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
     private final TeamCalendarRepository teamCalendarRepository;
@@ -64,7 +62,6 @@ public class TeamCalendarService {
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
-
     }
 
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
@@ -254,8 +251,5 @@ public class TeamCalendarService {
                 playerRepository.flush();
             }
         }
-
     }
-
-
 }

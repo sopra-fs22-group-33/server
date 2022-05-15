@@ -42,7 +42,6 @@ public class Day implements Serializable {
         this.weekday = weekday;
     }
 
-
     public List<Slot> getSlots(){
         return slots;
     }

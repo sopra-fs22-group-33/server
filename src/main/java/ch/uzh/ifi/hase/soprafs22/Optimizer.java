@@ -1,20 +1,26 @@
 package ch.uzh.ifi.hase.soprafs22;
 
+import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
 
 public class Optimizer {
+    private final Logger log = LoggerFactory.getLogger(Optimizer.class);
 
     int nCols;
     TeamCalendar teamCalendar;
     ArrayList<Schedule> result;
     LpSolve solver;
 
-    // TODO: add overlapping constraint and daily limit constraint
+
 
     public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
         this.teamCalendar = teamCalendar;
@@ -26,14 +32,65 @@ public class Optimizer {
         addRequirementConstraint();
         addSpecialPreferenceConstraint();
         addHourLimitConstraintWeekly();
+        //TODO:add daily and collisions external and add collisions internal
 
         // solve the problem
         this.solver.setMaxim();
         int sol = this.solver.solve();
 
-        // TODO: if the solution returned is optimal, store it else  relax some constraints
-        readSolution();
-        this.solver.deleteLp();
+     // if constraints could be satisfied and all worked
+        if(sol == LpSolve.OPTIMAL){
+            readSolution();
+            this.solver.deleteLp();
+        }
+        else{ // if not try relaxing constraints
+            this.solver.deleteLp();
+            solveReducedProblemIgnoreExternalCollisions();
+        }
+    }
+
+    private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException {
+        this.solver = LpSolve.makeLp(0, nCols);
+        defineObjective();
+        addRequirementConstraint();
+        addSpecialPreferenceConstraint();
+        addHourLimitConstraintWeekly();
+
+        // TODO: add daily, add collisions internal
+        // solve the problem
+        this.solver.setMaxim();
+        int sol = this.solver.solve();
+
+        if(sol == LpSolve.OPTIMAL){
+            readSolution();
+            this.solver.deleteLp();
+        }
+        else{ // if not try relaxing constraints further
+            this.solver.deleteLp();
+            solveReducedProblemIgnoreSpecial();
+        }
+    }
+
+    private void  solveReducedProblemIgnoreSpecial() throws LpSolveException {
+        this.solver = LpSolve.makeLp(0, nCols);
+        defineObjective();
+        addRequirementConstraint();
+        addHourLimitConstraintWeekly();
+        // TODO: add daily, add collisions internal
+
+        // solve the problem
+        this.solver.setMaxim();
+        int sol = this.solver.solve();
+
+        if(sol == LpSolve.OPTIMAL){
+            readSolution();
+            this.solver.deleteLp();
+        }
+        else{ // if not try relaxing constraints further
+            this.solver.deleteLp();
+            log.debug("Not possible to optimize, ask the admin to change his requirements" );
+            throw new ResponseStatusException(HttpStatus.CONFLICT);
+        }
     }
 
 
@@ -153,7 +210,7 @@ public class Optimizer {
         for (Long key : usersWeek.keySet()) {
             double[] req = new double[nCols +1];
             for (Integer idx : usersWeek.get(key)) {
-                int hours = result.get(idx).getSlot().getTimeTo() - result.get(idx).getSlot().getTimeFrom();
+                int hours = result.get(idx-1).getSlot().getTimeTo() - result.get(idx-1).getSlot().getTimeFrom(); // here -1 because I store the result normally ( starting from 0, and in lp_solve they start with 1........)
                 req[idx] = hours;
             }
             this.solver.addConstraint(req, LpSolve.EQ, 40);
