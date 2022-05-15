@@ -111,10 +111,10 @@ public class GameService {
 
         makeMove(foundGame, foundPlayer);
 
-        // playerRepository.save(foundPlayer);
+        //playerRepository.save(foundPlayer);
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
-        playerRepository.flush(); // TODO: prob shouod be gamerepo
+        gameRepository.flush();
 
 
     }
@@ -122,6 +122,7 @@ public class GameService {
     public void makeMove(Game game, Player currentPlayer){
         int size = game.getBoardLength();
 
+        // check if all the players are dead
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
             if (player.getStatus()!= "dead") {
@@ -129,10 +130,12 @@ public class GameService {
             }
         }
         if (stop){
-            finishGame(game);
+            finishGame(game); //  if all the players are dead, finish it
         }
-
-        currentPlayer.setStatus(null);
+        // if the player just ate, change his status to null so thathe stops eating...
+        if (currentPlayer.getStatus() == "ate"){
+            currentPlayer.setStatus(null);
+        }
         List<Location> chunks = currentPlayer.getChunks();
         Location head = chunks.get(0);
 
@@ -143,33 +146,51 @@ public class GameService {
 
                     // change location  of apple to random
                     Random rand = new Random();
-                    int x = rand.nextInt((size) + 1) + 0;
-                    int y = rand.nextInt((size) + 1) + 0;
+                    int x = rand.nextInt(size);
+                    int y = rand.nextInt(size);
                     appleLocation.setX(x);
                     appleLocation.setY(y);
 
                 }
             }
         int rank = 0;
+        Location playerHead;
         for (Player player:game.getPlayers()) {
             if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
                     // if that player is not dead and it is not us
             if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                 List<Location> playerChunks = player.getChunks();
                 for (Location chunkLocation : playerChunks) {
-                    if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                    // handle the case when two heads meet
+                    playerHead = player.getChunks().get(0);
+                    if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
                         currentPlayer.setStatus("dead");
+                        currentPlayer.setChunks(null);
+                        currentPlayer.setRank(rank+1);
+
+                        player.setStatus("dead");
+                        player.setChunks(null);
+                        player.setRank(rank+1);
+
+
+                    }
+                    else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                        currentPlayer.setStatus("dead");
+                        currentPlayer.setChunks(null);
                         currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
 
                     }
-                    // handle the case when two heads meet
-
+                    else if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
+                        currentPlayer.setStatus("dead");
+                        currentPlayer.setChunks(null);
+                        currentPlayer.setRank(rank+1);
+                    }
                 }
             }
         }
     }
 
-    public void finishGame(Game game){
+    private void finishGame(Game game){
         game.setStatus("off");
         int requirement = game.getSlot().getRequirement();
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
@@ -188,13 +209,13 @@ public class GameService {
         else {mismatch = requirement - (assignment+possible);}
 
         for (Player player:game.getPlayers()) {
-            if (player.getRank()<= mismatch){ // TODO: check that it is not strict inequality
+            if (player.getRank()< mismatch){
                 removeSpecialPreference(player.getUser(), game.getSlot());
             }
         }
     }
 
-    public void removeSpecialPreference(User user, Slot slot){
+    private void removeSpecialPreference(User user, Slot slot){
         for (Schedule schedule: slot.getSchedules()){
             if (schedule.getUser().getId() == user.getId()){
                 schedule.setSpecial(-1);
