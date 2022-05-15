@@ -71,7 +71,7 @@ public class TeamCalendarService {
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
 
             if (oldCalendar.getVersion()!= newCalendar.getVersion()){
-                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you have an old version, send me get request receive fresh version and then put then show user like there is updated version");
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "you have an old version, send me get request receive fresh version and then show user like there is updated version");
             }
             oldCalendar.getBasePlan().clear();
             teamCalendarRepository.save(oldCalendar);
@@ -107,10 +107,25 @@ public class TeamCalendarService {
 
             TeamCalendar savedCalendar = teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();
-            checkCollisions(savedCalendar);
             return savedCalendar;
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    public String finalCalendarSubmission(Long id){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            if (checkCollisionsWithoutGameStart(foundCalendar)){
+                checkCollisions(foundCalendar); // makes the games start
+                return "there are collisions and games were started";
+            };
+        // else if collisions are unresolvable by the game return "admin change your requirements, currently they cannot be satisfied" // TODO: implement if game is required: 1. check if it is only one user involved  and  if they actually can be resolved.
+            return "optimizer is working";
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team is not found");
+
     }
 
 
@@ -182,6 +197,7 @@ public class TeamCalendarService {
 
 
     public void checkCollisions(TeamCalendar teamCalendar){
+
         teamCalendar.setCollisions(0);
         for (Day day : teamCalendar.getBasePlan()) {
             if (day.getSlots() != null) {

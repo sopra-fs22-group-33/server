@@ -48,6 +48,12 @@ public class TeamCalendarController {
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
     }
 
+    @GetMapping("/teams/{teamId}/calendars/final")
+    @ResponseStatus(HttpStatus.OK)
+    public String finalSubmission( @PathVariable("teamId") long id) {
+        return teamCalendarService.finalCalendarSubmission(id);
+    }
+
     @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
