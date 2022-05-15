@@ -32,7 +32,8 @@ public class Optimizer {
         addRequirementConstraint();
         addSpecialPreferenceConstraint();
         addHourLimitConstraintWeekly();
-        //TODO:add daily and collisions external and add collisions internal
+        addInternalCollisionsConstraint();
+        //TODO:add daily and collisions external
 
         // solve the problem
         this.solver.setMaxim();
@@ -55,6 +56,7 @@ public class Optimizer {
         addRequirementConstraint();
         addSpecialPreferenceConstraint();
         addHourLimitConstraintWeekly();
+        addInternalCollisionsConstraint();
 
         // TODO: add daily, add collisions internal
         // solve the problem
@@ -76,7 +78,9 @@ public class Optimizer {
         defineObjective();
         addRequirementConstraint();
         addHourLimitConstraintWeekly();
-        // TODO: add daily, add collisions internal
+        addInternalCollisionsConstraint();
+
+        // TODO: add daily
 
         // solve the problem
         this.solver.setMaxim();
@@ -131,7 +135,6 @@ public class Optimizer {
     }
 
     private void addSpecialPreferenceConstraint() throws LpSolveException {
-
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
@@ -149,11 +152,10 @@ public class Optimizer {
     }
 
     private void addHourLimitConstraintWeekly() throws LpSolveException {
-        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // id of the user, indices of columns related to him
+        HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // key: id of the user, value: indices of columns related to him
         HashMap<Long, ArrayList<Integer>> usersWeek2 = new HashMap<>();
         HashMap<Long, ArrayList<Integer>> usersWeek3 = new HashMap<>();
         HashMap<Long, ArrayList<Integer>> usersWeek4 = new HashMap<>();
-
 
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
@@ -205,7 +207,7 @@ public class Optimizer {
         }
     }
 
-    public void addConstraintWeekly(HashMap<Long, ArrayList<Integer>> usersWeek) throws LpSolveException {
+    private void addConstraintWeekly(HashMap<Long, ArrayList<Integer>> usersWeek) throws LpSolveException {
         // number of hours should not exceed 40 h for each week
         for (Long key : usersWeek.keySet()) {
             double[] req = new double[nCols +1];
@@ -216,6 +218,54 @@ public class Optimizer {
             this.solver.addConstraint(req, LpSolve.EQ, 40);
         }
     }
+
+    private void addInternalCollisionsConstraint() throws LpSolveException {
+        HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
+
+        // fill out the hashmap
+        int i = 1;
+        for (Day day : teamCalendar.getBasePlan()) {
+            for (Slot slot : day.getSlots()) {
+                for (Schedule schedule : slot.getSchedules()) {
+                    if (!users.containsKey(schedule.getUser())) {
+                        ArrayList<Integer> tmp = new ArrayList<>();
+                        tmp.add(i);
+                        users.put(schedule.getUser().getId(), tmp);
+                    }
+                    else{
+                        // if the user is already there, just add a new index into the list
+                        users.get(schedule.getUser().getId()).add(i);
+                    }
+                    i += 1;
+                }
+            }
+        }
+
+        for (Long key : users.keySet()) { // for each user
+            for (int idx : users.get(key)) { // for each slot of that user
+                ArrayList<Integer> overlappingSlots = checkForOverlaps(idx, users.get(key));
+                if (overlappingSlots.size() !=0){
+                    double[] row = new double[nCols +1];
+                    for (int j: overlappingSlots){
+                        row[j] = 1;
+                    }
+                    this.solver.addConstraint(row, LpSolve.EQ, 1);
+                }
+            }
+        }
+    }
+
+    private ArrayList<Integer> checkForOverlaps(int idx, ArrayList<Integer> slots){
+        ArrayList<Integer> overlappingSlots = new ArrayList<Integer>();
+        for (int slot: slots){
+            // if starts earlier than idx is finished or finishes later than idx starts
+            if ((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo())||(result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeFrom())){
+                overlappingSlots.add(slot);
+            }
+        }
+        return overlappingSlots;
+    }
+
 
     private void readSolution() throws LpSolveException {
         double[] var = solver.getPtrVariables();
