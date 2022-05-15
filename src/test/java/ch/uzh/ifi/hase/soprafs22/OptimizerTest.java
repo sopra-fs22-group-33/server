@@ -50,29 +50,47 @@ public class OptimizerTest {
     @Test
     public void OptimizerTest_Two_Users() throws Exception {
         TeamCalendar teamCalendar = new TeamCalendar();
+        teamCalendar.setId(1L);
         Day day = new Day();
+        day.setTeamCalendar(teamCalendar);
         Slot slot = new Slot();
-        Schedule schedule = new Schedule();
-        schedule.setSpecial(-1);
-        schedule.setBase(1);
+        slot.setDay(day);
+        slot.setTimeFrom(11);
+        slot.setTimeTo(14);
+
+        Schedule schedule1 = new Schedule();
+        schedule1.setSpecial(-1);
+        schedule1.setBase(1);
+        User user1 = new User();
+        user1.setId(1L);
+        schedule1.setUser(user1);
+        schedule1.setSlot(slot);
+
         Schedule schedule2 = new Schedule();
         schedule2.setSpecial(-1);
         schedule2.setBase(2);
-        List<Schedule> schedules =new ArrayList<>();
-        schedules.add(schedule);
+        User user2 = new User();
+        user2.setId(2L);
+        schedule2.setUser(user2);
+        schedule2.setSlot(slot);
+
+
+        List<Schedule> schedules = new ArrayList<Schedule>();
+        schedules.add(schedule1);
         schedules.add(schedule2);
         slot.setSchedules(schedules);
+        user1.setSchedules(Collections.singletonList(schedule1));
+        user2.setSchedules(Collections.singletonList(schedule2));
         slot.setRequirement(1);
         List<Slot> slots = Collections.singletonList(slot);
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        //teamCalendar.setStartingDate("123");
+        teamCalendar.setStartingDate(LocalDate.now());
 
-       // Optimizer optimizer = new Optimizer (teamCalendar);
-       // assertTrue(optimizer.isFeasible());
-       // assertEquals(0, schedule.getAssigned());
-        //assertEquals(1, schedule2.getAssigned());
+        Optimizer optimizer = new Optimizer (teamCalendar);
+        assertEquals(0, schedule1.getAssigned());
+        assertEquals(1, schedule2.getAssigned());
     }
 
 }
