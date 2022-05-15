@@ -1,20 +1,13 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,13 +25,17 @@ public class UserController {
   private final TeamService teamService;
   private final MembershipService membershipService;
   private final InvitationService invitationService;
+  private final UserCalendarService userCalendarService;
+  private final PreferenceCalendarService preferenceCalendarService;
 
-  UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService) {
+    UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService, PreferenceCalendarService preferenceCalendarService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
     this.invitationService = invitationService;
-  }
+    this.userCalendarService = userCalendarService;
+    this.preferenceCalendarService = preferenceCalendarService;
+    }
 
   @GetMapping("/users")
   @ResponseStatus(HttpStatus.OK)
@@ -69,11 +66,13 @@ public class UserController {
     response.setHeader("Access-Control-Expose-Headers", "token");
     response.addHeader("token", createdUser.getToken());
 
-//    try {
-//      EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
-//    } catch (Exception e) {
-//      //do nothing
-//    }
+    try {
+        EmailService emailService = new EmailService();
+        emailService.sendEmail(createdUser.getEmail(), "welcome to shift planner", "Hi " + createdUser.getUsername() + "\nWelcome to shift planner.\n" +
+                "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+    } catch (Exception e) {
+        //do nothing
+    }
 
     // convert internal representation of user back to API
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(createdUser);
@@ -85,7 +84,7 @@ public class UserController {
   public UserGetDTO getUser(@PathVariable("id") long id) {
     User user = userService.findUserById(id);
     UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
-    
+
     return userGetDTO;
   }
 
@@ -144,6 +143,14 @@ public class UserController {
     if (userService.authorizeAdmin(team, token)){
       User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
       Invitation invitation = invitationService.createInvitation(team, userToAdd);
+        try {
+            EmailService emailService = new EmailService();
+            emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
+                    "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
+                            "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+        } catch (Exception e) {
+            //do nothing
+        }
       return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
     return null;
@@ -167,5 +174,16 @@ public class UserController {
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
     }
+  }
+
+  @GetMapping("/users/{userId}/calendars")
+  @ResponseStatus(HttpStatus.OK)
+  @ResponseBody
+  public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId ){ //@RequestHeader("token") String token
+//      if (userService.authorizeUser(userId, token)) {
+          User user = userService.findUserById(userId);
+          UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
+//      }
+      return DTOMapper.INSTANCE.convertEntityToUserCalendarGetDTO(userCalendar);
   }
 }

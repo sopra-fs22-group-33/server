@@ -37,9 +37,11 @@ public class Slot implements Serializable {
     @JsonIgnore
     private Day day;
 
+
     @Column
     private int requirement;
 
+    //TODO check if slots get deleted by cascade
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
 
@@ -90,6 +92,7 @@ public class Slot implements Serializable {
     public void setRequirement(int requirement) {
         this.requirement = requirement;
     }
+
 
 /*
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

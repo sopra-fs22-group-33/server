@@ -37,7 +37,7 @@ public class TeamCalendarService {
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
-                               @Qualifier("userRepository") UserRepository userRepository,  @Qualifier("playerRepository") PlayerRepository playerRepository,
+                               @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
                                @Qualifier("dayRepository") DayRepository dayRepository) {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
@@ -119,7 +119,7 @@ public class TeamCalendarService {
             foundTeam.setTeamCalendar(newCalendar);
             newCalendar.setTeam(foundTeam);
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find team");
 
         if (newCalendar.getBasePlan() != null){
             for (Day day : newCalendar.getBasePlan()) {
@@ -183,7 +183,7 @@ public class TeamCalendarService {
             if (day.getSlots() != null) {
                 for (Slot slot : day.getSlots()) {
                     int requirement = slot.getRequirement();
-                    int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+                    int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
                     int possible = 0;
                     if (slot.getSchedules() != null) {
                         for (Schedule schedule : slot.getSchedules()) {
@@ -195,7 +195,17 @@ public class TeamCalendarService {
                     if (assignment > requirement || (assignment+possible) < requirement ){
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
-
+                        //send email notification
+                        EmailService emailService = new EmailService();
+                        for (Schedule schedule : slot.getSchedules()) {
+                            try {
+                                emailService.sendEmail(schedule.getUser().getEmail(), "collision detected",
+                                        "Hi " + schedule.getUser().getUsername() + "\nSomeone is trying to steal you highly preferred slot. \nLog in to your shift planner account to fight for it.");
+                            }
+                            catch (Exception e) {
+                                //do nothing
+                            }
+                        }
                     }
                 }
             }

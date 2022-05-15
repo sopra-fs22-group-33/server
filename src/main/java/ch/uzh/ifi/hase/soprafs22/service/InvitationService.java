@@ -30,15 +30,20 @@ public class InvitationService {
   }
 
   //TODO check if user is invited or member already
-  public Invitation createInvitation(Team team, User user) {    
-    Invitation invitation = new Invitation();
-    invitation.setUser(user);
-    invitation.setTeam(team);
-    invitation = invitationRepository.save(invitation);
-    invitationRepository.flush();
+  public Invitation createInvitation(Team team, User user) {
+    try {
+        Invitation inv = this.findInvitation(team, user.getId());
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "user " + inv.getUser().getEmail() + " is already invited");
+    }catch (Exception ex){
+        Invitation invitation = new Invitation();
+        invitation.setUser(user);
+        invitation.setTeam(team);
+        invitation = invitationRepository.save(invitation);
+        invitationRepository.flush();
 
-    log.debug("Created Information for invitation: {}", invitation);
-    return invitation;
+        log.debug("Created Information for invitation: {}", invitation);
+        return invitation;
+    }
   }
 
   public void deleteInvitation(long invitationId){

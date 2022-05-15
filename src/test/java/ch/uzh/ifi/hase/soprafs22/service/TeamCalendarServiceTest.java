@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -88,10 +89,10 @@ public class TeamCalendarServiceTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         testTeamCalendar.setBasePlan(days);
-        testTeamCalendar.setStartingDate("123");
+        //testTeamCalendar.setStartingDate("123");
 
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate("123");
+        teamCalendarPostDTO.setStartingDate(LocalDate.now());
 
         TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
 
