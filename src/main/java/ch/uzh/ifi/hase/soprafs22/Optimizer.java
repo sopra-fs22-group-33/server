@@ -14,7 +14,7 @@ public class Optimizer {
     ArrayList<Schedule> result;
     LpSolve solver;
 
-    // TODO: add overlapping constraint
+    // TODO: add overlapping constraint and daily limit constraint
 
     public Optimizer(TeamCalendar teamCalendar) throws LpSolveException {
         this.teamCalendar = teamCalendar;
@@ -39,10 +39,8 @@ public class Optimizer {
 
     private void defineObjective() throws LpSolveException {
         double[] obj = new double[nCols+1]; // should be 1 longer because 0 element is reserved for the rhs
-        obj[0] = 0;
         int i = 1;
         // 1) create array obj and define obj function, should be done before constraints for better performance
-
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
@@ -64,7 +62,6 @@ public class Optimizer {
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 double[] req = new double[nCols+1];
-                req[0]=0;
                 for (Schedule schedule : slot.getSchedules()) {
                     req[i] = 1;
                     i += 1;
@@ -85,7 +82,6 @@ public class Optimizer {
                     // if the user has special req, create constraints
                     if (schedule.getSpecial() != -1) {
                         double[] special = new double[nCols+1];
-                        special[0] = 0;
                         special[i] = 1;
                         this.solver.addConstraint(special, LpSolve.EQ, schedule.getSpecial());
                     }
@@ -94,6 +90,7 @@ public class Optimizer {
             }
         }
     }
+
     private void addHourLimitConstraintWeekly() throws LpSolveException {
         HashMap<Long, ArrayList<Integer>> usersWeek1 = new HashMap<>(); // id of the user, indices of columns related to him
         HashMap<Long, ArrayList<Integer>> usersWeek2 = new HashMap<>();
@@ -154,8 +151,7 @@ public class Optimizer {
     public void addConstraintWeekly(HashMap<Long, ArrayList<Integer>> usersWeek) throws LpSolveException {
         // number of hours should not exceed 40 h for each week
         for (Long key : usersWeek.keySet()) {
-            double[] req = new double[nCols +1]; // check that in java array is initialized with 0
-
+            double[] req = new double[nCols +1];
             for (Integer idx : usersWeek.get(key)) {
                 int hours = result.get(idx).getSlot().getTimeTo() - result.get(idx).getSlot().getTimeFrom();
                 req[idx] = hours;
@@ -170,7 +166,6 @@ public class Optimizer {
             this.result.get(j).setAssigned((int) var[j]);
         }
     }
-
 
 
     private void computeN(){
