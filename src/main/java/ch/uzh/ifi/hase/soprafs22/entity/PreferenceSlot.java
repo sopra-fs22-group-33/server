@@ -7,9 +7,9 @@ import java.io.Serializable;
 
 @Entity
 public class PreferenceSlot implements Serializable {
-    private static final long serialVersionUID = 2L;
+//    private static final long serialVersionUID = 2L;
     @Id
-//    @GeneratedValue
+    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
@@ -17,6 +17,9 @@ public class PreferenceSlot implements Serializable {
 
     @Column(nullable = false)
     private int timeTo;
+
+    @Column
+    private int base;
 
     @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumns(value = {
@@ -61,5 +64,13 @@ public class PreferenceSlot implements Serializable {
 
     public void setDay(PreferenceDay day) {
         this.day = day;
+    }
+
+    public int getBase() {
+        return base;
+    }
+
+    public void setBase(int base) {
+        this.base = base;
     }
 }

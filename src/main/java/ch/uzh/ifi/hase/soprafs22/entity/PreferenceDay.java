@@ -9,10 +9,10 @@ import java.util.List;
 @Entity
 
 public class PreferenceDay implements Serializable {
-    private static final long serialVersionUID = 1L;
+//    private static final long serialVersionUID = 1L;
     // define composite key
     @Id
-//    @GeneratedValue
+    @GeneratedValue
     private Long id;
 
     @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
