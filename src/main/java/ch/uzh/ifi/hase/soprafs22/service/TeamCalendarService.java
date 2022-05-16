@@ -193,8 +193,9 @@ public class TeamCalendarService {
     }
 
 
-    public String checkCollisions(TeamCalendar teamCalendar){
+    public int checkCollisions(TeamCalendar teamCalendar){ // return 1 - if the game/games created; 0 - nothing is done, -1 terrible collision, inform admin
         boolean isGame = false;
+        boolean isBadCollision = false;
 
         teamCalendar.setCollisions(0); // remove this
         for (Day day : teamCalendar.getBasePlan()) {
@@ -212,7 +213,7 @@ public class TeamCalendarService {
                         }
                     }
 
-                    if (assignment > requirement) {
+                    if ((assignment > requirement) && (assignment >1) && (requirement >1)) { // if too many people want and it is not 2 trivial cases : only one user involved and no requirements at all
                         isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
@@ -255,7 +256,10 @@ public class TeamCalendarService {
             }
         }
 
-        return isGame;
+       if (isGame){
+           return 1;
+       }
+       else return 0;
     }
 
     public void initializeGame(Slot slot) {
