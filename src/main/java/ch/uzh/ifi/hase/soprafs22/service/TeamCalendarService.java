@@ -181,12 +181,21 @@ public class TeamCalendarService {
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
-            if (true){
-                checkCollisions(foundCalendar); // makes the games start
+            int res = checkCollisions(foundCalendar);
+
+
+            if (res == 0){
+                // TODO: start the optimizer on another thread
+                return "optimizer is working";
+            }
+            else if (res ==1){
                 return "there are collisions and games were started";
-            };
-            // else if collisions are unresolvable by the game return "admin change your requirements, currently they cannot be satisfied" // TODO: implement if game is required: 1. check if it is only one user involved  and  if they actually can be resolved.
-            return "optimizer is working";
+            }
+            else { // -1 case
+                // TODO: send e mail
+                return "admin has stupid requirement, I have sent him email";
+            }
+
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team is not found");
 
@@ -204,16 +213,22 @@ public class TeamCalendarService {
                     int requirement = slot.getRequirement();
                     int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
                     int possible = 0;
+                    int lazy = 0;
 
                     if (slot.getSchedules() != null) {
                         for (Schedule schedule : slot.getSchedules()) {
                            if (schedule.getSpecial()!=-1){
                             assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                           if(schedule.getSpecial() ==0){lazy+=1;}
                            else{ possible  += 1;} // dont have special preference - could theoretically be asigned
                         }
                     }
 
-                    if ((assignment > requirement) && (assignment >1) && (requirement >1)) { // if too many people want and it is not 2 trivial cases : only one user involved and no requirements at all
+                    if(requirement> (assignment+possible) ){ // irresolvable collision
+                        return -1;
+                    }
+  // PART 1 : OVERSUPPLY OF USERS
+                    if ((assignment > requirement) && (assignment >1) && (requirement >0)) { // if too many people want and it is not trivial case with just one player or trivial case with no requirements.
                         isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
@@ -233,7 +248,18 @@ public class TeamCalendarService {
                         }
                     }
 
-                    if ((assignment+possible) < requirement ){
+                    // trivial collision resolution
+                    // if it is just one user causing  problems, turn off his special
+                    // if no requirement is set - > game is meaningless since you just need to turn off all the special 1 on that one
+                    else if ((assignment > requirement) && ((assignment ==1)|| (requirement ==0))) {
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial() == 1) { schedule.setSpecial(-1);
+                            }
+                        }
+                    }
+
+// PART 2: UNDERSUPPLY
+                    else if ((assignment+possible) < requirement && (requirement-possible-assignment!=1|| lazy!=1 ) ){ // if there are too littleusers and it is not trivial case when just one user is a problem // TODO: make sure that there are no other corner cases
                         isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
@@ -252,7 +278,15 @@ public class TeamCalendarService {
                             }
                         }
                     }
-                }
+
+                    // trivial collision resolution - if it is juts one lazy and he is the bottleneck - switch off his special preferences
+                    else if ((assignment+possible) < requirement && (requirement-possible-assignment==1) && lazy==1 ){
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial() == 0) { schedule.setSpecial(-1);
+                            }
+                        }
+                    }
+                    }
             }
         }
 
