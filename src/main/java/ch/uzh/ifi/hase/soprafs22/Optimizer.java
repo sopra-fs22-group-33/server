@@ -48,15 +48,14 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
-
+            fixPlan();
         }
         else{ // if not try relaxing constraints
             this.solver.deleteLp();
-            solveReducedProblemIgnoreSpecial();
+            solveReducedProblemIgnoreExternalCollisions();
         }
     }
 
-    // always need to account external collisions otherwise cant depict overlapping slots
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
@@ -76,7 +75,7 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
-
+            fixPlan();
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
@@ -103,6 +102,7 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+            fixPlan();
 
         }
         else{ // if not try relaxing constraints further
@@ -112,6 +112,39 @@ public class Optimizer {
         }
     }
 
+    private void fixPlan(){
+        // fix the dates by adjusting the pointers
+        this.teamCalendar.setBasePlanFixed(this.teamCalendar.getBasePlan());
+        this.teamCalendar.setStartingDateFixed(this.teamCalendar.getStartingDate());
+
+        // copy the content into the baseLan a
+        int latestDay = 0;
+        List<Day> basePlan = new ArrayList<>();
+        for (Day dayFixed: teamCalendar.getBasePlanFixed()){
+            if (dayFixed.getWeekday()>latestDay){
+                latestDay = dayFixed.getWeekday();
+            }
+
+            Day day = new Day();
+            day.setTeamCalendar(dayFixed.getTeamCalendar());
+            day.setWeekday(dayFixed.getWeekday());
+            List<Slot> slots = new ArrayList<>();
+            for (Slot fixedSlot: day.getSlots()){
+                Slot slot = new Slot();
+                slot.setDay(day);
+                slot.setTimeTo(fixedSlot.getTimeTo());
+                slot.setTimeFrom(fixedSlot.getTimeFrom());
+                slot.setRequirement(fixedSlot.getRequirement());
+                slots.add(slot);
+            }
+            day.setSlots(slots);
+            teamCalendar.setBasePlan(basePlan);
+            teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
+        }
+
+
+
+    }
 
 
     private void defineObjective() throws LpSolveException {
