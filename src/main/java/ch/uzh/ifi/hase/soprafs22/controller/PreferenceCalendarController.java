@@ -56,7 +56,7 @@ public class PreferenceCalendarController {
     @PutMapping("/users/{userId}/preferences")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public PreferenceCalendarGetDTO getPreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO, @RequestHeader("token") String token) {
+    public PreferenceCalendarGetDTO updatePreferenceCalendar(@PathVariable("userId") long userId, @RequestBody PreferenceCalendarPostDTO preferenceCalendarPostDTO, @RequestHeader("token") String token) {
         if (userService.authorizeUser(userId, token)) {
             User user = userService.findUserById(userId);
             PreferenceCalendar updatedCalendar = DTOMapper.INSTANCE.convertPreferenceCalendarPostDTOtoEntity(preferenceCalendarPostDTO);
