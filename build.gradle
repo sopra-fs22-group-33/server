@@ -49,7 +49,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.5.2'
 
     implementation 'com.sendgrid:sendgrid-java:4.4.1'
-    implementation fileTree(dir: 'lib', include: ['*.jar'])
+    implementation 'com.datumbox:lpsolve:5.5.2.0'
 }
 
 bootJar {
