@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
@@ -193,6 +194,9 @@ public class GameService {
         int requirement = game.getSlot().getRequirement();
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
         int possible = 0;
+        //if (!checkCollisionWithoutGameStart){
+         //   new Optimizer(game.getSlot().getDay().getTeamCalendar());   // TODO: uncomment this after pull to master
+       // }
         if (game.getSlot().getSchedules() != null) {
             for (Schedule schedule :  game.getSlot().getSchedules()) {
                 if (schedule.getSpecial()!=-1){
