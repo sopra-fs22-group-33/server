@@ -15,7 +15,7 @@ public class PreferenceDay implements Serializable {
     @GeneratedValue
     private Long id;
 
-    @ManyToOne //(cascade = {CascadeType.ALL, CascadeType.REFRESH})
+    @ManyToOne (cascade = {CascadeType.ALL, CascadeType.REFRESH})
     @JoinColumn(name = "preference_calendar_id")
     @JsonIgnore
     private PreferenceCalendar preferenceCalendar;
@@ -23,7 +23,7 @@ public class PreferenceDay implements Serializable {
     @JoinColumn
     private int weekday;
 
-    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany (mappedBy = "day", cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<PreferenceSlot> slots;
 
     public Long getId() {

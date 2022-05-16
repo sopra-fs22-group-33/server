@@ -21,7 +21,7 @@ public class PreferenceCalendar implements Serializable {
     @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "preferenceCalendar")//, cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "preferenceCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<PreferenceDay> preferencePlan;
 
     public Long getId() {

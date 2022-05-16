@@ -81,24 +81,11 @@ public class PreferenceCalendarService {
     }
 
     public PreferenceCalendar updatePreferenceCalendar (User user, PreferenceCalendar updatedCalendar){
-        //clear old calendar
         PreferenceCalendar oldCalendar = user.getPreferenceCalendar();
-        oldCalendar.getPreferencePlan().clear();
-        preferenceCalendarRepository.save(oldCalendar);
-        preferenceCalendarRepository.flush();
 
-        for (PreferenceDay day : updatedCalendar.getPreferencePlan()){
-//            PreferenceDay newDay = new PreferenceDay();
-//            newDay.setWeekday(day.getWeekday());
-//            newDay.setSlots(day.getSlots());
-//            oldCalendar.getPreferencePlan().add(newDay);
-//            newDay.setPreferenceCalendar(oldCalendar);
-            oldCalendar.getPreferencePlan().add(day);
-            day.setPreferenceCalendar(oldCalendar);
-            if (day.getSlots() != null) {
-                for (PreferenceSlot slot : day.getSlots()) {
-                    slot.setDay(day);
-                }
+        for (PreferenceDay day : oldCalendar.getPreferencePlan()){
+            for (PreferenceSlot slot : day.getSlots()){
+                slot.setBase(updatedCalendar.getPreferencePlan().get(oldCalendar.getPreferencePlan().indexOf(day)).getSlots().get(day.getSlots().indexOf(slot)).getBase());
             }
         }
         PreferenceCalendar savedCalendar = preferenceCalendarRepository.save(oldCalendar);
