@@ -192,7 +192,22 @@ public class TeamCalendarService {
                 return "there are collisions and games were started";
             }
             else { // -1 case
-                // TODO: send e mail
+                EmailService emailService = new EmailService();
+                try {
+
+                    for (Membership membership: foundCalendar.getTeam().getMemberships()){
+                        if (membership.getIsAdmin()){
+                            User admin = membership.getUser();
+                            emailService.sendEmail(admin.getEmail(), "collision detected",
+                                    "Hi "+  admin.getUsername() + "\nSome requirements for your team" + foundCalendar.getTeam() + "cannot be satisfied. \nLog in to your shift planner account to correct them.");
+                            break;
+                        }
+                    }
+
+                }
+                catch (Exception e) {
+                    //do nothing
+                }
                 return "admin has stupid requirement, I have sent him email";
             }
 
