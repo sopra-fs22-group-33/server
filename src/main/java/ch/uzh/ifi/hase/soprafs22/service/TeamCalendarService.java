@@ -193,8 +193,10 @@ public class TeamCalendarService {
     }
 
 
-    public void checkCollisions(TeamCalendar teamCalendar){
-        teamCalendar.setCollisions(0);
+    public String checkCollisions(TeamCalendar teamCalendar){
+        boolean isGame = false;
+
+        teamCalendar.setCollisions(0); // remove this
         for (Day day : teamCalendar.getBasePlan()) {
             if (day.getSlots() != null) {
                 for (Slot slot : day.getSlots()) {
@@ -211,6 +213,7 @@ public class TeamCalendarService {
                     }
 
                     if (assignment > requirement) {
+                        isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
@@ -230,6 +233,7 @@ public class TeamCalendarService {
                     }
 
                     if ((assignment+possible) < requirement ){
+                        isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
@@ -250,6 +254,8 @@ public class TeamCalendarService {
                 }
             }
         }
+
+        return isGame;
     }
 
     public void initializeGame(Slot slot) {
