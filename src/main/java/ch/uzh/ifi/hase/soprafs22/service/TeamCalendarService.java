@@ -176,6 +176,22 @@ public class TeamCalendarService {
         return x;
     }
 
+    public String finalCalendarSubmission(Long id){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            if (true){
+                checkCollisions(foundCalendar); // makes the games start
+                return "there are collisions and games were started";
+            };
+            // else if collisions are unresolvable by the game return "admin change your requirements, currently they cannot be satisfied" // TODO: implement if game is required: 1. check if it is only one user involved  and  if they actually can be resolved.
+            return "optimizer is working";
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team is not found");
+
+    }
+
 
     public void checkCollisions(TeamCalendar teamCalendar){
         teamCalendar.setCollisions(0);
