@@ -26,8 +26,6 @@ import static java.lang.Math.exp;
 @Transactional
 public class TeamCalendarService {
 
-
-
     private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
     private final TeamCalendarRepository teamCalendarRepository;
@@ -59,6 +57,11 @@ public class TeamCalendarService {
             return foundTeam.getTeamCalendar();
       }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
+        teamCalendarRepository.save(newCalendar);
+        teamCalendarRepository.flush();
     }
 
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
@@ -147,6 +150,32 @@ public class TeamCalendarService {
         log.debug("Created calendar for Team: {}",id);
         return newCalendar;
     }
+
+    public boolean checkCollisionsWithoutGameStart(TeamCalendar teamCalendar){
+        boolean x = false;
+        for (Day day : teamCalendar.getBasePlan()) {
+            if (day.getSlots() != null) {
+                for (Slot slot : day.getSlots()) {
+                    int requirement = slot.getRequirement();
+                    int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+                    int possible = 0;
+                    if (slot.getSchedules() != null) {
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial()!=-1){
+                                assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                            else{ possible  += 1;} // dont have special preference - could theoretically be asigned
+                        }
+                    }
+                    if (assignment > requirement || (assignment+possible) < requirement ){
+                        x = true;
+
+                    }
+                }
+            }
+        }
+        return x;
+    }
+
 
     public void checkCollisions(TeamCalendar teamCalendar){
         teamCalendar.setCollisions(0);
@@ -250,8 +279,5 @@ public class TeamCalendarService {
                 playerRepository.flush();
             }
         }
-
     }
-
-
 }

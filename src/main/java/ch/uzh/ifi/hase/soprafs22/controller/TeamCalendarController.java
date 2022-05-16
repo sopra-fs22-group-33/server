@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
+import lpsolve.LpSolveException;
 import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
@@ -11,14 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
-    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
-
+    private final Logger log = LoggerFactory.getLogger(TeamCalendarController.class);
     TeamCalendarController(TeamCalendarService teamCalendarService) {
         this.teamCalendarService = teamCalendarService;
     }
@@ -33,19 +36,7 @@ public class TeamCalendarController {
 
         // create teamCalendar
         TeamCalendar createdCalendar = teamCalendarService.createTeamCalendar(id, userInput);
-        /*try {
-            Optimizer optimizer = new Optimizer(createdCalendar);
-            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
-            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
-        }
-        // TODO: catch exception that cplex lib is not found
 
-        catch (NullPointerException ex){
-            log.debug("Something was null");
-            return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
-        }
-
-         */
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
@@ -54,24 +45,42 @@ public class TeamCalendarController {
     public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
-
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
-
-        /*
-        try {
-            Optimizer optimizer = new Optimizer(createdCalendar);
-            TeamCalendar modifiedCalendar = teamCalendarService.createTeamCalendar(id, createdCalendar);
-        }
-        // TODO: catch exception that cplex lib is not found
-
-        catch (NullPointerException ex){
-            log.debug("Something was null");
-        }
-
-         */
-
     }
 
+    @GetMapping("/teams/{teamId}/calendars/optimize")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public TeamCalendarGetDTO getOptimizedTeamCalendars(@PathVariable("teamId") long id) {
+        TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
+
+        // if there are no collisions
+        if (!teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
+            try {
+                new Optimizer(teamCalendar);
+                 teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
+                 TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
+                 return teamCalendarGetDTO;
+            }
+
+            catch (LpSolveException ex) {
+                log.debug("Something did not work with optimizer (I dont know what)" + ex);
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something did not work with optimizer, it though an error" );
+            }
+
+            catch (ArithmeticException ex) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "no solution found, ask admin to change requirements");
+            }
+
+            catch (Exception ex) {
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "lp_solve is not supported (probably)");
+            }
+        }
+
+        log.debug("There are still collisions, you need to play games" );
+        throw new ResponseStatusException(HttpStatus.TOO_EARLY, "There are still collisions, you need to play games" );
+
+    }
 
     @GetMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.OK)
@@ -79,10 +88,8 @@ public class TeamCalendarController {
     public TeamCalendarGetDTO getTeamCalendars(@PathVariable("teamId") long id) {
         TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
         TeamCalendarGetDTO teamCalendarGetDTOs = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
-
         return teamCalendarGetDTOs;
     }
-
 
     @GetMapping("/teamCalendars")
     @ResponseStatus(HttpStatus.OK)
@@ -95,14 +102,6 @@ public class TeamCalendarController {
             teamCalendarGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar));
         }
         return teamCalendarGetDTOs;
-    }
-
-    @DeleteMapping("/teams/{teamId}/calendars")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    void deleteTeamCalendar(@PathVariable("teamId") long id) {
-        //TeamCalendar teamCalendar = teamCalendarService.deleteCalendar(id);
-        return;
     }
 
 }

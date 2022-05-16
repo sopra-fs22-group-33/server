@@ -17,15 +17,13 @@ public class Schedule implements Serializable {
     private Long id;
 
     @ManyToOne ()
-    @JoinColumn(name = "slot_id")
+    @JoinColumn(name = "slot_id", nullable = false)
     @JsonIgnore
     private Slot slot;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
-
 
     @Column
     private String role;
