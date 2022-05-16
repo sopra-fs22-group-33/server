@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
 import org.slf4j.Logger;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.Math.exp;
 
@@ -34,6 +37,8 @@ public class TeamCalendarService {
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
 
+    private final ScheduledExecutorService executorService;
+
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
@@ -44,6 +49,7 @@ public class TeamCalendarService {
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     public  List<TeamCalendar> getCalendars() {
@@ -176,25 +182,94 @@ public class TeamCalendarService {
         return x;
     }
 
+    public String finalCalendarSubmission(Long id){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            int res = checkCollisions(foundCalendar);
 
-    public void checkCollisions(TeamCalendar teamCalendar){
-        teamCalendar.setCollisions(0);
+
+            if (res == 0){
+
+                Runnable task = () ->{
+                    try{
+                        new Optimizer(foundCalendar);}
+                    catch (Exception ex){
+                        log.debug("somehting probbaly went wrong with the lp_solve");
+                    }
+                     // here is the old optimizer used because the new one is not on this branch - TODO: DONT FORGET TO CHANGE THIS LINE
+                    // TODO: CHECK THE EXCEPTIONS AGAIN
+                };
+
+
+                try{
+
+                    this.executorService.execute(task);
+                }
+                catch (Exception ex) {
+                    ; // I dont know why this could go wrong
+                }
+
+                return "optimizer is working";
+            }
+            else if (res ==1){
+                return "there are collisions and games were started";
+            }
+            else { // -1 case
+                EmailService emailService = new EmailService();
+                try {
+
+                    for (Membership membership: foundCalendar.getTeam().getMemberships()){
+                        if (membership.getIsAdmin()){
+                            User admin = membership.getUser();
+                            emailService.sendEmail(admin.getEmail(), "collision detected",
+                                    "Hi "+  admin.getUsername() + "\nSome requirements for your team" + foundCalendar.getTeam() + "cannot be satisfied. \nLog in to your shift planner account to correct them.");
+                            break;
+                        }
+                    }
+
+                }
+                catch (Exception e) {
+                    //do nothing
+                }
+                return "admin has stupid requirement, I have sent him email";
+            }
+
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team is not found");
+
+    }
+
+
+    public int checkCollisions(TeamCalendar teamCalendar){ // return 1 - if the game/games created; 0 - nothing is done, -1 terrible collision, inform admin
+        boolean isGame = false;
+        boolean isBadCollision = false;
+
+        teamCalendar.setCollisions(0); // remove this
         for (Day day : teamCalendar.getBasePlan()) {
             if (day.getSlots() != null) {
                 for (Slot slot : day.getSlots()) {
                     int requirement = slot.getRequirement();
                     int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
                     int possible = 0;
+                    int lazy = 0;
 
                     if (slot.getSchedules() != null) {
                         for (Schedule schedule : slot.getSchedules()) {
                            if (schedule.getSpecial()!=-1){
                             assignment  += schedule.getSpecial();} // should be or should not be assigned.
+                           if(schedule.getSpecial() ==0){lazy+=1;}
                            else{ possible  += 1;} // dont have special preference - could theoretically be asigned
                         }
                     }
 
-                    if (assignment > requirement) {
+                    if(requirement> (assignment+possible) ){ // irresolvable collision
+                        return -1;
+                    }
+  // PART 1 : OVERSUPPLY OF USERS
+                    if ((assignment > requirement) && (assignment >1) && (requirement >0)) { // if too many people want and it is not trivial case with just one player or trivial case with no requirements.
+                        isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
@@ -213,7 +288,19 @@ public class TeamCalendarService {
                         }
                     }
 
-                    if ((assignment+possible) < requirement ){
+                    // trivial collision resolution
+                    // if it is just one user causing  problems, turn off his special
+                    // if no requirement is set - > game is meaningless since you just need to turn off all the special 1 on that one
+                    else if ((assignment > requirement) && ((assignment ==1)|| (requirement ==0))) {
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial() == 1) { schedule.setSpecial(-1);
+                            }
+                        }
+                    }
+
+// PART 2: UNDERSUPPLY
+                    else if ((assignment+possible) < requirement && (requirement-possible-assignment!=1|| lazy!=1 ) ){ // if there are too littleusers and it is not trivial case when just one user is a problem // TODO: make sure that there are no other corner cases
+                        isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
                         //send email notification
@@ -231,9 +318,22 @@ public class TeamCalendarService {
                             }
                         }
                     }
-                }
+
+                    // trivial collision resolution - if it is juts one lazy and he is the bottleneck - switch off his special preferences
+                    else if ((assignment+possible) < requirement && (requirement-possible-assignment==1) && lazy==1 ){
+                        for (Schedule schedule : slot.getSchedules()) {
+                            if (schedule.getSpecial() == 0) { schedule.setSpecial(-1);
+                            }
+                        }
+                    }
+                    }
             }
         }
+
+       if (isGame){
+           return 1;
+       }
+       else return 0;
     }
 
     public void initializeGame(Slot slot) {

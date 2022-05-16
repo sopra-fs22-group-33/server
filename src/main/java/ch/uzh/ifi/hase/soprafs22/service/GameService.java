@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
@@ -119,7 +120,7 @@ public class GameService {
     public void makeMove(Game game, Player currentPlayer){
         int size = game.getBoardLength();
 
-        // check if all the players are dead
+        // check if all the players are dead  // TODO: maybe change to only one left - then stop game
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
             if (player.getStatus()!= "dead") {
@@ -188,10 +189,14 @@ public class GameService {
     }
 
     private void finishGame(Game game){
+        // TODO: Maybe need to delete the game form the database - > discuss
         game.setStatus("off");
         int requirement = game.getSlot().getRequirement();
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
         int possible = 0;
+        //if (!checkCollisionWithoutGameStart){
+         //   new Optimizer(game.getSlot().getDay().getTeamCalendar());   // TODO: uncomment this after pull to master
+       // }
         if (game.getSlot().getSchedules() != null) {
             for (Schedule schedule :  game.getSlot().getSchedules()) {
                 if (schedule.getSpecial()!=-1){
@@ -219,7 +224,7 @@ public class GameService {
                 i+=1;
                 mismatch -=1;
             }
-            //TODO: some error is mismatch is positive meaning that collision is unresolvable and requireements of team leader are stupid
+
         }
     }
 
