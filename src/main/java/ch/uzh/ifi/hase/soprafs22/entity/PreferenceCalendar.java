@@ -9,19 +9,19 @@ import java.util.List;
 @Entity
 @Table(name = "PreferenceCalendar")
 public class PreferenceCalendar implements Serializable {
-//    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue
+//    @GeneratedValue
     private Long id;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "user", updatable = true, insertable = true)
     @MapsId
     @JsonIgnore
     private User user;
 
-    @OneToMany(mappedBy = "preferenceCalendar", cascade = {CascadeType.MERGE, CascadeType.REFRESH}, orphanRemoval=true)
+    @OneToMany(mappedBy = "preferenceCalendar")//, cascade = CascadeType.ALL, orphanRemoval=true)
     private List<PreferenceDay> preferencePlan;
 
     public Long getId() {

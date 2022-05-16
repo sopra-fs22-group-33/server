@@ -10,15 +10,18 @@ import java.util.List;
 
 public class PreferenceDay implements Serializable {
 //    private static final long serialVersionUID = 1L;
-    // define composite key
+
     @Id
     @GeneratedValue
     private Long id;
 
-    @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumn(name = "preferenceCalendar")
+    @ManyToOne //(cascade = {CascadeType.ALL, CascadeType.REFRESH})
+    @JoinColumn(name = "preference_calendar_id")
     @JsonIgnore
     private PreferenceCalendar preferenceCalendar;
+
+    @JoinColumn
+    private int weekday;
 
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<PreferenceSlot> slots;
@@ -45,6 +48,14 @@ public class PreferenceDay implements Serializable {
 
     public void setSlots(List<PreferenceSlot> slots) {
         this.slots = slots;
+    }
+
+    public int getWeekday() {
+        return weekday;
+    }
+
+    public void setWeekday(int weekday) {
+        this.weekday = weekday;
     }
 }
 

@@ -21,12 +21,19 @@ public class PreferenceSlot implements Serializable {
     @Column
     private int base;
 
-    @ManyToOne (cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+    @ManyToOne //(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumns(value = {
 
             @JoinColumn(
-                    name = "preferenceCalendar",
-                    referencedColumnName = "preferenceCalendar",
+                    name = "weekday",
+                    referencedColumnName = "weekday",
+                    updatable = true,
+                    insertable = true
+
+            ),
+            @JoinColumn(
+                    name = "preference_calendar_id",
+                    referencedColumnName = "preference_calendar_id",
                     insertable = true,
                     updatable = true
             )
