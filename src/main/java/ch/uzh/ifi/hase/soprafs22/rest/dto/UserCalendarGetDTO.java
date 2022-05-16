@@ -1,23 +1,23 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
+import ch.uzh.ifi.hase.soprafs22.entity.UserDay;
+
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Day;
-
-public class TeamCalendarGetDTO {
+public class UserCalendarGetDTO {
 
     private Long id;
 
     private LocalDate startingDate;
 
-    private List <Day> days;
+    private List <UserDay> days;
 
-    public void setDays(List<Day> days) {
+    public void setDays(List<UserDay> days) {
         this.days = days;
     }
 
-    public  List <Day> getDays() {
+    public  List <UserDay> getDays() {
         return days;
     }
 

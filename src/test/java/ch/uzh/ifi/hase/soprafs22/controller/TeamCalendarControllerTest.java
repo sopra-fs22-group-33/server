@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,11 +80,10 @@ public class TeamCalendarControllerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        //teamCalendar.setStartingDate("123");
+        teamCalendar.setStartingDate(LocalDate.parse("2000-10-10"));
 
         //creating teamCalendarPostDTO
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate("123");
 
         //defining mocks
         given(teamCalendarService.createTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
@@ -115,10 +115,9 @@ public class TeamCalendarControllerTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         teamCalendar.setBasePlan(days);
-        //teamCalendar.setStartingDate("123");
+        teamCalendar.setStartingDate(LocalDate.now());
 
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate("123");
 
 
         given(teamCalendarService.updateTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);

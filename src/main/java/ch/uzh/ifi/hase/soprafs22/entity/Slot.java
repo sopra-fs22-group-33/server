@@ -37,6 +37,7 @@ public class Slot implements Serializable {
     @JsonIgnore
     private Day day;
 
+
     @Column
     private int requirement;
 
@@ -91,6 +92,7 @@ public class Slot implements Serializable {
     public void setRequirement(int requirement) {
         this.requirement = requirement;
     }
+
 
 /*
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)

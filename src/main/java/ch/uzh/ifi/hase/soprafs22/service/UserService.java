@@ -51,7 +51,7 @@ public class UserService {
       if(user.isPresent()){
           return user.get();
       }
-      else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+      else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no User was found");
     }
 
   public User createUser(User newUser) {

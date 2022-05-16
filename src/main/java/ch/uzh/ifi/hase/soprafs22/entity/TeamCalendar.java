@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -22,11 +23,10 @@ public class TeamCalendar implements Serializable {
     private Team team;
 
     @Column
-    private Long startingDate;
+    private LocalDate startingDate;
 
     @Column
     private int collisions;
-
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Day> basePlan;
@@ -43,9 +43,9 @@ public class TeamCalendar implements Serializable {
 
     public void setBasePlan(List<Day> basePlan) { this.basePlan = basePlan;}
 
-    public Long getStartingDate() { return startingDate;}
+    public LocalDate getStartingDate() { return startingDate;}
 
-    public void setStartingDate(Long startingDate) {
+    public void setStartingDate(LocalDate startingDate) {
         this.startingDate = startingDate;
     }
 
