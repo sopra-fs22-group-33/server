@@ -191,11 +191,25 @@ public class TeamCalendarService {
 
 
             if (res == 0){
+
                 Runnable task = () ->{
-                        new Optimizer(foundCalendar); // here is the old optimizer used because the new one is not on this branch - TODO: DONT FORGET TO CHANGE THIS LINE
+                    try{
+                        new Optimizer(foundCalendar);}
+                    catch (Exception ex){
+                        log.debug("somehting probbaly went wrong with the lp_solve");
+                    }
+                     // here is the old optimizer used because the new one is not on this branch - TODO: DONT FORGET TO CHANGE THIS LINE
+                    // TODO: CHECK THE EXCEPTIONS AGAIN
                 };
 
-                this.executorService.execute(task);
+
+                try{
+
+                    this.executorService.execute(task);
+                }
+                catch (Exception ex) {
+                    ; // I dont know why this could go wrong
+                }
 
                 return "optimizer is working";
             }
