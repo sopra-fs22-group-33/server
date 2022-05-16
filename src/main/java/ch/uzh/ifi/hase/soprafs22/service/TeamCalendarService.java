@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
 import org.slf4j.Logger;
@@ -18,6 +19,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.Math.exp;
 
@@ -34,6 +37,8 @@ public class TeamCalendarService {
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
 
+    private final ScheduledExecutorService executorService;
+
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
@@ -44,6 +49,7 @@ public class TeamCalendarService {
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
+        this.executorService = Executors.newSingleThreadScheduledExecutor();
     }
 
     public  List<TeamCalendar> getCalendars() {
@@ -185,7 +191,12 @@ public class TeamCalendarService {
 
 
             if (res == 0){
-                // TODO: start the optimizer on another thread
+                Runnable task = () ->{
+                        new Optimizer(foundCalendar); // here is the old optimizer used because the new one is not on this branch - TODO: DONT FORGET TO CHANGE THIS LINE
+                };
+
+                this.executorService.execute(task);
+
                 return "optimizer is working";
             }
             else if (res ==1){
