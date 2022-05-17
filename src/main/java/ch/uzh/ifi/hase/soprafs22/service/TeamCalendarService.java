@@ -243,9 +243,8 @@ public class TeamCalendarService {
 
     public int checkCollisions(TeamCalendar teamCalendar){ // return 1 - if the game/games created; 0 - nothing is done, -1 terrible collision, inform admin
         boolean isGame = false;
-        boolean isBadCollision = false;
+        teamCalendar.setCollisions(0);
 
-        teamCalendar.setCollisions(0); // remove this
         for (Day day : teamCalendar.getBasePlan()) {
             if (day.getSlots() != null) {
                 for (Slot slot : day.getSlots()) {
@@ -271,6 +270,7 @@ public class TeamCalendarService {
                         isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
+
                         //send email notification
                         EmailService emailService = new EmailService();
                         for (Schedule schedule : slot.getSchedules()) {
@@ -302,6 +302,7 @@ public class TeamCalendarService {
                         isGame = true;
                         initializeGame(slot);
                         teamCalendar.setCollisions( teamCalendar.getCollisions() +1);
+
                         //send email notification
                         EmailService emailService = new EmailService();
                         for (Schedule schedule : slot.getSchedules()) {

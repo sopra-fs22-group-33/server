@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
+import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,12 +192,20 @@ public class GameService {
     private void finishGame(Game game){
         // TODO: Maybe need to delete the game form the database - > discuss
         game.setStatus("off");
+        game.getSlot().getDay().getTeamCalendar().setCollisions( game.getSlot().getDay().getTeamCalendar().getCollisions()-1);
         int requirement = game.getSlot().getRequirement();
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
         int possible = 0;
-        //if (!checkCollisionsWithoutGameStart()){
-         //   new Optimizer(game.getSlot().getDay().getTeamCalendar());   // TODO: uncomment this after pull to master
-       // }
+
+        if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
+            try {
+                new Optimizer(game.getSlot().getDay().getTeamCalendar());
+            }
+            catch (LpSolveException e) {
+                ;
+            }
+        }
+
         if (game.getSlot().getSchedules() != null) {
             for (Schedule schedule :  game.getSlot().getSchedules()) {
                 if (schedule.getSpecial()!=-1){
