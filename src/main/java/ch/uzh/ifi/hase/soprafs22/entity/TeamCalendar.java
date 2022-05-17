@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 import ch.uzh.ifi.hase.soprafs22.constant.Weekday;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -28,7 +30,8 @@ public class TeamCalendar implements Serializable {
     @Column
     private int collisions;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Day> basePlan;
 
     public Team getTeam() {

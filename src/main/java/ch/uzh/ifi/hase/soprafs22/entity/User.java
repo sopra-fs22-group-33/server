@@ -6,6 +6,8 @@ import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -60,6 +62,7 @@ public class User implements Serializable {
   private Set<Player> players;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+  @LazyCollection(LazyCollectionOption.FALSE)
   @JsonIgnore
   private List<Schedule> schedules;
 

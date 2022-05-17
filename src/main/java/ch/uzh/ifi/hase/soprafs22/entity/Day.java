@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,7 +25,8 @@ public class Day implements Serializable {
     @JoinColumn
     private int weekday; // 0-6 - 1 st week, 7- 13 - 2nd week, 14 - 20 - 3rd week, 21 - 27 - 4th week
 
-    @OneToMany (fetch = FetchType.EAGER, mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Slot> slots;
 
     public TeamCalendar getTeamCalendar() {

@@ -193,7 +193,8 @@ public class TeamCalendarService {
 
                 Runnable task = () ->{
                     try{
-                        new Optimizer(foundCalendar);}
+                        new Optimizer(foundCalendar);
+                        updateOptimizedTeamCalendar(id, foundCalendar);}
                     catch (Exception ex){
                         log.debug("somehting probbaly went wrong with the lp_solve");
                     }

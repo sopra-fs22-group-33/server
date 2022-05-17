@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,7 +44,8 @@ public class Slot implements Serializable {
     private int requirement;
 
     //TODO check if slots get deleted by cascade
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "slot", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Schedule> schedules;
 
     public Day getDay() {
