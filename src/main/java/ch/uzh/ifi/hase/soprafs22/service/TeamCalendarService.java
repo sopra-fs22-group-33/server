@@ -198,7 +198,6 @@ public class TeamCalendarService {
                     catch (Exception ex){
                         log.debug("somehting probbaly went wrong with the lp_solve");
                     }
-                     // here is the old optimizer used because the new one is not on this branch - TODO: DONT FORGET TO CHANGE THIS LINE
                     // TODO: CHECK THE EXCEPTIONS AGAIN
                 };
 
@@ -326,7 +325,7 @@ public class TeamCalendarService {
                             }
                         }
                     }
-                    }
+                }
             }
         }
 
