@@ -97,26 +97,4 @@ public class Slot implements Serializable {
     }
 
 
-/*
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<User> users = new HashSet<User>();/* maybe not required
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-        @JoinTable(
-                name = "event_user",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "event_id"))
-        private Set<User>  users = new HashSet<User>();
- */
-
-
-    /*TODO
-    @Column(nullable = false)
-    private Map<Role, Quantity> requiredRoles = new LinkedHashMap<<Role, Quantity>();
- */
-
-
 }

@@ -82,7 +82,7 @@ public class TeamCalendarController {
 
     }
 
-    @GetMapping("/teams/{teamId}/calendars/final")
+    @GetMapping("/teams/{teamId}/calendars/finalize")
     @ResponseStatus(HttpStatus.OK)
     public String finalSubmission( @PathVariable("teamId") long id) {
         return teamCalendarService.finalCalendarSubmission(id);

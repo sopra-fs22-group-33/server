@@ -194,14 +194,14 @@ public class GameService {
         game.setStatus("off");
         game.getSlot().getDay().getTeamCalendar().setCollisions( game.getSlot().getDay().getTeamCalendar().getCollisions()-1);
         int requirement = game.getSlot().getRequirement();
-        int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
+        int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
         int possible = 0;
 
         if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
             try {
                 new Optimizer(game.getSlot().getDay().getTeamCalendar());
             }
-            catch (LpSolveException e) {
+            catch (LpSolveException e) { // TODO : make the whole exception thing catch
                 ;
             }
         }
@@ -233,7 +233,6 @@ public class GameService {
                 i+=1;
                 mismatch -=1;
             }
-
         }
     }
 
@@ -256,7 +255,6 @@ public class GameService {
                 schedule.setSpecial(-1);
             }
         }
-
     }
 
 }
