@@ -28,7 +28,7 @@ public class TeamCalendar implements Serializable {
     @Column
     private int collisions;
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
     private List<Day> basePlan;
 
     public Team getTeam() {
