@@ -109,7 +109,6 @@ public class TeamCalendarService {
 
             TeamCalendar savedCalendar = teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();
-            checkCollisions(savedCalendar);
             return savedCalendar;
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);

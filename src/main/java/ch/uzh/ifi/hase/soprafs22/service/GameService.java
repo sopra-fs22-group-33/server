@@ -194,7 +194,7 @@ public class GameService {
         int requirement = game.getSlot().getRequirement();
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  prference
         int possible = 0;
-        //if (!checkCollisionWithoutGameStart){
+        //if (!checkCollisionsWithoutGameStart()){
          //   new Optimizer(game.getSlot().getDay().getTeamCalendar());   // TODO: uncomment this after pull to master
        // }
         if (game.getSlot().getSchedules() != null) {
