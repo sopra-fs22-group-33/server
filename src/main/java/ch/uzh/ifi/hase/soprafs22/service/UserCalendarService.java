@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -57,6 +58,7 @@ public class UserCalendarService {
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
                 for (Slot slot : day.getSlots()) {
                     UserSlot userSlot = new UserSlot();
+                    userSlot.setSchedules(new ArrayList<>());
                     for (Schedule schedule : slot.getSchedules()) {
                         if (schedule.getUser() == user) {
                             UserSchedule userSchedule = new UserSchedule();
