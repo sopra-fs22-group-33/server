@@ -26,7 +26,6 @@ public class Day implements Serializable {
     private int weekday; // 0-6 - 1 st week, 7- 13 - 2nd week, 14 - 20 - 3rd week, 21 - 27 - 4th week
 
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Slot> slots;
 
     public TeamCalendar getTeamCalendar() {

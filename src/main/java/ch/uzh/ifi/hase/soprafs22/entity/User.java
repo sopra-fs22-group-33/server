@@ -62,7 +62,6 @@ public class User implements Serializable {
   private Set<Player> players;
 
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-  @LazyCollection(LazyCollectionOption.FALSE)
   @JsonIgnore
   private List<Schedule> schedules;
 

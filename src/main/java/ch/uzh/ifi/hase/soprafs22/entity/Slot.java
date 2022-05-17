@@ -45,7 +45,6 @@ public class Slot implements Serializable {
 
     //TODO check if slots get deleted by cascade
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Schedule> schedules;
 
     public Day getDay() {

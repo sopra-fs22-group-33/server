@@ -31,7 +31,6 @@ public class TeamCalendar implements Serializable {
     private int collisions;
 
     @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
-    @LazyCollection(LazyCollectionOption.FALSE)
     private List<Day> basePlan;
 
     public Team getTeam() {
