@@ -37,7 +37,6 @@ public class TeamCalendarService {
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
 
-    private final ScheduledExecutorService executorService;
 
 
     @Autowired
@@ -49,7 +48,7 @@ public class TeamCalendarService {
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
-        this.executorService = Executors.newSingleThreadScheduledExecutor();
+
     }
 
     public  List<TeamCalendar> getCalendars() {
@@ -191,23 +190,13 @@ public class TeamCalendarService {
 
             if (res == 0){
 
-                Runnable task = () ->{
-                    try{
-                        new Optimizer(foundCalendar);
-                        updateOptimizedTeamCalendar(id, foundCalendar);}
-                    catch (Exception ex){
-                        log.debug("somehting probbaly went wrong with the lp_solve");
-                    }
-                    // TODO: CHECK THE EXCEPTIONS AGAIN
-                };
-
-
                 try{
 
-                    this.executorService.execute(task);
+                    new Optimizer(foundCalendar);
+                    updateOptimizedTeamCalendar(id, foundCalendar);
                 }
                 catch (Exception ex) {
-                    ; // I dont know why this could go wrong
+                    return "optimizer started working but smth went wrong" + ex;
                 }
 
                 return "optimizer is working";
