@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -78,28 +80,6 @@ public class Slot implements Serializable {
     public void setRequirement(int requirement) {
         this.requirement = requirement;
     }
-
-
-/*
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-    @JoinTable(
-            name = "event_user",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id"))
-    private Set<User> users = new HashSet<User>();/* maybe not required
-    @ManyToMany (fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
-        @JoinTable(
-                name = "event_user",
-                joinColumns = @JoinColumn(name = "user_id"),
-                inverseJoinColumns = @JoinColumn(name = "event_id"))
-        private Set<User>  users = new HashSet<User>();
- */
-
-
-    /*TODO
-    @Column(nullable = false)
-    private Map<Role, Quantity> requiredRoles = new LinkedHashMap<<Role, Quantity>();
- */
 
 
 }

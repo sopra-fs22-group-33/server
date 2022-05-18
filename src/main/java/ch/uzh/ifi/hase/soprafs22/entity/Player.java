@@ -24,7 +24,7 @@ public class Player{
     private int special;
 
     @Column
-    private UserStatus statusOnline;
+    private UserStatus statusOnline = UserStatus.OFFLINE;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "game_id", nullable = false)
