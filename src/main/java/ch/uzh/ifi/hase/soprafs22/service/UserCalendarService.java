@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -51,10 +52,14 @@ public class UserCalendarService {
 
         UserCalendar userCalendar = new UserCalendar();
         userCalendar.setStartingDate(startingDate);
+        userCalendar.setUserPlan(new ArrayList<>());
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
 
             for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
+                UserDay uD = new UserDay();
+                uD.setSlots(new ArrayList<>());
+                userCalendar.getUserPlan().add(uD);
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
                 for (Slot slot : day.getSlots()) {
                     UserSlot userSlot = new UserSlot();
@@ -69,7 +74,9 @@ public class UserCalendarService {
                     if (!(userSlot.getSchedules() == null)) {
                         userSlot.setTimeFrom(slot.getTimeFrom());
                         userSlot.setTimeTo(slot.getTimeTo());
-                        userCalendar.getUserPlan().get(i - differenceInDays).getSlots().add(userSlot);
+                        if (!userSlot.getSchedules().isEmpty()) {
+                            userCalendar.getUserPlan().get(i - differenceInDays).getSlots().add(userSlot);
+                        }
                     }
                 }
             }
