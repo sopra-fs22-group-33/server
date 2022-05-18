@@ -1,6 +1,8 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.MembershipRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
@@ -264,6 +266,14 @@ public class UserServiceTest {
         List <User> users = userService.getUsers();
         assertEquals(1, users.size());
     }
+
+//    @Test
+//    public void getAllTeamsOfUser_authorized_success(){
+//      User createdUser = userService.createUser(testUser);
+//      Team team = new Team();
+//      Membership membership = new Membership();
+//      membership.s
+//    }
 
 
 }
