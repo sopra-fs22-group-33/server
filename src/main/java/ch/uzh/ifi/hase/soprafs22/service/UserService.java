@@ -5,8 +5,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
-import ch.uzh.ifi.hase.soprafs22.service.EmailService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,14 +111,6 @@ public class UserService {
     .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
   }
 
-  public User findUserByUsername(@PathVariable String username){
-    User userByUsername = userRepository.findByUsername(username);
-    if (userByUsername == null) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there is no user with the username " + username);
-    }
-    return userByUsername;
-  }
-
   public User findUserByEmail(@PathVariable String email){
     User userByEmail = userRepository.findByEmail(email);
     if (userByEmail == null) {
@@ -145,16 +135,12 @@ public class UserService {
       teams.add(membership.getTeam());
     }
    
-    // if (teams.isEmpty()) {
-    //   throw new ResponseStatusException(HttpStatus.NOT_FOUND, "this user belongs to no teams");
-    // }
    return teams;
  }
 
-  //TODO to be changed
   public User loginUser(User userInput){
     User userByEmail = findUserByEmail(userInput.getEmail());
-    if (!userByEmail.getPassword().toString().matches(userInput.getPassword().toString())){
+    if (!userByEmail.getPassword().matches(userInput.getPassword())){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "invalid password");
     }
     userByEmail.setStatus(UserStatus.ONLINE);
