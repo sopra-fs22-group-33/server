@@ -21,23 +21,8 @@ public class PreferenceSlot implements Serializable {
     @Column
     private int base;
 
-    @ManyToOne //(cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
-    @JoinColumns(value = {
-
-            @JoinColumn(
-                    name = "weekday",
-                    referencedColumnName = "weekday",
-                    updatable = true,
-                    insertable = true
-
-            ),
-            @JoinColumn(
-                    name = "preference_calendar_id",
-                    referencedColumnName = "preference_calendar_id",
-                    insertable = true,
-                    updatable = true
-            )
-    })
+    @ManyToOne
+    @JoinColumn(name = "preference_day_id")
     @JsonIgnore
     private PreferenceDay day;
 
