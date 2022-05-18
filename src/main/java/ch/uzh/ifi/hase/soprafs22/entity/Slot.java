@@ -19,21 +19,7 @@ public class Slot implements Serializable {
     private int timeTo;
 
     @ManyToOne
-    @JoinColumns(value = {
-            @JoinColumn(
-                    name = "weekday",
-                    referencedColumnName = "weekday",
-                    updatable = true,
-                    insertable = true
-
-            ),
-            @JoinColumn(
-                    name = "team_calendar_id",
-                    referencedColumnName = "team_calendar_id",
-                    insertable = true,
-                    updatable = true
-            )
-    })
+    @JoinColumn(name = "day_id")
     @JsonIgnore
     private Day day;
 
