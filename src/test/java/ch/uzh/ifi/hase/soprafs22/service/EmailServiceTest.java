@@ -12,14 +12,14 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
 
 public class EmailServiceTest {
 
   @Mock
   private InvitationRepository invitationRepository;
 
-  @InjectMocks
-  private EmailService emailService;
+  EmailService emailService = mock(EmailService.class);
 
   @BeforeEach
   public void setup() {
@@ -29,9 +29,8 @@ public class EmailServiceTest {
 
   @Test
   public void sendEmail_validInputs_success() throws Exception {
-    //String key = System.getenv("SENDGRID_API_KEY");
-    // EmailService.sendEmail("mark.rueetschi@uzh.ch", "created user", "you created a new user");
-
-
+    String key = System.getenv("SENDGRID_API_KEY");
+    emailService.sendEmail("test@123uzh.ch", "created user", "you created a new user");
+    Mockito.verify(emailService, Mockito.times(1)).sendEmail(Mockito.anyString(),Mockito.anyString(),Mockito.anyString());
   }
 }
