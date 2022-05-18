@@ -19,14 +19,7 @@ public class UserSlot implements Serializable {
     private int timeTo;
 
     @ManyToOne
-    @JoinColumns(value = {
-            @JoinColumn(
-                    name = "userCalendar",
-                    referencedColumnName = "userCalendar",
-                    insertable = true,
-                    updatable = true
-            )
-    })
+    @JoinColumn(name = "user_day_id")
     @JsonIgnore
     private UserDay day;
 
