@@ -114,8 +114,6 @@ public class MembershipServiceTest {
         testTeam.setMemberships(memberships);
         testUser.setMemberships(memberships);
 
-        assertFalse(createdMembership.getIsAdmin());
-
         membershipService.deleteMembership(testTeam, testUser.getId());
 
         Mockito.verify(membershipRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
