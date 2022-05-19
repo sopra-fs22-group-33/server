@@ -56,15 +56,13 @@ public class TeamService {
   public Team updateTeam(Team team, long teamId, String token) {
     Team teamToUpdate = teamRepository.findById(teamId)
       .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "team could not be updated, not found"));
-    if (authorizeAdmin(teamToUpdate, token)){        
-      if (team.getName() != null){teamToUpdate.setName(team.getName());}           
-      
-      teamRepository.save(teamToUpdate);
-      teamRepository.flush();
-      return teamToUpdate;
-    }else{
-      throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you are no admin");
-    }
+    authorizeAdmin(teamToUpdate, token);
+
+    if (team.getName() != null){teamToUpdate.setName(team.getName());}
+
+    teamRepository.save(teamToUpdate);
+    teamRepository.flush();
+    return teamToUpdate;
   }
 
   public void deleteTeam(long id, String token){
@@ -85,22 +83,8 @@ public class TeamService {
     for (Membership membership : team.getMemberships()){
       users.add(membership.getUser());
     }
-    if (users.isEmpty()) {
-      throw new ResponseStatusException(HttpStatus.NOT_FOUND, "there are no users in this team");
-    }
     return users;
   }
-
-  //helpers
-  // private void checkIfTeamExists(Team teamToBeCreated) {
-  //   Team TeamByName = teamRepository.findByName(teamToBeCreated.getName());
-
-  //   String baseErrorMessage = "The %s provided %s not unique. Therefore, the team could not be created!";
-  //   if (TeamByName != null) {
-  //     throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-  //         String.format(baseErrorMessage, "name", "is"));
-  //   } 
-  // }
 
   public boolean authorizeAdmin(Team team, String token){
     for (Membership membership : team.getMemberships()){

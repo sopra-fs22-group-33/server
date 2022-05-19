@@ -250,6 +250,7 @@ public class UserServiceTest {
     public void deleteUser_notAuthorized_trowsException(){
         User createdUser = userService.createUser(testUser);
         Mockito.when(userRepository.findByToken(createdUser.getToken())).thenReturn(testUser);
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testUser));
 
         assertThrows(ResponseStatusException.class, () -> userService.deleteUser(createdUser.getId(),"invalid"));
     }
