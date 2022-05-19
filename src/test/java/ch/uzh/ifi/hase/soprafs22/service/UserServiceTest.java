@@ -20,6 +20,7 @@ import javax.transaction.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -267,13 +268,19 @@ public class UserServiceTest {
         assertEquals(1, users.size());
     }
 
-//    @Test
-//    public void getAllTeamsOfUser_authorized_success(){
-//      User createdUser = userService.createUser(testUser);
-//      Team team = new Team();
-//      Membership membership = new Membership();
-//      membership.s
-//    }
+    @Test
+    public void getAllTeamsOfUser_authorized_success(){
+      User createdUser = userService.createUser(testUser);
+      Team team = new Team();
+      Membership membership = new Membership();
+      membership.setIsAdmin(true);
+      membership.setUser(createdUser);
+      membership.setTeam(team);
+      team.setMemberships(new HashSet<>());
+      team.getMemberships().add(membership);
+
+      assertTrue(userService.authorizeAdmin(team, createdUser.getToken()));
+    }
 
 
 }

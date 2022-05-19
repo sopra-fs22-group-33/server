@@ -56,7 +56,7 @@ public class UserCalendarService {
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
 
-            for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
+                for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
                 UserDay uD = new UserDay();
                 uD.setSlots(new ArrayList<>());
                 userCalendar.getUserPlan().add(uD);
@@ -65,7 +65,7 @@ public class UserCalendarService {
                     UserSlot userSlot = new UserSlot();
                     userSlot.setSchedules(new ArrayList<>());
                     for (Schedule schedule : slot.getSchedules()) {
-                        if (schedule.getUser() == user) {
+                        if (schedule.getUser() == user && schedule.getAssigned() == 1) {
                             UserSchedule userSchedule = new UserSchedule();
                             userSchedule.setTeam(membership.getTeam());
                             userSlot.getSchedules().add(userSchedule);
