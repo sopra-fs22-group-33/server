@@ -15,14 +15,9 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.transaction.Transactional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
 
 public class UserServiceTest {
 
@@ -269,7 +264,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void getAllTeamsOfUser_authorized_success(){
+    public void authorizeAdmin_success(){
       User createdUser = userService.createUser(testUser);
       Team team = new Team();
       Membership membership = new Membership();
@@ -282,5 +277,39 @@ public class UserServiceTest {
       assertTrue(userService.authorizeAdmin(team, createdUser.getToken()));
     }
 
+    @Test
+    public void authorizeAdmin_notAuthorized_throwsException(){
+        User createdUser = userService.createUser(testUser);
+        Team team = new Team();
+        Membership membership = new Membership();
+        membership.setIsAdmin(true);
+        membership.setUser(createdUser);
+        membership.setTeam(team);
+        team.setMemberships(new HashSet<>());
+        team.getMemberships().add(membership);
 
+        assertThrows(ResponseStatusException.class, () -> userService.authorizeAdmin(team, "invalid"));
+    }
+
+    @Test
+    public void getAllTeamsOfUser_authorized_success(){
+        User createdUser = userService.createUser(testUser);
+        Team team = new Team();
+        Membership membership = new Membership();
+        membership.setIsAdmin(true);
+        membership.setUser(createdUser);
+        membership.setTeam(team);
+        team.setMemberships(new HashSet<>());
+        team.getMemberships().add(membership);
+        createdUser.setMemberships(new HashSet<>());
+        createdUser.getMemberships().add(membership);
+
+        //mocks
+        Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(createdUser));
+
+        Set <Team> teams = userService.getAllTeamsOfUser(createdUser.getId());
+        assertNotNull(teams);
+        assertFalse(teams.isEmpty());
+        assertTrue(teams.contains(team));
+    }
 }
