@@ -53,6 +53,14 @@ public class UserCalendarService {
         UserCalendar userCalendar = new UserCalendar();
         userCalendar.setStartingDate(startingDate);
         userCalendar.setUserPlan(new ArrayList<>());
+
+        //fill with empty days
+        for (int j=0; j<7; j++){
+            UserDay userD = new UserDay();
+            userD.setSlots(new ArrayList<>());
+            userCalendar.getUserPlan().add(userD);
+        }
+
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
 
