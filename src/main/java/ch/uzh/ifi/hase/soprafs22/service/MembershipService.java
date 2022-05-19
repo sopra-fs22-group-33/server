@@ -28,8 +28,7 @@ public class MembershipService {
     this.membershipRepository = membershipRepository;
   }
 
-  //TODO check if membership already exists
-  public Membership createMembership(Team team, User user, Boolean isAdmin) {    
+  public Membership createMembership(Team team, User user, Boolean isAdmin) {
     Membership membership = new Membership();
     membership.setUser(user);
     membership.setTeam(team);
