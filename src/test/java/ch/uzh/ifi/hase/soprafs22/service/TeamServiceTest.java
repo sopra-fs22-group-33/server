@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
@@ -10,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +39,7 @@ public class TeamServiceTest {
     testUser.setId(2L);
     testUser.setEmail("firstname@lastname");
     testUser.setPassword("password");
+    testUser.setToken("token");
 
     // when -> any object is being save in the TeamRepository -> return the dummy
     // testTeam
@@ -55,4 +59,101 @@ public class TeamServiceTest {
     assertEquals(testTeam.getName(), createdTeam.getName());
   }
 
+    @Test
+    public void updateTeam_validInputs_success(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.of(testTeam));
+
+        Team teamToUpdate = new Team();
+        teamToUpdate.setName("new TeamName");
+
+        Team updatedTeam = teamService.updateTeam(teamToUpdate, testTeam.getId(), "token");
+        assertEquals(updatedTeam.getName(), testTeam.getName());
+    }
+
+    @Test
+    public void updateTeam_notAuthorized_throwsException(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(Mockito.any())).thenReturn(Optional.of(testTeam));
+
+        Team teamToUpdate = new Team();
+        teamToUpdate.setName("new TeamName");
+
+        assertThrows(ResponseStatusException.class, () -> teamService.updateTeam(teamToUpdate, testTeam.getId(), "invalid"));
+    }
+
+    @Test
+    public void findTeamById_teamExists_success(){
+        testTeam.setId(1L);
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testTeam));
+
+        Team foundTeam = teamService.findTeamById(createdTeam.getId());
+
+        assertEquals(foundTeam.getName(), testTeam.getName());
+    }
+
+    @Test
+    public void findTeamById_teamDoesNotExists_throwsException(){
+        testTeam.setId(1L);
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(testTeam.getId())).thenReturn(Optional.of(testTeam));
+
+        assertThrows(ResponseStatusException.class, () -> teamService.findTeamById(2L));
+    }
+
+    @Test
+    public void deleteTeam_authorized_success(){
+        testTeam.setId(1L);
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(testTeam.getId())).thenReturn(Optional.of(testTeam));
+
+        teamService.deleteTeam(testTeam.getId(), testUser.getToken());
+        Mockito.verify(teamRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
+    }
+
+    @Test
+    public void deleteTeam_notAuthorized_trowsException(){
+        testTeam.setId(1L);
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findById(testTeam.getId())).thenReturn(Optional.of(testTeam));
+
+        assertThrows(ResponseStatusException.class, () -> teamService.deleteTeam(testTeam.getId(), "invalid"));
+    }
+
+    @Test
+    public void authorizeAdmin_success(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+
+        assertTrue(teamService.authorizeAdmin(testTeam, testUser.getToken()));
+    }
+
+    @Test
+    public void authorizeAdmin_notAuthorized_throwsException(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+
+        assertThrows(ResponseStatusException.class, () -> teamService.authorizeAdmin(testTeam, "invalid"));
+    }
+
+    @Test
+    public void getAllTeams_success(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+        Mockito.when(teamRepository.findAll()).thenReturn(Collections.singletonList(createdTeam));
+
+        List<Team> teams = teamService.getTeams();
+        assertEquals(1, teams.size());
+    }
+
+    @Test
+    public void getAllUsersOfTeam_authorized_success(){
+        Team createdTeam = teamService.createTeam(testTeam, testUser);
+
+        //mocks
+        Mockito.when(teamRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(createdTeam));
+
+        Set<User> users = teamService.getAllUsersOfTeam(createdTeam.getId());
+        assertNotNull(users);
+        assertFalse(users.isEmpty());
+        assertTrue(users.contains(testUser));
+    }
 }

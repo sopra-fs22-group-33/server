@@ -6,6 +6,7 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 
@@ -139,21 +140,27 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserGetDTO inviteUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
-    Team team = teamService.findTeamById(teamId); 
-    if (userService.authorizeAdmin(team, token)){
-      User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-      Invitation invitation = invitationService.createInvitation(team, userToAdd);
-        try {
-            EmailService emailService = new EmailService();
-            emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
-                    "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
-                            "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
-        } catch (Exception e) {
-            //do nothing
-        }
-      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
+    Team team = teamService.findTeamById(teamId);
+    User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
+    try {
+        membershipService.findMembership(team, userToAdd.getId());
+    }catch (Exception ex){
+        throw new ResponseStatusException(HttpStatus.CONFLICT, "this user is already a member of this team!");
     }
-    return null;
+    userService.authorizeAdmin(team, token);
+
+
+    Invitation invitation = invitationService.createInvitation(team, userToAdd);
+    try {
+        EmailService emailService = new EmailService();
+        emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
+                "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
+                        "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+    } catch (Exception e) {
+        //do nothing
+    }
+    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
+
   }
 
   @PutMapping("/teams/{teamId}/users/{userId}")
