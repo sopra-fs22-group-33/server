@@ -57,6 +57,7 @@ public class UserCalendarService {
         //fill with empty days
         for (int j=0; j<7; j++){
             UserDay userD = new UserDay();
+            userD.setWeekday(j);
             userD.setSlots(new ArrayList<>());
             userCalendar.getUserPlan().add(userD);
         }
@@ -68,6 +69,7 @@ public class UserCalendarService {
                 UserDay uD = new UserDay();
                 uD.setSlots(new ArrayList<>());
                 userCalendar.getUserPlan().add(uD);
+                uD.setWeekday(userCalendar.getUserPlan().indexOf(uD));
                 i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
                 for (Slot slot : day.getSlots()) {
                     UserSlot userSlot = new UserSlot();

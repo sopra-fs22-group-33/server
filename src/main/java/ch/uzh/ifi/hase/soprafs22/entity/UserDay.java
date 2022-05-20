@@ -20,6 +20,9 @@ public class UserDay implements Serializable {
     @JsonIgnore
     private UserCalendar userCalendar;
 
+    @JoinColumn
+    private int weekday;
+
     @OneToMany (mappedBy = "day",  cascade = CascadeType.ALL,  orphanRemoval = true)
     private List<UserSlot> slots;
 
@@ -47,5 +50,12 @@ public class UserDay implements Serializable {
         this.id = id;
     }
 
+    public int getWeekday() {
+        return weekday;
+    }
+
+    public void setWeekday(int weekday) {
+        this.weekday = weekday;
+    }
 }
 
