@@ -142,25 +142,25 @@ public class UserController {
   public UserGetDTO inviteUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
     User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
+
     try {
         membershipService.findMembership(team, userToAdd.getId());
     }catch (Exception ex){
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "this user is already a member of this team!");
+        userService.authorizeAdmin(team, token);
+
+
+        Invitation invitation = invitationService.createInvitation(team, userToAdd);
+        try {
+            EmailService emailService = new EmailService();
+            emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
+                    "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
+                            "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
+        } catch (Exception e) {
+            //do nothing
+        }
+        return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
     }
-    userService.authorizeAdmin(team, token);
-
-
-    Invitation invitation = invitationService.createInvitation(team, userToAdd);
-    try {
-        EmailService emailService = new EmailService();
-        emailService.sendEmail(userToAdd.getEmail(), "invitation to team " + team.getName(),
-                "Hi " + userToAdd.getUsername() + "\nYou have been invited to team " + team.getName() + "\nplease log in to your shift planner account to check you invitations\n" +
-                        "\nhttps://sopra-fs22-group-33-client.herokuapp.com");
-    } catch (Exception e) {
-        //do nothing
-    }
-    return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
-
+      throw new ResponseStatusException(HttpStatus.CONFLICT, "this user is already a member of this team!");
   }
 
   @PutMapping("/teams/{teamId}/users/{userId}")
