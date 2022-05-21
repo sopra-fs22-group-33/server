@@ -17,6 +17,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import static org.junit.jupiter.api.Assertions.*;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 
 /**
  * Test class for the TeamResource REST resource.
@@ -135,4 +136,27 @@ public class MembershipServiceIntegrationTest {
     assertTrue(membershipRepository.findAll().isEmpty());
   }
 
+    @Test
+    @Transactional
+    public void findMembership_success() {
+        // given
+        assertTrue(membershipRepository.findAll().isEmpty());
+
+        Team testTeam = new Team();
+        testTeam.setName("team1");
+        User testUser = new User();
+        testUser.setEmail("firstname@lastname");
+        testUser.setPassword("password");
+        testUser.setStatus(UserStatus.ONLINE);
+        testUser.setToken("token");
+
+        // // when
+        Membership membership = membershipService.createMembership(testTeam, testUser, true);
+        testTeam.setMemberships(new HashSet<>());
+        testTeam.getMemberships().add(membership);
+
+        // then
+        assertNotNull(membershipRepository.findAll());
+        assertNotNull(membershipService.findMembership(testTeam,testUser.getId()));
+    }
 }
