@@ -49,11 +49,11 @@ public class User implements Serializable {
   @Column(nullable = false)
   private UserStatus status;
 
-  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
   @JsonIgnore
   private Set<Membership> memberships;
 
-  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH})
+  @OneToMany(mappedBy = "user", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.REMOVE})
   @JsonIgnore
   private Set<Invitation> invitations;
 

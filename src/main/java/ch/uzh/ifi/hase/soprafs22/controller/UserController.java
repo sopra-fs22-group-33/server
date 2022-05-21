@@ -174,6 +174,8 @@ public class UserController {
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
+    }else{
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights");
     }
   }
 

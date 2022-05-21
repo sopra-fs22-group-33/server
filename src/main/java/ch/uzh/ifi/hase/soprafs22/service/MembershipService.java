@@ -59,7 +59,11 @@ public class MembershipService {
 
   public void deleteMembership(Team team, long userId){
     Membership membership = findMembership(team, userId);
-    membershipRepository.deleteById(membership.getId());
+    team.getMemberships().remove(membership);
+    User user = membership.getUser();
+    user.getMemberships().remove(membership);
+    membershipRepository.delete(membership);
+//    membershipRepository.deleteById(membership.getId());
     membershipRepository.flush();
   }
 }
