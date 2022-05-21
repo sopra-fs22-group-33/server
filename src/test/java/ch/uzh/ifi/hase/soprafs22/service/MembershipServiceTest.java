@@ -116,6 +116,6 @@ public class MembershipServiceTest {
 
         membershipService.deleteMembership(testTeam, testUser.getId());
 
-        Mockito.verify(membershipRepository, Mockito.times(1)).deleteById(Mockito.anyLong());
+        Mockito.verify(membershipRepository, Mockito.times(1)).delete(Mockito.any());
     }
 }
