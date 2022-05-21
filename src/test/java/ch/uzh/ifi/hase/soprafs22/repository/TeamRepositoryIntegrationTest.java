@@ -22,7 +22,7 @@ public class TeamRepositoryIntegrationTest {
   public void findByName_success() {
     // given
     Team team = new Team();
-    team.setName("teamname");
+    team.setName("teamName");
 
     entityManager.persist(team);
     entityManager.flush();

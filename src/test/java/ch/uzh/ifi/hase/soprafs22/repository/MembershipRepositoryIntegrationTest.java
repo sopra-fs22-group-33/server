@@ -35,7 +35,7 @@ public class MembershipRepositoryIntegrationTest {
     user.setPassword("password");
 
     Team team = new Team();
-    team.setName("teamname");
+    team.setName("teamName");
     Membership membership = new Membership();
     // membership.setId(200L);
     membership.setTeam(team);

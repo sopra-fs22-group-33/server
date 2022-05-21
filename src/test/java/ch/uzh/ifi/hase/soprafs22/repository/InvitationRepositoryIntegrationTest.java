@@ -41,7 +41,7 @@ public class InvitationRepositoryIntegrationTest {
 
     // create Team
     Team team = new Team();
-    team.setName("teamname");
+    team.setName("teamName");
 
     //create invitation with user and team
     Invitation invitation = new Invitation();
