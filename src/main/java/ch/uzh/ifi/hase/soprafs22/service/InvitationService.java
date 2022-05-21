@@ -1,5 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
+
+import java.util.Objects;
 
 
 @Service
@@ -30,6 +33,15 @@ public class InvitationService {
   }
 
   public Invitation createInvitation(Team team, User user) {
+
+      if (team.getMemberships() != null){
+          for (Membership membership : team.getMemberships()){
+              if (Objects.equals(membership.getUser().getId(), user.getId())){
+                  throw new ResponseStatusException(HttpStatus.CONFLICT, "user " + user.getEmail() + " is already a team member");
+              }
+          }
+      }
+
     try {
         Invitation inv = this.findInvitation(team, user.getId());
     }catch (Exception ex){

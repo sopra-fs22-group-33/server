@@ -142,13 +142,8 @@ public class UserController {
   public UserGetDTO inviteUser(@RequestBody UserPostDTO userPostDTO, @PathVariable("teamId") long teamId, @RequestHeader("token") String token){
     Team team = teamService.findTeamById(teamId);
     User userToAdd = userService.findUserByEmail(userPostDTO.getEmail());
-    try {
-        membershipService.findMembership(team, userToAdd.getId());
-    }catch (Exception ex){
-        throw new ResponseStatusException(HttpStatus.CONFLICT, "this user is already a member of this team!");
-    }
-    userService.authorizeAdmin(team, token);
 
+    userService.authorizeAdmin(team, token);
 
     Invitation invitation = invitationService.createInvitation(team, userToAdd);
     try {
@@ -160,7 +155,6 @@ public class UserController {
         //do nothing
     }
     return DTOMapper.INSTANCE.convertEntityToUserGetDTO(userToAdd);
-
   }
 
   @PutMapping("/teams/{teamId}/users/{userId}")
@@ -180,6 +174,8 @@ public class UserController {
     Team team = teamService.findTeamById(teamId);
     if (userService.authorizeAdmin(team, token)){
       membershipService.deleteMembership(team, userId);
+    }else{
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights");
     }
   }
 

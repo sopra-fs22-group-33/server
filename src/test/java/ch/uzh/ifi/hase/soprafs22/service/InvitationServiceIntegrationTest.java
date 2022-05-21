@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.web.server.ResponseStatusException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -87,6 +88,36 @@ public class InvitationServiceIntegrationTest {
     assertEquals(testTeam.getId(), invitation.getTeam().getId());
     assertEquals(testTeam.getName(), createdTeam.getName());
   }
+
+    @Test
+    @Transactional
+    public void createInvitation_twice_throwsException() {
+        // given
+        assertTrue(invitationRepository.findAll().isEmpty());
+
+        Team testTeam = new Team();
+        testTeam.setName("team1");
+        User testUser = new User();
+        testUser.setEmail("firstname@lastname");
+        testUser.setPassword("password");
+        User testUser2 = new User();
+        testUser2.setEmail("2@test");
+        testUser2.setPassword("password");
+
+        // when
+        User createdUser = userService.createUser(testUser);
+        User createdUser2 = userService.createUser(testUser2);
+        Team createdTeam = teamService.createTeam(testTeam, createdUser);
+        Invitation invitation = invitationService.createInvitation(testTeam, testUser2);
+        testTeam.setInvitations(new HashSet<>());
+        testTeam.getInvitations().add(invitation);
+
+        // then
+        assertEquals(testTeam.getId(), invitation.getTeam().getId());
+        assertEquals(testTeam.getName(), createdTeam.getName());
+
+        assertThrows(ResponseStatusException.class, () -> invitationService.createInvitation(testTeam, testUser2));
+    }
 
   @Test
   @Transactional
