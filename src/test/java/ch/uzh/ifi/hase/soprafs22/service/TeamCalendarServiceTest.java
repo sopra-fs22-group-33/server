@@ -77,7 +77,6 @@ public class TeamCalendarServiceTest {
     @Test
     public void createTeamCalendar_validInputs_success_nonEmpty_calendar() {
 
-
         Day day = new Day ();
         Slot slot = new Slot();
         Schedule schedule = new Schedule();
@@ -91,10 +90,6 @@ public class TeamCalendarServiceTest {
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
         testTeamCalendar.setBasePlan(days);
-        //testTeamCalendar.setStartingDate("123");
-
-        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate(LocalDate.now());
 
         TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
 
@@ -103,7 +98,6 @@ public class TeamCalendarServiceTest {
 
         assertEquals(testTeamCalendar.getStartingDate(), createdTeamCalendar.getStartingDate());
         assertEquals(testTeamCalendar.getBasePlan().size(), createdTeamCalendar.getBasePlan().size());
-
     }
 
     @Test
