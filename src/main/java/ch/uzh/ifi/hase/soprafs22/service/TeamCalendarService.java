@@ -15,6 +15,8 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +109,61 @@ public class TeamCalendarService {
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
     }
 
+    public void mapUserPreferences(Schedule schedule){
+        LocalDate  date =   schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(schedule.getSlot().getDay().getWeekday());
+        DayOfWeek dayofWeek = date.getDayOfWeek();
+        int weekday =0;
+        switch (dayofWeek) {
+            case MONDAY:
+                weekday = 0;
+                break;
+            case TUESDAY:
+                weekday = 1;
+                break;
+            case WEDNESDAY:
+               weekday = 2;
+               break;
+            case THURSDAY:
+                weekday = 3;
+                break;
+            case FRIDAY:
+                weekday = 4;
+            case SATURDAY:
+                weekday = 5;
+                break;
+            case SUNDAY:
+              weekday = 6;
+              break;
+        }
+        PreferenceCalendar calendar = schedule.getUser().getPreferenceCalendar();
+        if (calendar.getPreferencePlan()!= null){
+            PreferenceDay foundDay = calendar.getPreferencePlan().get(0);
+            for (PreferenceDay day:calendar.getPreferencePlan()){
+                if (day.getWeekday() == weekday){
+                    foundDay = day;
+                    break;
+                }
+            }
+
+            int sum = 0;
+            int nHours = 0;
+            // for each hour
+            for (int t = schedule.getSlot().getTimeFrom(); t<schedule.getSlot().getTimeTo(); t++){
+                        for (PreferenceSlot preferenceSlot: foundDay.getSlots()){
+                            if ((preferenceSlot.getTimeFrom()<=t)&&(preferenceSlot.getTimeTo()>t)){
+                                sum+= preferenceSlot.getBase();
+                            }
+                        }
+
+                    nHours+=1;
+            }
+            if(nHours!=0){
+                schedule.setBase(sum/nHours);
+            }
+            else schedule.setBase(0);
+        }
+    }
+
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
@@ -133,11 +190,13 @@ public class TeamCalendarService {
                         if (slot.getSchedules() != null) {
                             for (Schedule schedule : slot.getSchedules()) {
                                 schedule.setSlot(slot);
+                                mapUserPreferences(schedule);
                                 Optional<User> user = userRepository.findById(schedule.getUser().getId());
                                 if (user.isPresent()) {
                                     User foundUser = user.get();
                                     //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
+                                    mapUserPreferences(schedule);
                                 }
                                 else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
                             }
