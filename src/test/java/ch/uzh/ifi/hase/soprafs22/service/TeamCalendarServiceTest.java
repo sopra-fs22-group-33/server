@@ -1,10 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.*;
-import ch.uzh.ifi.hase.soprafs22.repository.ScheduleRepository;
-import ch.uzh.ifi.hase.soprafs22.repository.TeamCalendarRepository;
-import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
-import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.*;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +11,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
 import javax.transaction.Transactional;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.*;
 
@@ -27,6 +25,9 @@ public class TeamCalendarServiceTest {
     private TeamRepository teamRepository;
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private PreferenceCalendarRepository preferenceCalendarRepository;
 
     @Mock
     private ScheduleRepository scheduleRepository;
@@ -58,6 +59,7 @@ public class TeamCalendarServiceTest {
         Mockito.when(teamCalendarRepository.save(Mockito.any())).thenReturn(testTeamCalendar);
         Mockito.when(teamRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testTeam));
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testUser));
+
 
     }
 
@@ -164,10 +166,81 @@ public class TeamCalendarServiceTest {
 
     @Test
     @Transactional
-    public void Mapping_base_preferences_default_case() {
+    public void Mapping_base_preferences_normal_case() {
+        PreferenceCalendar prefCalendar = new PreferenceCalendar();
+        prefCalendar.setUser(testUser);
+        PreferenceDay prefDay = new PreferenceDay();
+        prefDay.setId(5L);
+        prefDay.setWeekday(0);
+        List<PreferenceDay>  prefdays = Collections.singletonList(prefDay);
+        PreferenceSlot prefSlot = new PreferenceSlot();
+        prefSlot.setDay(prefDay);
+        prefSlot.setId(6L);
+        prefSlot.setTimeFrom(1);
+        prefSlot.setTimeTo(4);
+        prefSlot.setBase(5);
+        List<PreferenceSlot>  prefSlots = Collections.singletonList(prefSlot);
+        prefDay.setSlots(prefSlots);
+        prefCalendar.setPreferencePlan(prefdays);
+        testUser.setPreferenceCalendar(prefCalendar);
+        Mockito.when(preferenceCalendarRepository.save(Mockito.any())).thenReturn(prefCalendar);
+
+
         testTeam.setTeamCalendar(testTeamCalendar);
         Set <Membership> memberships = new HashSet<>();
         Membership m = new Membership();
+        m.setTeam(testTeam);
+        m.setIsAdmin(true);
+        m.setUser(testUser);
+        memberships.add(m);
+        testTeam.setMemberships(memberships);
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        //create calendar
+        TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
+        assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), createdTeamCalendar.getBasePlan().get(0).getSlots().size());
+
+
+        // create new calendar  ( you cant get with the old one as it is passed by pointer and gets destroyed when)
+        TeamCalendar testCalendarUpdate = new TeamCalendar();
+        Day day2 = new Day ();
+        Slot slot2 = new Slot();
+        slot2.setTimeFrom(1);
+        slot2.setTimeTo(3);
+        slot2.setRequirement(1);
+        List<Slot> slots2 = Collections.singletonList(slot2);
+        day2.setSlots(slots2);
+        List<Day> days2 = new ArrayList<>();
+        days2.add(day2);
+        testCalendarUpdate.setBasePlan(days2);
+        testCalendarUpdate.setStartingDate(LocalDate.now());
+        while(testCalendarUpdate.getStartingDate().plusDays(day2.getWeekday()).getDayOfWeek()!= DayOfWeek.MONDAY){
+            day2.setWeekday(day2.getWeekday()+1);
+        }
+
+
+        TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testCalendarUpdate, "token" );
+        assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
+        assertEquals(5,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
+
+    }
+
+
+    @Test
+    @Transactional
+    public void Mapping_base_preferences_default_case() {
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Set <Membership> memberships = new HashSet<>();
+        Membership m = new Membership( );
         m.setTeam(testTeam);
         m.setIsAdmin(true);
         m.setUser(testUser);
