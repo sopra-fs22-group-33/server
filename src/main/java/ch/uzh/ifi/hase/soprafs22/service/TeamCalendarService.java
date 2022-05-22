@@ -176,6 +176,7 @@ public class TeamCalendarService {
                 break;
             case FRIDAY:
                 weekday = 4;
+                break;
             case SATURDAY:
                 weekday = 5;
                 break;
