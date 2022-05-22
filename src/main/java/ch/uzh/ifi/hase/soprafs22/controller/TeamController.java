@@ -64,9 +64,8 @@ public class TeamController {
   @ResponseBody
   public TeamGetDTO getTeam(@PathVariable("id") long id) {
     Team team = teamService.findTeamById(id);
-    TeamGetDTO teamGetDTO = DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team);
-    
-    return teamGetDTO;
+
+    return DTOMapper.INSTANCE.convertEntityToTeamGetDTO(team);
   }
 
   @PutMapping("/teams/{teamId}")
