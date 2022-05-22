@@ -130,9 +130,9 @@ public class TeamCalendarService {
                         Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
                         if (optinalSchedule.isPresent()){
                             Schedule foundSchedule = optinalSchedule.get();
-                            if (foundSchedule.getSlot().getDay().getTeamCalendar() == oldCalendar){
+                            if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
                                 foundSchedule.setSpecial(schedule.getSpecial());
-                                foundSchedule.setBase(schedule.getSpecial());
+                                foundSchedule.setBase(schedule.getBase());
                             }
                             else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
                         }
