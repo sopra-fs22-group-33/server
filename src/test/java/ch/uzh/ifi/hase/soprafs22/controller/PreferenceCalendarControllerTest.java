@@ -18,13 +18,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
 
-import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -61,8 +64,9 @@ public class PreferenceCalendarControllerTest {
         MockHttpServletRequestBuilder getRequest = get("/users/1/preferences").contentType(MediaType.APPLICATION_JSON);
 
         // then
-        mockMvc.perform(getRequest).andExpect(status().isOk())
-                .andExpect(status().isOk());
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(preferenceCalendar.getId())));
     }
 
     @Test
@@ -77,6 +81,7 @@ public class PreferenceCalendarControllerTest {
         List<PreferenceDay> days = Collections.singletonList(day);
         preferenceCalendar.setPreferencePlan(days);
         User user = new User();
+        user.setId(1L);
         user.setToken("1");
 
         //creating teamCalendarPostDTO
@@ -91,12 +96,44 @@ public class PreferenceCalendarControllerTest {
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder postRequest = post("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(preferenceCalendarPostDTO));
+                .content(asJsonString(preferenceCalendarPostDTO))
+                .header("token", "1");
 
         // then
-        //TODO fix test
         mockMvc.perform(postRequest)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id", is(preferenceCalendar.getId())));
+    }
+
+    @Test
+    public void postPreferenceCalendar_notAuthorized_throwsException() throws Exception {
+        // given
+        PreferenceCalendar preferenceCalendar = new PreferenceCalendar();
+        PreferenceDay day = new PreferenceDay();
+        PreferenceSlot slot = new PreferenceSlot();
+        List<PreferenceSlot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<PreferenceDay> days = Collections.singletonList(day);
+        preferenceCalendar.setPreferencePlan(days);
+
+        //creating teamCalendarPostDTO
+        PreferenceCalendarPostDTO preferenceCalendarPostDTO = new PreferenceCalendarPostDTO();
+
+        //defining mocks
+        given(preferenceCalendarService.createPreferenceCalendar(Mockito.anyLong(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.any())).willReturn(false);
+        given(preferenceCalendarService.updatePreferenceCalendar(Mockito.any(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder postRequest = post("/users/1/preferences")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(preferenceCalendarPostDTO))
+                .header("token", "1");;
+
+        // then
+        mockMvc.perform(postRequest)
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(status().isForbidden());
 
     }
 
@@ -115,18 +152,53 @@ public class PreferenceCalendarControllerTest {
         PreferenceCalendarPostDTO preferenceCalendarPostDTO = new PreferenceCalendarPostDTO();
 
 
+        //defining mocks
+        given(preferenceCalendarService.createPreferenceCalendar(Mockito.anyLong(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.any())).willReturn(true);
         given(preferenceCalendarService.updatePreferenceCalendar(Mockito.any(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(asJsonString(preferenceCalendarPostDTO));
+                .content(asJsonString(preferenceCalendarPostDTO))
+                .header("token", "1");;
 
 
         // then
-        //TODO fix test
         mockMvc.perform(putRequest)
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
+
+    }
+
+    @Test
+    public void changePreferenceCalendar_notAuthorized_throwsException() throws Exception {
+        // given
+        PreferenceCalendar preferenceCalendar = new PreferenceCalendar();
+        PreferenceDay day = new PreferenceDay();
+        PreferenceSlot slot = new PreferenceSlot();
+        List<PreferenceSlot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<PreferenceDay> days = Collections.singletonList(day);
+        preferenceCalendar.setPreferencePlan(days);
+
+        //creating teamCalendarPostDTO
+        PreferenceCalendarPostDTO preferenceCalendarPostDTO = new PreferenceCalendarPostDTO();
+
+        //defining mocks
+        given(preferenceCalendarService.createPreferenceCalendar(Mockito.anyLong(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.any())).willReturn(false);
+        given(preferenceCalendarService.updatePreferenceCalendar(Mockito.any(), Mockito.any(PreferenceCalendar.class))).willReturn(preferenceCalendar);
+
+        // when/then -> do the request + validate the result
+        MockHttpServletRequestBuilder putRequest = put("/users/1/preferences")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(asJsonString(preferenceCalendarPostDTO))
+                .header("token", "1");;
+
+        // then
+        mockMvc.perform(putRequest)
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(status().isForbidden());
 
     }
 
