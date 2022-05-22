@@ -404,7 +404,6 @@ public class UserControllerTest {
 
         given(teamService.findTeamById(Mockito.anyLong())).willReturn(team);
         given(membershipService.findMembership(Mockito.any(), Mockito.anyLong())).willReturn(membership);
-//        given(userService.authorizeAdmin(Mockito.any(), Mockito.anyString())).willReturn(true);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest =

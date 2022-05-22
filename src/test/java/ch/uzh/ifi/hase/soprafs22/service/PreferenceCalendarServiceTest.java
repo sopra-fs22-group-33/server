@@ -103,6 +103,8 @@ public class PreferenceCalendarServiceTest {
         PreferenceDay day = new PreferenceDay ();
         PreferenceSlot slot = new PreferenceSlot();
         slot.setBase(-1);
+        slot.setTimeFrom(0);
+        slot.setTimeTo(0);
         List<PreferenceSlot> slots = Collections.singletonList(slot);
         day.setSlots(slots);
         List<PreferenceDay> days = Collections.singletonList(day);
@@ -111,7 +113,9 @@ public class PreferenceCalendarServiceTest {
         PreferenceCalendar updatedCalendar = preferenceCalendarService.updatePreferenceCalendar(testUser, update);
 
         //check if slot was overridden
-        assertEquals(-1, updatedCalendar.getPreferencePlan().get(0).getSlots().get(0).getBase());
+        assertEquals(slot.getBase(), updatedCalendar.getPreferencePlan().get(0).getSlots().get(0).getBase());
+        assertEquals(slot.getTimeFrom(), updatedCalendar.getPreferencePlan().get(0).getSlots().get(0).getTimeTo());
+        assertEquals(slot.getTimeTo(), updatedCalendar.getPreferencePlan().get(0).getSlots().get(0).getTimeTo());
     }
 }
 
