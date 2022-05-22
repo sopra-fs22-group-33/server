@@ -3,9 +3,6 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +15,6 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -71,53 +66,8 @@ public class TeamCalendarService {
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
-        fixPlan(newCalendar);
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
-    }
-
-
-    private void fixPlan(TeamCalendar teamCalendar){
-        // fix the dates by adjusting the pointers
-        teamCalendar.setBasePlanFixed(teamCalendar.getBasePlan());
-        teamCalendar.setStartingDateFixed(teamCalendar.getStartingDate());
-
-        // copy the content into the baseLan a
-        int latestDay = 0;
-        List<Day> basePlan = new ArrayList<>();
-        for (Day dayFixed: teamCalendar.getBasePlanFixed()){
-            if (dayFixed.getWeekday()>latestDay){
-                latestDay = dayFixed.getWeekday();
-            }
-
-            Day day = new Day();
-            day.setTeamCalendar(dayFixed.getTeamCalendar());
-            day.setWeekday(dayFixed.getWeekday());
-            List<Slot> slots = new ArrayList<>();
-            for (Slot fixedSlot: dayFixed.getSlots()){
-                Slot slot = new Slot();
-                slot.setDay(day);
-                slot.setTimeTo(fixedSlot.getTimeTo());
-                slot.setTimeFrom(fixedSlot.getTimeFrom());
-                slot.setRequirement(fixedSlot.getRequirement());
-                slots.add(slot);
-                List<Schedule> schedules = new ArrayList<>();
-                for (Schedule fixedSchedule: fixedSlot.getSchedules()){
-                    Schedule schedule = new Schedule();
-                    schedule.setSlot(slot);
-                    schedule.setBase(fixedSchedule.getBase());
-                    schedule.setUser(fixedSchedule.getUser());
-                    schedules.add(schedule);
-                }
-                slot.setSchedules(schedules);
-            }
-            day.setSlots(slots);
-            basePlan.add(day);
-
-        }
-        teamCalendar.setBasePlan(basePlan);
-        teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
-
     }
     public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
         Optional<Team> team = teamRepository.findById(id);
@@ -130,9 +80,9 @@ public class TeamCalendarService {
                         Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
                         if (optinalSchedule.isPresent()){
                             Schedule foundSchedule = optinalSchedule.get();
-                            if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
+                            if (foundSchedule.getSlot().getDay().getTeamCalendar() == oldCalendar){
                                 foundSchedule.setSpecial(schedule.getSpecial());
-                                foundSchedule.setBase(schedule.getBase());
+                                foundSchedule.setBase(schedule.getSpecial());
                             }
                             else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
                         }
@@ -155,68 +105,6 @@ public class TeamCalendarService {
             }
         }
         throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
-    }
-
-    public void mapUserPreferences(Schedule schedule){
-        LocalDate  date =   schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(schedule.getSlot().getDay().getWeekday());
-        DayOfWeek dayofWeek = date.getDayOfWeek();
-        int weekday =0;
-        switch (dayofWeek) {
-            case MONDAY:
-                weekday = 0;
-                break;
-            case TUESDAY:
-                weekday = 1;
-                break;
-            case WEDNESDAY:
-               weekday = 2;
-               break;
-            case THURSDAY:
-                weekday = 3;
-                break;
-            case FRIDAY:
-                weekday = 4;
-                break;
-            case SATURDAY:
-                weekday = 5;
-                break;
-            case SUNDAY:
-              weekday = 6;
-              break;
-        }
-        PreferenceCalendar calendar = schedule.getUser().getPreferenceCalendar();
-        if (calendar!= null){
-        if (calendar.getPreferencePlan()!= null){
-            PreferenceDay foundDay = calendar.getPreferencePlan().get(0);
-            for (PreferenceDay day:calendar.getPreferencePlan()){
-                if (day.getWeekday() == weekday){
-                    foundDay = day;
-                    break;
-                }
-            }
-
-            int sum = 0;
-            int nHours = 0;
-            // for each hour
-            for (int t = schedule.getSlot().getTimeFrom(); t<schedule.getSlot().getTimeTo(); t++){
-                        for (PreferenceSlot preferenceSlot: foundDay.getSlots()){
-                            if ((preferenceSlot.getTimeFrom()<=t)&&(preferenceSlot.getTimeTo()>t)){
-                                sum+= preferenceSlot.getBase();
-                            }
-                        }
-
-                    nHours+=1;
-            }
-            if(nHours!=0){
-                schedule.setBase(sum/nHours);
-            }
-            else schedule.setBase(0);
-         }
-        }
-        else schedule.setBase(0);
-
-        // set to default
-        schedule.setSpecial(-1);
     }
 
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
@@ -242,16 +130,18 @@ public class TeamCalendarService {
                 if (day.getSlots() != null) {
                     for (Slot slot : day.getSlots()) {
                         slot.setDay(day);
-                        List<Schedule> schedules= new ArrayList<>();
-                        for (Membership m: foundTeam.getMemberships()) {
-                            Schedule schedule = new Schedule();
-                            schedule.setUser(m.getUser());
-                            schedule.setSlot(slot);
-                            mapUserPreferences(schedule);
-                            schedules.add(schedule);
-
+                        if (slot.getSchedules() != null) {
+                            for (Schedule schedule : slot.getSchedules()) {
+                                schedule.setSlot(slot);
+                                Optional<User> user = userRepository.findById(schedule.getUser().getId());
+                                if (user.isPresent()) {
+                                    User foundUser = user.get();
+                                    //foundUser.addSchedule(schedule);
+                                    schedule.setUser(foundUser);
+                                }
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                            }
                         }
-                        slot.setSchedules(schedules);
                     }
                 }
             }
@@ -262,47 +152,6 @@ public class TeamCalendarService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
-
-    public void addTeamMemberToCalendar(Long teamId) {
-
-        Optional<Team> team = teamRepository.findById(teamId);
-        if (team.isPresent()){
-            Team foundTeam = team.get();
-            TeamCalendar calendar = foundTeam.getTeamCalendar();
-
-            for (Day day : calendar.getBasePlan()) {
-                if (day.getSlots() != null) {
-                    for (Slot slot : day.getSlots()) {
-                        if (slot.getSchedules() != null) {
-                            List<Schedule> schedules = slot.getSchedules();
-                            for (Membership m: foundTeam.getMemberships()) {
-                                boolean scheduleExists = false;
-                                for (Schedule schedule : schedules) {
-                                    if (schedule.getUser().getId().equals(m.getUser().getId())){
-                                        scheduleExists = true;
-                                        break;
-                                    }
-                                }
-                                if (!scheduleExists) {
-                                    Schedule newSchedule = new Schedule();
-                                    newSchedule.setUser(m.getUser());
-                                    newSchedule.setSlot(slot);
-                                    mapUserPreferences(newSchedule);
-                                    schedules.add(newSchedule);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            teamCalendarRepository.save(calendar);
-            teamCalendarRepository.flush();
-        }
-
-    }
-
-
 
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
@@ -381,29 +230,17 @@ public class TeamCalendarService {
 
             if (res == 0){
 
-                try {
+                try{
+
                     new Optimizer(foundCalendar);
                     updateOptimizedTeamCalendar(id, foundCalendar);
-                    return "optimiyer worked";
-
                 }
-
-                catch (LpSolveException ex) {
-                   return "Something did not work with optimizer";
-
-                }
-
-                catch (ArithmeticException ex) {
-                    return "no solution found";
-
-                }
-
                 catch (Exception ex) {
-                    return "lp?solve is not supported";
+                    return "optimizer started working but smth went wrong" + ex;
                 }
+
+                return "optimizer is working";
             }
-
-
             else if (res ==1){
                 return "there are collisions and games were started";
             }

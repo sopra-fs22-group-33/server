@@ -52,10 +52,11 @@ public class Optimizer {
         }
         else{ // if not try relaxing constraints
             this.solver.deleteLp();
-            solveReducedProblemIgnoreExternalCollisions();
+            solveReducedProblemIgnoreSpecial();
         }
     }
 
+    // always need to account external collisions otherwise cant depict overlapping slots
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
