@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.Math.exp;
 
@@ -37,17 +35,20 @@ public class TeamCalendarService {
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
 
+    private final ScheduleRepository scheduleRepository;
 
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
                                @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                               @Qualifier("dayRepository") DayRepository dayRepository) {
+                               @Qualifier("dayRepository") DayRepository dayRepository, @Qualifier("scheduleRepository") ScheduleRepository scheduleRepository)
+    {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
+        this.scheduleRepository= scheduleRepository;
 
     }
 
@@ -68,15 +69,54 @@ public class TeamCalendarService {
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
     }
-
-    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
+    public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+            for (Day day: newCalendar.getBasePlan()){
+                for (Slot slot: day.getSlots()){
+                    for (Schedule schedule: slot.getSchedules()){
+                        Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
+                        if (optinalSchedule.isPresent()){
+                            Schedule foundSchedule = optinalSchedule.get();
+                            if (foundSchedule.getSlot().getDay().getTeamCalendar() == oldCalendar){
+                                foundSchedule.setSpecial(schedule.getSpecial());
+                                foundSchedule.setBase(schedule.getSpecial());
+                            }
+                            else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
+                        }
+                        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of the schedules is not in the database");
+                    }
+                }
+            }
+
+            teamCalendarRepository.save(oldCalendar);
+            teamCalendarRepository.flush();
+            return oldCalendar;
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team was not found");
+    }
+
+    public boolean authorizeAdmin(Team team, String token){
+        for (Membership membership : team.getMemberships()){
+            if (membership.getUser().getToken().matches(token) && membership.getIsAdmin()){
+                return true;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
+    }
+
+    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            authorizeAdmin(foundTeam, token);
+            TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
             oldCalendar.getBasePlan().clear();
             teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();}
+
 
         Optional<Team> teamagain = teamRepository.findById(id);
         if (teamagain.isPresent()){
