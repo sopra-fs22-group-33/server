@@ -61,6 +61,7 @@ public class TeamCalendarServiceTest {
         Mockito.when(userRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testUser));
 
 
+
     }
 
     @Test
@@ -85,6 +86,7 @@ public class TeamCalendarServiceTest {
         Day day = new Day ();
         Slot slot = new Slot();
         Schedule schedule = new Schedule();
+        schedule.setId(10L);
         schedule.setSpecial(-1);
         schedule.setBase(1);
         schedule.setUser(testUser);
@@ -290,6 +292,65 @@ public class TeamCalendarServiceTest {
         TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testCalendarUpdate, "token" );
         assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
         assertEquals(0,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
+
+    }
+
+    @Test
+    @Transactional
+    public void UpdatePreferencesTest() {
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+
+        Mockito.when(scheduleRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(schedule));
+
+        TeamCalendar testCalendarUpdate = new TeamCalendar();
+        Day day2 = new Day ();
+        day2.setTeamCalendar(testCalendarUpdate);
+        Slot slot2 = new Slot();
+        slot.setDay(day2);
+        Schedule schedule2 = new Schedule();
+        schedule2.setId(10L);
+        schedule2.setSpecial(-4);
+        schedule2.setBase(6);
+        schedule2.setSlot(slot2);
+        schedule2.setUser(testUser);
+        List<Schedule> schedules2 = Collections.singletonList(schedule2);
+        slot2.setSchedules(schedules2);
+        slot2.setRequirement(1);
+        List<Slot> slots2 = Collections.singletonList(slot2);
+        day2.setSlots(slots2);
+        List<Day> days2 = new ArrayList<>();
+        days2.add(day2);
+        testCalendarUpdate.setBasePlan(days2);
+        testCalendarUpdate.setStartingDate(LocalDate.now());
+        testCalendarUpdate.setId(1L);
+
+
+        //create calendar
+        TeamCalendar updatedTeamCalendar = teamCalendarService.updatePreferences(1L, testCalendarUpdate );
+        assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
+        assertEquals(6,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
+        assertEquals(-4,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getSpecial());
+
+
 
     }
 
