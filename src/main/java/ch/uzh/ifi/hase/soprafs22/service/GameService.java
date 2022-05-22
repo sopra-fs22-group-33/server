@@ -138,6 +138,7 @@ public class GameService {
         List<Location> chunks = currentPlayer.getChunks();
         Location head = chunks.get(0);
 
+        if (game.getApples()!=null){
         for (int i = 0; i< game.getApples().size(); i++){
              Location appleLocation = game.getApples().get(i);
                 if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
@@ -152,6 +153,7 @@ public class GameService {
 
                 }
             }
+        }
         int rank = 0;
         Location playerHead;
         for (Player player:game.getPlayers()) {

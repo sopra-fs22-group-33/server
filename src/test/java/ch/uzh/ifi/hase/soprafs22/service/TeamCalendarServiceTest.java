@@ -14,10 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import javax.transaction.Transactional;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -50,6 +47,7 @@ public class TeamCalendarServiceTest {
         testTeam.setId(1L);
         testUser = new User();
         testUser.setId(2L);
+        testUser.setToken("token");
         testTeam.setName("testTeamname");
         testTeamCalendar = new TeamCalendar();
 
@@ -104,6 +102,13 @@ public class TeamCalendarServiceTest {
     @Transactional
     public void modifyTeamCalendar_validInputs_success() {
         testTeam.setTeamCalendar(testTeamCalendar);
+        Set <Membership> memberships = new HashSet<>();
+        Membership m = new Membership();
+        m.setTeam(testTeam);
+        m.setIsAdmin(true);
+        m.setUser(testUser);
+        memberships.add(m);
+        testTeam.setMemberships(memberships);
 
         Day day = new Day ();
         Slot slot = new Slot();
@@ -137,7 +142,7 @@ public class TeamCalendarServiceTest {
         List<Slot> slots2 = Collections.singletonList(slot2);
         day2.setSlots(slots2);
         testTeamCalendar.getBasePlan().add(day2);
-        TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testTeamCalendar );
+        TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testTeamCalendar, "token" );
         assertEquals(testTeamCalendar.getBasePlan().size(), updatedTeamCalendar.getBasePlan().size());
 
         // then
@@ -146,6 +151,8 @@ public class TeamCalendarServiceTest {
         assertEquals(testTeamCalendar.getStartingDate(), updatedTeamCalendar.getStartingDate());
         assertEquals(testTeamCalendar.getBasePlan().size(), updatedTeamCalendar.getBasePlan().size());
     }
+
+
 }
 
 
