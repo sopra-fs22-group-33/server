@@ -185,6 +185,7 @@ public class TeamCalendarService {
               break;
         }
         PreferenceCalendar calendar = schedule.getUser().getPreferenceCalendar();
+        if (calendar!= null){
         if (calendar.getPreferencePlan()!= null){
             PreferenceDay foundDay = calendar.getPreferencePlan().get(0);
             for (PreferenceDay day:calendar.getPreferencePlan()){
@@ -210,7 +211,9 @@ public class TeamCalendarService {
                 schedule.setBase(sum/nHours);
             }
             else schedule.setBase(0);
+         }
         }
+        else schedule.setBase(0);
     }
 
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
@@ -236,20 +239,16 @@ public class TeamCalendarService {
                 if (day.getSlots() != null) {
                     for (Slot slot : day.getSlots()) {
                         slot.setDay(day);
-                        if (slot.getSchedules() != null) {
-                            for (Schedule schedule : slot.getSchedules()) {
-                                schedule.setSlot(slot);
-                                mapUserPreferences(schedule);
-                                Optional<User> user = userRepository.findById(schedule.getUser().getId());
-                                if (user.isPresent()) {
-                                    User foundUser = user.get();
-                                    //foundUser.addSchedule(schedule);
-                                    schedule.setUser(foundUser);
-                                    mapUserPreferences(schedule);
-                                }
-                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-                            }
+                        List<Schedule> schedules= new ArrayList<>();
+                        for (Membership m: foundTeam.getMemberships()) {
+                            Schedule schedule = new Schedule();
+                            schedule.setUser(m.getUser());
+                            schedule.setSlot(slot);
+                            mapUserPreferences(schedule);
+                            schedules.add(schedule);
+
                         }
+                        slot.setSchedules(schedules);
                     }
                 }
             }
