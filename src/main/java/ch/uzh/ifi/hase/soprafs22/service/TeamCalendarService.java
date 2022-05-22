@@ -214,6 +214,9 @@ public class TeamCalendarService {
          }
         }
         else schedule.setBase(0);
+
+        // set to default
+        schedule.setSpecial(-1);
     }
 
     public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
