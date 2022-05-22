@@ -3,6 +3,9 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
+import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,8 +71,53 @@ public class TeamCalendarService {
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
+        fixPlan(newCalendar);
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
+    }
+
+
+    private void fixPlan(TeamCalendar teamCalendar){
+        // fix the dates by adjusting the pointers
+        teamCalendar.setBasePlanFixed(teamCalendar.getBasePlan());
+        teamCalendar.setStartingDateFixed(teamCalendar.getStartingDate());
+
+        // copy the content into the baseLan a
+        int latestDay = 0;
+        List<Day> basePlan = new ArrayList<>();
+        for (Day dayFixed: teamCalendar.getBasePlanFixed()){
+            if (dayFixed.getWeekday()>latestDay){
+                latestDay = dayFixed.getWeekday();
+            }
+
+            Day day = new Day();
+            day.setTeamCalendar(dayFixed.getTeamCalendar());
+            day.setWeekday(dayFixed.getWeekday());
+            List<Slot> slots = new ArrayList<>();
+            for (Slot fixedSlot: day.getSlots()){
+                Slot slot = new Slot();
+                slot.setDay(day);
+                slot.setTimeTo(fixedSlot.getTimeTo());
+                slot.setTimeFrom(fixedSlot.getTimeFrom());
+                slot.setRequirement(fixedSlot.getRequirement());
+                slots.add(slot);
+                List<Schedule> schedules = new ArrayList<>();
+                for (Schedule fixedSchedule: slot.getSchedules()){
+                    Schedule schedule = new Schedule();
+                    schedule.setSlot(slot);
+                    schedule.setBase(fixedSchedule.getBase());
+                    schedule.setUser(fixedSchedule.getUser());
+                    schedules.add(schedule);
+                }
+                slot.setSchedules(schedules);
+            }
+            day.setSlots(slots);
+            teamCalendar.setBasePlan(basePlan);
+            teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
+        }
+
+
+
     }
     public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
         Optional<Team> team = teamRepository.findById(id);
@@ -289,17 +337,29 @@ public class TeamCalendarService {
 
             if (res == 0){
 
-                try{
-
+                try {
                     new Optimizer(foundCalendar);
                     updateOptimizedTeamCalendar(id, foundCalendar);
-                }
-                catch (Exception ex) {
-                    return "optimizer started working but smth went wrong" + ex;
+                    return "optimiyer worked";
+
                 }
 
-                return "optimizer is working";
+                catch (LpSolveException ex) {
+                   return "Something did not work with optimizer";
+
+                }
+
+                catch (ArithmeticException ex) {
+                    return "no solution found";
+
+                }
+
+                catch (Exception ex) {
+                    return "lp?solve is not supported";
+                }
             }
+
+
             else if (res ==1){
                 return "there are collisions and games were started";
             }
