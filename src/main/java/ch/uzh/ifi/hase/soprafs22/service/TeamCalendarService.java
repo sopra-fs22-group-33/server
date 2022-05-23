@@ -263,6 +263,47 @@ public class TeamCalendarService {
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
+    public void addTeamMemberToCalendar(Long teamId) {
+
+        Optional<Team> team = teamRepository.findById(teamId);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar calendar = foundTeam.getTeamCalendar();
+
+            for (Day day : calendar.getBasePlan()) {
+                if (day.getSlots() != null) {
+                    for (Slot slot : day.getSlots()) {
+                        if (slot.getSchedules() != null) {
+                            List<Schedule> schedules = slot.getSchedules();
+                            for (Membership m: foundTeam.getMemberships()) {
+                                boolean scheduleExists = false;
+                                for (Schedule schedule : schedules) {
+                                    if (schedule.getUser().getId().equals(m.getUser().getId())){
+                                        scheduleExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!scheduleExists) {
+                                    Schedule newSchedule = new Schedule();
+                                    newSchedule.setUser(m.getUser());
+                                    newSchedule.setSlot(slot);
+                                    mapUserPreferences(newSchedule);
+                                    schedules.add(newSchedule);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            teamCalendarRepository.save(calendar);
+            teamCalendarRepository.flush();
+        }
+
+    }
+
+
+
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
