@@ -52,4 +52,8 @@ public class TeamCalendarGetDTO {
     public void setDaysFixed(List<Day> daysFixed) {
         this.daysFixed = daysFixed;
     }
+
+    public void setStartingDateFixed(LocalDate startingDateFixed) {
+        this.startingDateFixed = startingDateFixed;
+    }
 }
