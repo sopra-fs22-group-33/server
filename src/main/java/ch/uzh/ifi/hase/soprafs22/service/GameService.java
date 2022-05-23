@@ -108,6 +108,7 @@ public class GameService {
         Player foundPlayer =  player.get();
         Game foundGame = game.get();
 
+        foundPlayer.setStatusOnline(playerInput.getStatusOnline());
         foundPlayer.setChunks(playerInput.getChunks());
 
         makeMove(foundGame, foundPlayer);
