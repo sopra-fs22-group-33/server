@@ -121,16 +121,8 @@ public class GameService {
     public void makeMove(Game game, Player currentPlayer){
         int size = game.getBoardLength();
 
-        // check if all the players are dead  // TODO: maybe change to only one left - then stop game
-        Boolean stop = true;
-        for (Player player:game.getPlayers()) {
-            if (player.getStatus()!= "dead") {
-                stop = false;
-            }
-        }
-        if (stop){
-            finishGame(game); //  if all the players are dead, finish it
-        }
+
+
         // if the player just ate, change his status to null so thathe stops eating...
         if (currentPlayer.getStatus() == "ate"){
             currentPlayer.setStatus(null);
@@ -188,6 +180,16 @@ public class GameService {
                     }
                 }
             }
+        }
+        // check if all the players are dead  // TODO: maybe change to only one left - then stop game
+        Boolean stop = true;
+        for (Player player:game.getPlayers()) {
+            if (player.getStatus()!= "dead") {
+                stop = false;
+            }
+        }
+        if (stop){
+            finishGame(game); //  if all the players are dead, finish it
         }
     }
 
