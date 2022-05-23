@@ -103,6 +103,7 @@ public class GameService {
             List<Location> chunks = currentPlayer.getChunks();
             Location head = chunks.get(0);
 
+            // check if he eats again
             if (game.getApples()!=null){
             for (int i = 0; i< game.getApples().size(); i++){
                  Location appleLocation = game.getApples().get(i);
@@ -119,19 +120,21 @@ public class GameService {
                     }
                 }
             }
-
+            // compute the current max rank
             int rank = 0;
             Location playerHead;
             for (Player player:game.getPlayers()) {
                 if (player.getRank()> rank ){rank = player.getRank();}
             }// update the current max rank
 
-                // wall collision check
+            // check wall collision
             if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
                     currentPlayer.setStatus("dead");
                     currentPlayer.setChunks(null);
                     currentPlayer.setRank(rank+1);
                 }
+            // if the player did not die because of wall maybe he crashed into others
+
             else  for (Player player:game.getPlayers()) {
                 // if that player is not dead and it is not us
             if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
@@ -158,7 +161,7 @@ public class GameService {
                 }
             }
         }
-        // check if all the players are dead  // TODO: maybe change to only one left - then stop game
+        // check if all the players are dead  // TODO: maybe change to only one player left - then stop game
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
             if (player.getStatus()!= "dead") {
@@ -171,7 +174,7 @@ public class GameService {
     }
 
     private void finishGame(Game game){
-        // TODO: Maybe need to delete the game form the database - > discuss
+        // TODO: Maybe need to delete the game from the database - > discuss
         game.setStatus("off");
         game.getSlot().getDay().getTeamCalendar().setCollisions( game.getSlot().getDay().getTeamCalendar().getCollisions()-1);
         int requirement = game.getSlot().getRequirement();
