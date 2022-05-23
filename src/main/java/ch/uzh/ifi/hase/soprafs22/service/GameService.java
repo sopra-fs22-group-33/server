@@ -232,7 +232,7 @@ public class GameService {
             }
         }
 
-        Collections.sort(selectedPlayers, (o1, o2) -> Integer.valueOf(o2.getRank()).compareTo(Integer.valueOf(o1.getRank()))); // this sorts in decreasing order by rank - check again TODO
+        Collections.sort(selectedPlayers, (o1, o2) -> Integer.valueOf(o1.getRank()).compareTo(Integer.valueOf(o2.getRank()))); // this sorts in increasing order by rank
         return selectedPlayers;
     }
 
