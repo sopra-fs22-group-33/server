@@ -119,19 +119,22 @@ public class GameService {
                     }
                 }
             }
+
             int rank = 0;
             Location playerHead;
             for (Player player:game.getPlayers()) {
-                if (player.getRank()> rank ){rank = player.getRank();} // update the current max rank
+                if (player.getRank()> rank ){rank = player.getRank();}
+            }// update the current max rank
 
                 // wall collision check
-                if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
+            if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
                     currentPlayer.setStatus("dead");
                     currentPlayer.setChunks(null);
                     currentPlayer.setRank(rank+1);
                 }
-                        // if that player is not dead and it is not us
-                if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
+            else  for (Player player:game.getPlayers()) {
+                // if that player is not dead and it is not us
+            if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
                     List<Location> playerChunks = player.getChunks();
                     for (Location chunkLocation : playerChunks) {
                         // handle the case when two heads meet
