@@ -172,8 +172,9 @@ public class GameService {
         if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
             try {
                 new Optimizer(game.getSlot().getDay().getTeamCalendar());
+              // TODO: need to put to database optimized calendar somehow...
             }
-            catch (LpSolveException e) { // TODO : make the whole exception thing catch
+            catch (Exception e) { // TODO : make the whole exception thing catch
                 ;
             }
         }
