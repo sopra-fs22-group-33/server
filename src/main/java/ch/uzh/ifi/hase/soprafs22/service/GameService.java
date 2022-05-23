@@ -149,7 +149,7 @@ public class GameService {
         int rank = 0;
         Location playerHead;
         for (Player player:game.getPlayers()) {
-            if (player.getRank()> rank ){rank = player.getRank();} // upsate the current max rank
+            if (player.getRank()> rank ){rank = player.getRank();} // update the current max rank
 
             // wall collision check
             if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
