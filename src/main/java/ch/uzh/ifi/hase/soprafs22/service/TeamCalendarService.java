@@ -94,7 +94,7 @@ public class TeamCalendarService {
             day.setTeamCalendar(dayFixed.getTeamCalendar());
             day.setWeekday(dayFixed.getWeekday());
             List<Slot> slots = new ArrayList<>();
-            for (Slot fixedSlot: day.getSlots()){
+            for (Slot fixedSlot: dayFixed.getSlots()){
                 Slot slot = new Slot();
                 slot.setDay(day);
                 slot.setTimeTo(fixedSlot.getTimeTo());
@@ -102,7 +102,7 @@ public class TeamCalendarService {
                 slot.setRequirement(fixedSlot.getRequirement());
                 slots.add(slot);
                 List<Schedule> schedules = new ArrayList<>();
-                for (Schedule fixedSchedule: slot.getSchedules()){
+                for (Schedule fixedSchedule: fixedSlot.getSchedules()){
                     Schedule schedule = new Schedule();
                     schedule.setSlot(slot);
                     schedule.setBase(fixedSchedule.getBase());
@@ -112,11 +112,10 @@ public class TeamCalendarService {
                 slot.setSchedules(schedules);
             }
             day.setSlots(slots);
-            teamCalendar.setBasePlan(basePlan);
-            teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
+
         }
-
-
+        teamCalendar.setBasePlan(basePlan);
+        teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
 
     }
     public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
