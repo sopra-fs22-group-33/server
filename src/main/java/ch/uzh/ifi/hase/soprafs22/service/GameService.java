@@ -169,15 +169,6 @@ public class GameService {
         int assignment = 0; // make 0 - does not want, 1 - wants, -1 - no  preference
         int possible = 0;
 
-        if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
-            try {
-                new Optimizer(game.getSlot().getDay().getTeamCalendar());
-              // TODO: need to put to database optimized calendar somehow...
-            }
-            catch (Exception e) { // TODO : make the whole exception thing catch
-                ;
-            }
-        }
 
         if (game.getSlot().getSchedules() != null) {
             for (Schedule schedule :  game.getSlot().getSchedules()) {
@@ -205,6 +196,16 @@ public class GameService {
                 removeSpecialPreference(sortedPlayers.get(i).getUser(), game.getSlot());
                 i+=1;
                 mismatch -=1;
+            }
+        }
+
+        if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
+            try {
+                new Optimizer(game.getSlot().getDay().getTeamCalendar());
+                // TODO: need to put to database optimized calendar somehow...
+            }
+            catch (Exception e) {
+                ;
             }
         }
     }
