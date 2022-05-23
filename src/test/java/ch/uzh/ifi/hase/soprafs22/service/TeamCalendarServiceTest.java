@@ -353,7 +353,7 @@ public class TeamCalendarServiceTest {
 
 
     }
-
+/*
 
     @Test
     public void update_calendar_after_optimizer_test() {
@@ -389,7 +389,7 @@ public class TeamCalendarServiceTest {
 
 
     }
-
+*/
 
 }
 
