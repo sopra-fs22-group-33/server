@@ -93,62 +93,64 @@ public class GameService {
     public void makeMove(Game game, Player currentPlayer){
         int size = game.getBoardLength();
 
+// if the current player is not yet dead
+        if (currentPlayer.getStatus() != "dead"){
 
+            // if the player just ate, change his status to null so thathe stops eating...
+            if (currentPlayer.getStatus() == "ate"){
+                currentPlayer.setStatus(null);
+            }
+            List<Location> chunks = currentPlayer.getChunks();
+            Location head = chunks.get(0);
 
-        // if the player just ate, change his status to null so thathe stops eating...
-        if (currentPlayer.getStatus() == "ate"){
-            currentPlayer.setStatus(null);
-        }
-        List<Location> chunks = currentPlayer.getChunks();
-        Location head = chunks.get(0);
+            if (game.getApples()!=null){
+            for (int i = 0; i< game.getApples().size(); i++){
+                 Location appleLocation = game.getApples().get(i);
+                    if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
+                        currentPlayer.setStatus("ate");
 
-        if (game.getApples()!=null){
-        for (int i = 0; i< game.getApples().size(); i++){
-             Location appleLocation = game.getApples().get(i);
-                if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
-                    currentPlayer.setStatus("ate");
+                        // change location  of apple to random
+                        Random rand = new Random();
+                        int x = rand.nextInt(size);
+                        int y = rand.nextInt(size);
+                        appleLocation.setX(x);
+                        appleLocation.setY(y);
 
-                    // change location  of apple to random
-                    Random rand = new Random();
-                    int x = rand.nextInt(size);
-                    int y = rand.nextInt(size);
-                    appleLocation.setX(x);
-                    appleLocation.setY(y);
-
+                    }
                 }
             }
-        }
-        int rank = 0;
-        Location playerHead;
-        for (Player player:game.getPlayers()) {
-            if (player.getRank()> rank ){rank = player.getRank();} // update the current max rank
+            int rank = 0;
+            Location playerHead;
+            for (Player player:game.getPlayers()) {
+                if (player.getRank()> rank ){rank = player.getRank();} // update the current max rank
 
-            // wall collision check
-            if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
-                currentPlayer.setStatus("dead");
-                currentPlayer.setChunks(null);
-                currentPlayer.setRank(rank+1);
-            }
-                    // if that player is not dead and it is not us
-            if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
-                List<Location> playerChunks = player.getChunks();
-                for (Location chunkLocation : playerChunks) {
-                    // handle the case when two heads meet
-                    playerHead = player.getChunks().get(0);
-                    if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
-                        currentPlayer.setStatus("dead");
-                        currentPlayer.setChunks(null);
-                        currentPlayer.setRank(rank+1);
+                // wall collision check
+                if ((head.getX() < 0 || head.getY() < 0 || head.getX() >= size || head.getY() >= size)) {
+                    currentPlayer.setStatus("dead");
+                    currentPlayer.setChunks(null);
+                    currentPlayer.setRank(rank+1);
+                }
+                        // if that player is not dead and it is not us
+                if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
+                    List<Location> playerChunks = player.getChunks();
+                    for (Location chunkLocation : playerChunks) {
+                        // handle the case when two heads meet
+                        playerHead = player.getChunks().get(0);
+                        if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
+                            currentPlayer.setStatus("dead");
+                            currentPlayer.setChunks(null);
+                            currentPlayer.setRank(rank+1);
 
-                        player.setStatus("dead");
-                        player.setChunks(null);
-                        player.setRank(rank+1);
-                    }
-                    else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
-                        currentPlayer.setStatus("dead");
-                        currentPlayer.setChunks(null);
-                        currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
+                            player.setStatus("dead");
+                            player.setChunks(null);
+                            player.setRank(rank+1);
+                        }
+                        else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                            currentPlayer.setStatus("dead");
+                            currentPlayer.setChunks(null);
+                            currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
 
+                        }
                     }
                 }
             }
@@ -160,7 +162,7 @@ public class GameService {
                 stop = false;
             }
         }
-        if (stop){
+        if (stop && game.getStatus()=="on"){
             finishGame(game); //  if all the players are dead, finish it
         }
     }
