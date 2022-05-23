@@ -7,10 +7,7 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
-import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
-import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
-import ch.uzh.ifi.hase.soprafs22.service.TeamService;
-import ch.uzh.ifi.hase.soprafs22.service.UserService;
+import ch.uzh.ifi.hase.soprafs22.service.*;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,12 +24,14 @@ public class InvitationController {
   private final UserService userService;
   private final MembershipService membershipService;
   private final InvitationService invitationService;
+  private final TeamCalendarService teamCalendarService;
 
-  InvitationController(TeamService teamService, UserService userService, MembershipService membershipService, InvitationService invitationService) {
+  InvitationController(TeamService teamService, UserService userService, MembershipService membershipService, InvitationService invitationService, TeamCalendarService teamCalendarService) {
     this.teamService = teamService;
     this.userService = userService;
     this.membershipService = membershipService;
     this.invitationService = invitationService;
+    this.teamCalendarService = teamCalendarService;
   }
 
   @GetMapping("/users/{userId}/invitations")
@@ -76,6 +75,7 @@ public class InvitationController {
       //creating a new membership if invitation is accepted
       if (accept.matches("true")){
         Membership membership = membershipService.createMembership(invitationService.findInvitationById(invitation.getId()).getTeam(), invitationService.findInvitationById(invitation.getId()).getUser(), false);
+        teamCalendarService.addTeamMemberToCalendar(teamId);
       }
       //deleting the invitation
       invitationService.deleteInvitation(invitation.getId());
