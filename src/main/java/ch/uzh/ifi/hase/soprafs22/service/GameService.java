@@ -61,39 +61,6 @@ public class GameService {
 
 
 
-    public Game startGame(Game game) { // this one is for API to call from front end -only used for DEMO
-
-        // random chunks generation
-        Random rand = new Random();
-        for (Player player:game.getPlayers()){
-            Location chunck = new Location();
-            int x = rand.nextInt((10) + 1) + 0;
-            int y = rand.nextInt((10) + 1) + 0;
-            chunck.setX(x);
-            chunck.setY(y);
-            List<Location> chunks = new ArrayList<>();
-            chunks.add(chunck);
-            player.setChunks(chunks);
-        }
-
-        List<Location> apples = new ArrayList<>();
-        for (int j = 0; j<5; j++){
-            Location apple = new Location();
-            int x = rand.nextInt((10) + 1) + 0;
-            int y = rand.nextInt((10) + 1) + 0;
-            apple.setX(x);
-            apple.setY(y);
-            apples.add(j, apple);
-        }
-        game.setApples(apples);
-
-        game = gameRepository.save(game);
-        gameRepository.flush();
-
-        return game;
-    }
-
-
     @Transactional
     public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
         Optional<Game> game = gameRepository.findById(gameId);

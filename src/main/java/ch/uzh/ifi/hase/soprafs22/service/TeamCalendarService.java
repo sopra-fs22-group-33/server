@@ -400,7 +400,7 @@ public class TeamCalendarService {
                 try {
                     new Optimizer(foundCalendar);
                     updateOptimizedTeamCalendar(id, foundCalendar);
-                    return "optimiyer worked";
+                    return "optimizer worked";
 
                 }
 
@@ -413,7 +413,7 @@ public class TeamCalendarService {
                 }
 
                 catch (Exception ex) {
-                    return "lp?solve is not supported";
+                    return "something went wrong. probably requirements cant be satisfied or lp solve is not supported";
                 }
             }
 
@@ -438,7 +438,7 @@ public class TeamCalendarService {
                 catch (Exception e) {
                     //do nothing
                 }
-                return "admin has stupid requirement, I have sent him email";
+                return "bad requirement, email sent";
             }
 
         }
