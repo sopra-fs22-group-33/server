@@ -112,6 +112,7 @@ public class TeamCalendarService {
                 slot.setSchedules(schedules);
             }
             day.setSlots(slots);
+            basePlan.add(day);
 
         }
         teamCalendar.setBasePlan(basePlan);
