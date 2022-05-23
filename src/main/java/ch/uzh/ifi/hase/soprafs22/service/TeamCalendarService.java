@@ -71,27 +71,20 @@ public class TeamCalendarService {
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
-        fixPlan(newCalendar);
+        // clean existing data from the fixed calendar
+        newCalendar.getBasePlanFixed().clear();
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
-    }
 
-
-    private void fixPlan(TeamCalendar teamCalendar){
-        // fix the dates by adjusting the pointers
-        teamCalendar.setBasePlanFixed(teamCalendar.getBasePlan());
-        teamCalendar.setStartingDateFixed(teamCalendar.getStartingDate());
-
-        // copy the content into the baseLan a
-        int latestDay = 0;
+        // create copy of the base plan
         List<Day> basePlan = new ArrayList<>();
-        for (Day dayFixed: teamCalendar.getBasePlanFixed()){
+        int latestDay = 0;
+        for (Day dayFixed: newCalendar.getBasePlan()){
             if (dayFixed.getWeekday()>latestDay){
                 latestDay = dayFixed.getWeekday();
             }
 
             Day day = new Day();
-            day.setTeamCalendar(dayFixed.getTeamCalendar());
             day.setWeekday(dayFixed.getWeekday());
             List<Slot> slots = new ArrayList<>();
             for (Slot fixedSlot: dayFixed.getSlots()){
@@ -106,19 +99,42 @@ public class TeamCalendarService {
                     Schedule schedule = new Schedule();
                     schedule.setSlot(slot);
                     schedule.setBase(fixedSchedule.getBase());
+                    schedule.setSpecial(fixedSchedule.getSpecial());
                     schedule.setUser(fixedSchedule.getUser());
+                    schedule.setAssigned(fixedSchedule.getAssigned());
+
+                    // this is not required anymore
+                    fixedSchedule.setAssigned(0);
+                    fixedSchedule.setSpecial(-1);
                     schedules.add(schedule);
                 }
                 slot.setSchedules(schedules);
             }
             day.setSlots(slots);
             basePlan.add(day);
-
         }
-        teamCalendar.setBasePlan(basePlan);
-        teamCalendar.setStartingDate(teamCalendar.getStartingDate().plusDays(latestDay+ 1));
 
+
+        Optional<Team> team = teamRepository.findById(id);
+
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            // used the stored basePlan to fill out the fixed calendar
+            for (Day day: basePlan){
+                foundCalendar.getBasePlanFixed().add(day);
+
+            }
+            // update the dates
+            foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate());
+            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
+            teamCalendarRepository.save(foundCalendar);
+            teamCalendarRepository.flush();
+        }
     }
+
+
     public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
@@ -389,9 +405,7 @@ public class TeamCalendarService {
                 }
 
                 catch (LpSolveException ex) {
-                   return "Something did not work with optimizer";
-
-                }
+                   return "Something did not work with optimizer";}
 
                 catch (ArithmeticException ex) {
                     return "no solution found";

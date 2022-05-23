@@ -48,4 +48,8 @@ public class TeamCalendarGetDTO {
     public List<Day> getDaysFixed() {
         return daysFixed;
     }
+
+    public void setDaysFixed(List<Day> daysFixed) {
+        this.daysFixed = daysFixed;
+    }
 }
