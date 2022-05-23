@@ -545,6 +545,7 @@ public class TeamCalendarService {
     public void initializeGame(Slot slot) {
         Game game = new Game();
         game.setStatus("on");
+        game.setSlot(slot);
         Random rand = new Random();
 
         // set board size based on number of players
