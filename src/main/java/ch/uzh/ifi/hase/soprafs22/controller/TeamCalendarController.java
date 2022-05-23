@@ -48,6 +48,8 @@ public class TeamCalendarController {
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput, token);
     }
 
+
+
     @PutMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {

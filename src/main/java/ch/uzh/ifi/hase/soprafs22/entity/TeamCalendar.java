@@ -33,10 +33,12 @@ public class TeamCalendar implements Serializable {
     @Column
     private int collisions;
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinTable(name = "base")
     private List<Day> basePlan;
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinTable(name = "fixed")
     private List<Day> basePlanFixed;
 
     public Team getTeam() {
