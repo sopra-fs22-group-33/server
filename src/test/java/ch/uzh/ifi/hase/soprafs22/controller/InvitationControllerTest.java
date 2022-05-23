@@ -1,11 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
+import ch.uzh.ifi.hase.soprafs22.entity.Membership;
 import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
@@ -18,19 +16,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,72 +54,210 @@ public class InvitationControllerTest {
   @MockBean
   private InvitationService invitationService;
 
-  // @Test
-  // public void inviteUser_succsess() throws Exception {
-  //   // given
-  //   given(userService.authorizeAdmin(Mockito.any(), Mockito.any())).willReturn(true);
-  //   Team team = new Team();
-  //   team.setName("team1");
-  //   team.setId(1L);
-  //   User user = new User();
-  //   user.setToken("1");
-  //   User user2 = new User();
-  //   user2.setEmail("2@test");
-  //   userService.createUser(user);
-  //   teamService.createTeam(team, user);
-  //   UserPostDTO userPostDTO = new UserPostDTO();
-  //   userPostDTO.setEmail("2@test");
+   @Test
+   public void getInvitations_returnsTeam() throws Exception {
+     // given
+     Team team = new Team();
+     team.setName("team1");
+     team.setId(1L);
+     User user = new User();
+     user.setToken("1");
+     Invitation invitation = new Invitation();
+     invitation.setTeam(team);
+     user.setInvitations(new HashSet<>());
+     user.getInvitations().add(invitation);
 
-  //   given(teamService.findTeamById(Mockito.any())).willReturn(team);
-  //   given(userService.authorizeAdmin(Mockito.any(), Mockito.any())).willReturn(true);
-  //   given(userService.findUserByEmail(Mockito.any())).willReturn(user);
+     given(userService.findUserById(Mockito.anyLong())).willReturn(user);
+     given(userService.authorizeUser(Mockito.anyLong(), Mockito.anyString())).willReturn(true);
 
-  //   // when
-  //   MockHttpServletRequestBuilder postRequest = post("/teams/{teamId}/users", 1)
-  //     .contentType(MediaType.APPLICATION_JSON)
-  //     .content(asJsonString(userPostDTO))
-  //     .header("token", "1");
+     // when
+     MockHttpServletRequestBuilder getRequest = get("/users/1/invitations", 1)
+       .header("token", "1");
 
-  //   // then
-  //   mockMvc.perform(postRequest)
-  //     .andExpect(status().isOk())
-  //     .andExpect(jsonPath("$", hasSize(1)));
-  // }
+     // then
+     mockMvc.perform(getRequest)
+       .andExpect(status().isOk())
+       .andExpect(jsonPath("$", hasSize(1)))
+       .andExpect(jsonPath("$.[0].id", is(team.getId().intValue())))
+       .andExpect(jsonPath("$.[0].name", is(team.getName())));
+   }
 
-  // @Test
-  // public void createInvitation_validInput_invitationCreated() throws Exception {
-  //   // given
-  //   Team team = new Team();
-  //   team.setName("team1");
-  //   User user = new User();
-  //   user.setEmail("1@test.ch");
-  //   user.setPassword("123");
-  //   User creadtedUser = userService.createUser(user);
-  //   Team createdTeam = teamService.createTeam(team, user);
+    @Test
+    public void getInvitations_notAuthorized_throwsException() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        team.setId(1L);
+        User user = new User();
+        user.setToken("1");
+        Invitation invitation = new Invitation();
+        invitation.setTeam(team);
+        user.setInvitations(new HashSet<>());
+        user.getInvitations().add(invitation);
 
-  //   User user2 = new User();
-  //   user2.setEmail("2@test.ch");
-  //   user2.setPassword("123");
-  //   userService.createUser(user);
+        given(userService.findUserById(Mockito.anyLong())).willReturn(user);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.anyString())).willReturn(false);
 
-  //   UserPostDTO userPostDTO = new UserPostDTO();
-  //   userPostDTO.setEmail("2@test.ch");
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users/1/invitations", 1)
+                .header("token", "1");
 
-  //   given(userService.authorizeAdmin(Mockito.any(), Mockito.any())).willReturn(true);
-  //   given(userService.findUserByEmail(Mockito.any())).willReturn(user);
-  //   given(teamService.findTeamById(Mockito.any())).willReturn(team);
-    
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(status().isForbidden());
+    }
 
-  //   // when/then -> do the request + validate the result
-  //   MockHttpServletRequestBuilder postRequest = post("/teams/" + team.getId() + "/users")
-  //       .contentType(MediaType.APPLICATION_JSON)
-  //       .content(asJsonString(userPostDTO))
-  //       .header("token", "1");
+    @Test
+    public void getInvitedUsers_success_returnsUser() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        team.setId(1L);
+        User user = new User();
+        user.setEmail("test@test");
+        user.setToken("1");
+        user.setId(2L);
+        Invitation invitation = new Invitation();
+        invitation.setUser(user);
+        team.setInvitations(new HashSet<>());
+        team.getInvitations().add(invitation);
 
-  //   // then
-  //   mockMvc.perform(postRequest)
-  //       .andExpect(status().isOk());
-  // }
+        given(teamService.findTeamById(Mockito.anyLong())).willReturn(team);
+        given(userService.authorizeAdmin(Mockito.any(), Mockito.anyString())).willReturn(true);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/teams/1/invitations", 1)
+                .header("token", "1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$.[0].id", is(user.getId().intValue())))
+                .andExpect(jsonPath("$.[0].email", is(user.getEmail())));
+    }
+
+    @Test
+    public void getInvitedUsers_notAuthorized_throwsException() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        team.setId(1L);
+        User user = new User();
+        user.setToken("1");
+        Invitation invitation = new Invitation();
+        invitation.setTeam(team);
+        user.setInvitations(new HashSet<>());
+        user.getInvitations().add(invitation);
+
+        given(userService.findUserById(Mockito.anyLong())).willReturn(user);
+        given(userService.authorizeAdmin(Mockito.any(), Mockito.anyString())).willReturn(false);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/teams/1/invitations", 1)
+                .header("token", "1");
+
+        // then
+        mockMvc.perform(getRequest)
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof ResponseStatusException))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void answerInvitation_membershipCreated() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        User user = new User();
+        user.setToken("1");
+        Invitation invitation = new Invitation();
+        invitation.setId(1L);
+        invitation.setTeam(team);
+        invitation.setUser(user);
+        user.setInvitations(new HashSet<>());
+        user.getInvitations().add(invitation);
+        team.setInvitations(new HashSet<>());
+        team.getInvitations().add(invitation);
+
+        given(teamService.findTeamById(Mockito.anyLong())).willReturn(team);
+        given(membershipService.createMembership(Mockito.any(), Mockito.any(), Mockito.anyBoolean())).willReturn(new Membership());
+        given(invitationService.findInvitation(Mockito.any(), Mockito.anyLong())).willReturn(invitation);
+        given(invitationService.findInvitationById(Mockito.anyLong())).willReturn(invitation);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.anyString())).willReturn(true);
+
+        // when
+        MockHttpServletRequestBuilder putRequest = put("/users/2/invitations/1", 1)
+                .param("accept", "true")
+                .header("token", "1");
+
+        // then
+        mockMvc.perform(putRequest)
+                .andExpect(status().isOk());
+
+        Mockito.verify(membershipService, Mockito.times(1)).createMembership(Mockito.any(), Mockito.any(), Mockito.anyBoolean());
+        Mockito.verify(invitationService, Mockito.times(1)).deleteInvitation(Mockito.anyLong());
+    }
+
+    @Test
+    public void declineInvitation_invitationDeleted() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        User user = new User();
+        user.setToken("1");
+        Invitation invitation = new Invitation();
+        invitation.setId(1L);
+        invitation.setTeam(team);
+        invitation.setUser(user);
+        user.setInvitations(new HashSet<>());
+        user.getInvitations().add(invitation);
+        team.setInvitations(new HashSet<>());
+        team.getInvitations().add(invitation);
+
+        given(teamService.findTeamById(Mockito.anyLong())).willReturn(team);
+        given(invitationService.findInvitation(Mockito.any(), Mockito.anyLong())).willReturn(invitation);
+        given(userService.authorizeUser(Mockito.anyLong(), Mockito.anyString())).willReturn(true);
+
+        // when
+        MockHttpServletRequestBuilder deleteRequest = delete("/users/2/invitations/1", 1)
+                .header("token", "1");
+
+        // then
+        mockMvc.perform(deleteRequest)
+                .andExpect(status().isOk());
+
+        Mockito.verify(invitationService, Mockito.times(1)).deleteInvitation(Mockito.anyLong());
+    }
+
+    @Test
+    public void deleteInvitation_invitationDeleted() throws Exception {
+        // given
+        Team team = new Team();
+        team.setName("team1");
+        User user = new User();
+        user.setToken("1");
+        Invitation invitation = new Invitation();
+        invitation.setId(1L);
+        invitation.setTeam(team);
+        invitation.setUser(user);
+        user.setInvitations(new HashSet<>());
+        user.getInvitations().add(invitation);
+        team.setInvitations(new HashSet<>());
+        team.getInvitations().add(invitation);
+
+        given(userService.authorizeAdmin(Mockito.any(), Mockito.anyString())).willReturn(true);
+
+        // when
+        MockHttpServletRequestBuilder deleteRequest = delete("/teams/2/invitations/1", 1)
+                .header("token", "1");
+
+        // then
+        mockMvc.perform(deleteRequest)
+                .andExpect(status().isOk());
+
+        Mockito.verify(invitationService, Mockito.times(1)).deleteInvitation(Mockito.anyLong());
+    }
 
   /**
    * Helper Method to convert userPostDTO into a JSON string such that the input

@@ -15,6 +15,7 @@ import ch.uzh.ifi.hase.soprafs22.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +48,7 @@ public class InvitationController {
             teamGetDTOs.add(DTOMapper.INSTANCE.convertEntityToTeamGetDTO(invitation.getTeam()));
         }
         return teamGetDTOs;
-    }return null;
+    }throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized");
   }
 
   @GetMapping("/teams/{teamId}/invitations")
@@ -62,7 +63,7 @@ public class InvitationController {
             userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(invitation.getUser()));
         }
         return userGetDTOs;
-    }return null;
+    }throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You have no admin rights");
   }
 
   @PutMapping("/users/{userId}/invitations/{teamId}")

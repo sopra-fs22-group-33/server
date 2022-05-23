@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
@@ -43,7 +42,7 @@ public class UserCalendarService {
         LocalDate startingDate = LocalDate.now();
         int i;
 
-        //set startingDate to lowest date of all teamCalendars
+        //set startingDate to the lowest date of all teamCalendars
         for (Membership membership : user.getMemberships()) {
             if (startingDate.isAfter(membership.getTeam().getTeamCalendar().getStartingDate())){
                 startingDate = membership.getTeam().getTeamCalendar().getStartingDate();

@@ -30,7 +30,6 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.BDDMockito.given;
-import static org.springframework.http.RequestEntity.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -405,7 +404,6 @@ public class UserControllerTest {
 
         given(teamService.findTeamById(Mockito.anyLong())).willReturn(team);
         given(membershipService.findMembership(Mockito.any(), Mockito.anyLong())).willReturn(membership);
-//        given(userService.authorizeAdmin(Mockito.any(), Mockito.anyString())).willReturn(true);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder deleteRequest =

@@ -40,7 +40,7 @@ public class PreferenceCalendarController {
 
             return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(createdCalendar);
         }
-        return null;
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized");
     }
 
     @GetMapping("/users/{userId}/preferences")
@@ -64,7 +64,7 @@ public class PreferenceCalendarController {
 
             return DTOMapper.INSTANCE.convertEntityToPreferenceCalendarGetDTO(preferenceCalendar);
         }
-        return null;
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not authorized");
     }
 }
 
