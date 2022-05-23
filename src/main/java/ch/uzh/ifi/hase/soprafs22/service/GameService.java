@@ -4,6 +4,7 @@ import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.TeamCalendarRepository;
 import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,13 +33,16 @@ public class GameService {
     private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
+
+    private final TeamCalendarRepository teamCalendarRepository;
     private final PlayerRepository playerRepository;
 
 
     @Autowired
-    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("playerRepository") PlayerRepository playerRepository) {
+    public GameService(@Qualifier("gameRepository") GameRepository gameRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,  @Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository) {
         this.gameRepository = gameRepository;
         this.playerRepository = playerRepository;
+        this.teamCalendarRepository = teamCalendarRepository;
 
     }
 
@@ -202,7 +206,7 @@ public class GameService {
         if ( game.getSlot().getDay().getTeamCalendar().getCollisions() == 0){
             try {
                 new Optimizer(game.getSlot().getDay().getTeamCalendar());
-                // TODO: need to put to database optimized calendar somehow...
+                updateOptimizedTeamCalendar(game.getSlot().getDay().getTeamCalendar());
             }
             catch (Exception e) {
                 ;
@@ -219,7 +223,7 @@ public class GameService {
             }
         }
 
-        Collections.sort(selectedPlayers, (o1, o2) -> Integer.valueOf(o1.getRank()).compareTo(Integer.valueOf(o2.getRank()))); // TODO: make sure that it works
+        Collections.sort(selectedPlayers, (o1, o2) -> Integer.valueOf(o1.getRank()).compareTo(Integer.valueOf(o2.getRank()))); // this sorts in increasing order by rank
         return selectedPlayers;
     }
 
@@ -228,6 +232,73 @@ public class GameService {
             if (schedule.getUser().getId() == user.getId()){
                 schedule.setSpecial(-1);
             }
+        }
+    }
+
+
+
+    public void updateOptimizedTeamCalendar( TeamCalendar newCalendar){
+        // clean existing data from the fixed calendar
+        Long id = newCalendar.getId();
+        newCalendar.getBasePlanFixed().clear();
+        teamCalendarRepository.save(newCalendar);
+        teamCalendarRepository.flush();
+
+        // create copy of the base plan
+        List<Day> basePlan = new ArrayList<>();
+        int latestDay = 0;
+        for (Day dayFixed: newCalendar.getBasePlan()){
+            if (dayFixed.getWeekday()>latestDay){
+                latestDay = dayFixed.getWeekday();
+            }
+
+            Day day = new Day();
+            day.setWeekday(dayFixed.getWeekday());
+            List<Slot> slots = new ArrayList<>();
+            for (Slot fixedSlot: dayFixed.getSlots()){
+                Slot slot = new Slot();
+                slot.setDay(day);
+                slot.setTimeTo(fixedSlot.getTimeTo());
+                slot.setTimeFrom(fixedSlot.getTimeFrom());
+                slot.setRequirement(fixedSlot.getRequirement());
+                slots.add(slot);
+                List<Schedule> schedules = new ArrayList<>();
+                for (Schedule fixedSchedule: fixedSlot.getSchedules()){
+                    Schedule schedule = new Schedule();
+                    schedule.setSlot(slot);
+                    schedule.setBase(fixedSchedule.getBase());
+                    schedule.setSpecial(fixedSchedule.getSpecial());
+                    schedule.setUser(fixedSchedule.getUser());
+                    schedule.setAssigned(fixedSchedule.getAssigned());
+
+                    // this is not required anymore
+                    fixedSchedule.setAssigned(0);
+                    fixedSchedule.setSpecial(-1);
+                    schedules.add(schedule);
+                }
+                slot.setSchedules(schedules);
+            }
+            day.setSlots(slots);
+            basePlan.add(day);
+        }
+
+
+        Optional<TeamCalendar> teamCalendar = teamCalendarRepository.findById(id);
+
+        if (teamCalendar.isPresent()){
+
+            TeamCalendar foundCalendar =teamCalendar.get();
+            // used the stored basePlan to fill out the fixed calendar
+            for (Day day: basePlan){
+                foundCalendar.getBasePlanFixed().add(day);
+
+            }
+            // update the dates
+            foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate());
+            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
+            teamCalendarRepository.save(foundCalendar);
+            teamCalendarRepository.flush();
         }
     }
 
