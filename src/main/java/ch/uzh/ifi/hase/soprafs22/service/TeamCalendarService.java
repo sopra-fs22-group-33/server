@@ -468,7 +468,7 @@ public class TeamCalendarService {
                         }
                     }
 
-                    if(requirement> (assignment+possible) ){ // irresolvable collision
+                    if(requirement> (assignment+possible+lazy) ){ // irresolvable collision
                         return -1;
                     }
   // PART 1 : OVERSUPPLY OF USERS
