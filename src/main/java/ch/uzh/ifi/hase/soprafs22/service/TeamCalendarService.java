@@ -428,7 +428,7 @@ public class TeamCalendarService {
                 }
 
                 catch (Exception ex) {
-                    return "something went wrong.";
+                    return "no solution found or some other issue could occur";
                 }
             }
 

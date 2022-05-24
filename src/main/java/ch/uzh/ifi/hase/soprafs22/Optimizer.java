@@ -58,6 +58,7 @@ public class Optimizer {
 
     // always need to account external collisions otherwise cant depict overlapping slots
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
+        this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
 
@@ -86,6 +87,7 @@ public class Optimizer {
 
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
+        this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
         addRequirementConstraint();
 
@@ -276,32 +278,26 @@ public class Optimizer {
                 }
             }
             for (Long key : users.keySet()) { // for each user
-                for (int idx : users.get(key)) { // for each slot of that user
-                    ArrayList<Integer> overlappingSlots = checkForOverlaps(idx, users.get(key));
-                    if (overlappingSlots.size() !=0){
-                        double[] row = new double[nCols +1];
-                        for (int j: overlappingSlots){
-                            row[j] = 1;
+                for (int slot1 : users.get(key)) { // for each slot of that user
+                    for (int slot2 : users.get(key)){
+                        if (checkForOverlaps(slot1, slot2)){
+                            double[] row = new double[nCols +1];
+                            row[slot1] =1;
+                            row[slot2] =1;
+                            this.solver.addConstraint(row, LpSolve.LE, 1);
+
                         }
-                        this.solver.addConstraint(row, LpSolve.LE, 1);
                     }
                 }
             }
-
         }
-
 
     }
 
-    private ArrayList<Integer> checkForOverlaps(int idx, ArrayList<Integer> slots){
-        ArrayList<Integer> overlappingSlots = new ArrayList<Integer>();
-        for (int slot: slots){
-            // if starts earlier than idx is finished or finishes later than idx starts
-            if (((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo()) && (result.get(slot-1).getSlot().getTimeFrom()> result.get(idx-1).getSlot().getTimeFrom()))||((result.get(slot-1).getSlot().getTimeTo()> result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeTo()))||((result.get(slot-1).getSlot().getTimeFrom()== result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()== result.get(idx-1).getSlot().getTimeTo()))){
-                overlappingSlots.add(slot);
-            }
-        }
-        return overlappingSlots;
+    private Boolean checkForOverlaps(int slot1, int slot2){
+        // slot1 starts during slot2, slot2 finishes during slot2, they are the same
+       return (((result.get(slot1-1).getSlot().getTimeFrom()< result.get(slot2-1).getSlot().getTimeTo()) && (result.get(slot2-1).getSlot().getTimeFrom()> result.get(slot2-1).getSlot().getTimeFrom()))||((result.get(slot1-1).getSlot().getTimeTo()> result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()< result.get(slot2-1).getSlot().getTimeTo()))||((result.get(slot1-1).getSlot().getTimeFrom()== result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()== result.get(slot2-1).getSlot().getTimeTo())));
+
     }
 
     private void addExternalCollisionsConstraint() throws LpSolveException {
