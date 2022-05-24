@@ -29,6 +29,19 @@ public class Slot implements Serializable {
     @Column
     private int requirement;
 
+
+    @OneToOne(mappedBy = "slot", cascade = CascadeType.REMOVE)
+    public Game game;
+
+
+    public Game getGame() {
+        return game;
+    }
+
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
     //TODO check if slots get deleted by cascade
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL)
     private List<Schedule> schedules;
@@ -36,6 +49,8 @@ public class Slot implements Serializable {
     public Day getDay() {
         return day;
     }
+
+
 
     public void setDay(Day day) {
         this.day = day;

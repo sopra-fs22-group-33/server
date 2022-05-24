@@ -216,6 +216,7 @@ public class GameService {
                 new Optimizer(game.getSlot().getDay().getTeamCalendar());
                 updateOptimizedTeamCalendar(game.getSlot().getDay().getTeamCalendar());
                 gameRepository.delete(game);
+                gameRepository.flush();
             }
             catch (Exception e) {
                 ;
