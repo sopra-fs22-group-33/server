@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.PlayerPutDTO;
@@ -73,6 +74,13 @@ public class GameController {
         }
         return gameGetDTOs;
 
+    }
+
+    @DeleteMapping("/games/{gameId}/")
+    @ResponseStatus(HttpStatus.OK)
+    @ResponseBody
+    public void deleteTeamFromUser(@PathVariable("gameId") Long gameId){
+        gameService.deleteGame(gameId);
     }
 
 
