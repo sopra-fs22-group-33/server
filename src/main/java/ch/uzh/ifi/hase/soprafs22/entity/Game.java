@@ -20,7 +20,7 @@ public class Game {
     @GeneratedValue
     private long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REFRESH)
     private  Slot slot;
 
     @Column
