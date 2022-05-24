@@ -574,6 +574,7 @@ public class TeamCalendarService {
                 Player player = new Player();
                 player.setUser(schedule.getUser());
                 player.setGame(game);
+                player.setSpecial(schedule.getSpecial());
                 Location chunck = new Location();
                 int x = rand.nextInt(size);
                 int y = rand.nextInt(size);
