@@ -38,6 +38,7 @@ public class GameServiceTest {
         // given
         testGame = new Game();
         testGame.setId(1L);
+        testGame.setBoardLength(10);
         testPlayer1= new Player();
         testPlayer2 = new Player();
         testPlayer1.setId(2L);
@@ -78,41 +79,33 @@ public class GameServiceTest {
     public void updatePlayerInGameTest(){
         Location l = new Location();
         l.setX(1);
-        l.setY(1);
+        l.setY(2);
         List<Location> chunks = new ArrayList<>();
         chunks.add(l);
 
         Location l2 = new Location();
-        l.setX(2);
-        l.setY(2);
+        l2.setX(2);
+        l2.setY(2);
+
+
         List<Location> chunks2 = new ArrayList<>();
         chunks2.add(l2);
         testPlayer1.setChunks(chunks);
         testPlayer2.setChunks(chunks2);
 
-        gameService.updatePlayerInGame(testPlayer1,1L, 3L);
-        assertEquals(testPlayer1.getChunks(), testPlayer2.getChunks());
+
+        Location l3 = new Location();
+        l3.setX(3);
+        l3.setY(3);
+        List<Location> chunks3 = new ArrayList<>();
+        chunks3.add(l3);
+
+        Player playerInput = new Player();
+        playerInput.setChunks(chunks3);
+
+        gameService.updatePlayerInGame(playerInput,1L, 3L);
+        assertEquals(playerInput.getChunks(), testPlayer2.getChunks());
     }
 
-
-    @Test
-    public void makeMove_Apple_eaten_test(){
-        Location l = new Location();
-        l.setX(1);
-        l.setY(1);
-        List<Location> chunks = new ArrayList<>();
-        chunks.add(l);
-
-        Location l2 = new Location();
-        l.setX(2);
-        l.setY(2);
-        List<Location> chunks2 = new ArrayList<>();
-        chunks2.add(l2);
-        testPlayer1.setChunks(chunks);
-        testPlayer2.setChunks(chunks2);
-
-        gameService.updatePlayerInGame(testPlayer1,1L, 3L);
-        assertEquals(testPlayer1.getChunks(), testPlayer2.getChunks());
-    }
 
 }
