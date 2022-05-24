@@ -40,7 +40,7 @@ public class TeamCalendarController {
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
-    @PutMapping("/teams/{teamId}/calendars/admin")
+    @PutMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateTeamCalendarAdmin(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id,  @RequestHeader("token") String token) {
         // convert API team to internal representation
