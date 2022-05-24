@@ -76,7 +76,7 @@ public class GameController {
 
     }
 
-    @DeleteMapping("/games/{gameId}/")
+    @DeleteMapping("/games/{gameId}")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void deleteGame(@PathVariable("gameId") Long gameId){
