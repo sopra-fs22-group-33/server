@@ -1,13 +1,7 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
-import ch.uzh.ifi.hase.soprafs22.entity.Membership;
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.service.InvitationService;
-import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
-import ch.uzh.ifi.hase.soprafs22.service.TeamService;
-import ch.uzh.ifi.hase.soprafs22.service.UserService;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.service.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
@@ -51,6 +45,9 @@ public class InvitationControllerTest {
   @MockBean
   private MembershipService membershipService;
 
+    @MockBean
+    private TeamCalendarService teamCalendarService;
+
   @MockBean
   private InvitationService invitationService;
 
@@ -69,6 +66,8 @@ public class InvitationControllerTest {
 
      given(userService.findUserById(Mockito.anyLong())).willReturn(user);
      given(userService.authorizeUser(Mockito.anyLong(), Mockito.anyString())).willReturn(true);
+
+       Mockito.doNothing().when(teamCalendarService).addTeamMemberToCalendar(Mockito.anyLong());
 
      // when
      MockHttpServletRequestBuilder getRequest = get("/users/1/invitations", 1)

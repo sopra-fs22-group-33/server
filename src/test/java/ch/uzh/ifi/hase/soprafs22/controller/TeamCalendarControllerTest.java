@@ -120,7 +120,7 @@ public class TeamCalendarControllerTest {
         TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
 
 
-        given(teamCalendarService.updateTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class))).willReturn(teamCalendar);
+        given(teamCalendarService.updateTeamCalendar(Mockito.anyLong(), Mockito.any(TeamCalendar.class), Mockito.anyString())).willReturn(teamCalendar);
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder putRequest = put("/teams/1/calendars")

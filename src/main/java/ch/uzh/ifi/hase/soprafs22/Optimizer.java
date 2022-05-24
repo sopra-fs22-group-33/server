@@ -48,13 +48,15 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints
             this.solver.deleteLp();
-            solveReducedProblemIgnoreExternalCollisions();
+            solveReducedProblemIgnoreSpecial();
         }
     }
 
+    // always need to account external collisions otherwise cant depict overlapping slots
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
@@ -74,12 +76,14 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
             solveReducedProblemIgnoreSpecial();
         }
     }
+
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
         this.solver = LpSolve.makeLp(0, nCols);
@@ -99,6 +103,7 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
@@ -106,6 +111,7 @@ public class Optimizer {
             throw new ArithmeticException("Not possible to optimize, ask the admin to change his requirements");
         }
     }
+
 
 
     private void defineObjective() throws LpSolveException {
@@ -314,7 +320,7 @@ public class Optimizer {
         boolean res = false;
         for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
             if (anotherSchedule.getSlot().getDay().getTeamCalendar().getId() != schedule.getSlot().getDay().getTeamCalendar().getId()){ // if the slot belongs to another calendar
-                if (schedule.getAssigned() == 1){ // if the user is already assigned there
+                if (anotherSchedule.getAssigned() == 1){ // if the user is already assigned there
                     if (anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day, TODO: check this once again
                         if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
                             res = true;

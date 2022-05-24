@@ -2,6 +2,7 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
 import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GameGetDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.PlayerPutDTO;
@@ -75,30 +76,11 @@ public class GameController {
 
     }
 
-
-    /* what is  going to be the mapping?
-    because as soon as the game is started /game/{gameId}/{userId} makes sense
-    since there is one game and multiple users playing
-    but the game is created when the first user clicks "start game" (or sth similar) ***
-    and at that point all we have is the user id and information on the shift,
-    but no game id, which is only created when the game is created
-    *** start game is only displayed when all users affected by this scheduling conflict are online
-     */
-    @PostMapping("/games")
-    @ResponseStatus(HttpStatus.CREATED)
+    @DeleteMapping("/games/{gameId}")
+    @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public GameGetDTO startGame(@RequestBody GamePostDTO gamePostDTO) {
-        // start a new game, only possible if game associated with that shift hasn't been started by another user
-        // check that in the GameService
-
-        // Game Service needs to be given UserID of the client that sent the post call
-
-        // returns the game information
-        Game gameInput = DTOMapper.INSTANCE.convertGamePostDTOtoEntity(gamePostDTO);
-
-        Game createdGame = gameService.startGame(gameInput);
-
-        return DTOMapper.INSTANCE.convertEntityToGameGetDTO(createdGame);
+    public void deleteGame(@PathVariable("gameId") Long gameId){
+        gameService.deleteGame(gameId);
     }
 
 

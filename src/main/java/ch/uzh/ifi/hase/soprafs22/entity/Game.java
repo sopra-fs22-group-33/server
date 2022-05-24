@@ -20,7 +20,7 @@ public class Game {
     @GeneratedValue
     private long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.REFRESH)
     private  Slot slot;
 
     @Column
@@ -84,15 +84,4 @@ public class Game {
         this.boardLength = boardLength;
     }
 
-    // associated shift
-
-    // nr. of winner(s) that there will be (== nr. of people that can have that shift)
-
-    // list of users that play including their status (playing the game or opted out, maybe also if winner or not)
-
-    // game status (still going on, finished)
-
-    // whatever the users enter (input depends on type of game)
-
-    // winner(s) 1 or more
 }
