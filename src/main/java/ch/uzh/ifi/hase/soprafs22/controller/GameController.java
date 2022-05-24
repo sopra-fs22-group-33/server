@@ -79,7 +79,7 @@ public class GameController {
     @DeleteMapping("/games/{gameId}/")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
-    public void deleteTeamFromUser(@PathVariable("gameId") Long gameId){
+    public void deleteGame(@PathVariable("gameId") Long gameId){
         gameService.deleteGame(gameId);
     }
 
