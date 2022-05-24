@@ -136,7 +136,7 @@ public class TeamCalendarService {
     }
 
 
-    public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar){
+    public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar, Long userId){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
@@ -144,16 +144,18 @@ public class TeamCalendarService {
             for (Day day: newCalendar.getBasePlan()){
                 for (Slot slot: day.getSlots()){
                     for (Schedule schedule: slot.getSchedules()){
-                        Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
-                        if (optinalSchedule.isPresent()){
-                            Schedule foundSchedule = optinalSchedule.get();
-                            if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
-                                foundSchedule.setSpecial(schedule.getSpecial());
-                                foundSchedule.setBase(schedule.getBase());
-                            }
-                            else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
+                        if( schedule.getUser().getId().equals(userId)){
+                                Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
+                                if (optinalSchedule.isPresent()){
+                                    Schedule foundSchedule = optinalSchedule.get();
+                                    if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
+                                        foundSchedule.setSpecial(schedule.getSpecial());
+                                        foundSchedule.setBase(schedule.getBase());
+                                    }
+                                    else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
+                                }
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of the schedules is not in the database");
                         }
-                        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of the schedules is not in the database");
                     }
                 }
             }

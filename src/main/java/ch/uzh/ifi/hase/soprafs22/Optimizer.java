@@ -91,6 +91,7 @@ public class Optimizer {
 
 
         addInternalCollisionsConstraint();
+        addExternalCollisionsConstraint();
 
 
         addHourLimitConstraintWeekly();
@@ -212,7 +213,7 @@ public class Optimizer {
 
     private void addToUserHashmap(HashMap<Long, ArrayList<Integer>> usersWeek, Schedule schedule, int i){
         // if the user is not present in the dictionary, add him and his first index
-        if (!usersWeek.containsKey(schedule.getUser())) {
+        if (!usersWeek.containsKey(schedule.getUser().getId())) {
             ArrayList<Integer> tmp = new ArrayList<>();
             tmp.add(i);
             usersWeek.put(schedule.getUser().getId(), tmp);
@@ -261,7 +262,7 @@ public class Optimizer {
         for (Day day : teamCalendar.getBasePlan()) {
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
-                    if (!users.containsKey(schedule.getUser())) {
+                    if (!users.containsKey(schedule.getUser().getId())) {
                         ArrayList<Integer> tmp = new ArrayList<>();
                         tmp.add(i);
                         users.put(schedule.getUser().getId(), tmp);
@@ -293,7 +294,7 @@ public class Optimizer {
         ArrayList<Integer> overlappingSlots = new ArrayList<Integer>();
         for (int slot: slots){
             // if starts earlier than idx is finished or finishes later than idx starts
-            if ((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo())||(result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeFrom())){
+            if (((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo()) && (result.get(slot-1).getSlot().getTimeFrom()> result.get(idx-1).getSlot().getTimeFrom()))||((result.get(slot-1).getSlot().getTimeTo()> result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeTo()))){
                 overlappingSlots.add(slot);
             }
         }
@@ -319,10 +320,10 @@ public class Optimizer {
     private boolean checkExternalCollisions(Schedule schedule){
         boolean res = false;
         for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
-            if (anotherSchedule.getSlot().getDay().getTeamCalendar().getId() != schedule.getSlot().getDay().getTeamCalendar().getId()){ // if the slot belongs to another calendar
+            if (!Objects.equals(anotherSchedule.getSlot().getDay().getTeamCalendar().getId(), schedule.getSlot().getDay().getTeamCalendar().getId())){ // if the slot belongs to another calendar
                 if (anotherSchedule.getAssigned() == 1){ // if the user is already assigned there
-                    if (anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day, TODO: check this once again
-                        if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
+                    if (schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day
+                        if (((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo()) && (anotherSchedule.getSlot().getTimeTo()> schedule.getSlot().getTimeTo()))||((anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())&& (anotherSchedule.getSlot().getTimeFrom()> schedule.getSlot().getTimeFrom()))){    // if starts earlier than idx is finished or finishes later than schedule starts
                             res = true;
                         }
                     }

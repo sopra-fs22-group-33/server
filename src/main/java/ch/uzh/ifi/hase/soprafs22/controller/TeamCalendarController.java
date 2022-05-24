@@ -40,7 +40,7 @@ public class TeamCalendarController {
         return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(createdCalendar);
     }
 
-    @PutMapping("/teams/{teamId}/calendars/admin")
+    @PutMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
     public void updateTeamCalendarAdmin(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id,  @RequestHeader("token") String token) {
         // convert API team to internal representation
@@ -50,12 +50,12 @@ public class TeamCalendarController {
 
 
 
-    @PutMapping("/teams/{teamId}/calendars")
+    @PutMapping("/teams/{teamId}/calendars/{userId}")
     @ResponseStatus(HttpStatus.CREATED)
-    public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
+    public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id, @PathVariable("userId") long idUser) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
-        TeamCalendar createdCalendar = teamCalendarService.updatePreferences(id, userInput);
+        TeamCalendar createdCalendar = teamCalendarService.updatePreferences(id, userInput, idUser);
     }
 /*
     @GetMapping("/teams/{teamId}/calendars/optimize")

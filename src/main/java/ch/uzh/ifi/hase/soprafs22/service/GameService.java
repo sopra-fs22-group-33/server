@@ -101,10 +101,10 @@ public class GameService {
         int size = game.getBoardLength();
 
 // if the current player is not yet dead
-        if (currentPlayer.getStatus() != "dead"){
+        if (!Objects.equals(currentPlayer.getStatus(), "dead")){
 
             // if the player just ate, change his status to null so thathe stops eating...
-            if (currentPlayer.getStatus() == "ate"){
+            if (Objects.equals(currentPlayer.getStatus(), "ate")){
                 currentPlayer.setStatus(null);
             }
             List<Location> chunks = currentPlayer.getChunks();
@@ -144,7 +144,7 @@ public class GameService {
 
             else  for (Player player:game.getPlayers()) {
                 // if that player is not dead and it is not us
-            if (player.getStatus()!="dead" && player.getId() != currentPlayer.getId()) {
+            if (!Objects.equals(player.getStatus(), "dead") && player.getId() != currentPlayer.getId()) {
                     List<Location> playerChunks = player.getChunks();
                     for (Location chunkLocation : playerChunks) {
                         // handle the case when two heads meet
@@ -171,11 +171,11 @@ public class GameService {
         // check if all the players are dead  // TODO: maybe change to only one player left - then stop game
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
-            if (player.getStatus()!= "dead") {
+            if (!Objects.equals(player.getStatus(), "dead")) {
                 stop = false;
             }
         }
-        if (stop && game.getStatus()=="on"){
+        if (stop && Objects.equals(game.getStatus(), "on")){
             finishGame(game); //  if all the players are dead, finish it
         }
     }
@@ -245,7 +245,7 @@ public class GameService {
 
     private void removeSpecialPreference(User user, Slot slot){
         for (Schedule schedule: slot.getSchedules()){
-            if (schedule.getUser().getId() == user.getId()){
+            if (schedule.getUser().getId().equals(user.getId())){
                 schedule.setSpecial(-1);
             }
         }
