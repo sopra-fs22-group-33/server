@@ -31,6 +31,7 @@ public class Slot implements Serializable {
 
 
     @OneToOne(mappedBy = "slot", cascade = CascadeType.REMOVE)
+    @JsonIgnore
     public Game game;
 
 
