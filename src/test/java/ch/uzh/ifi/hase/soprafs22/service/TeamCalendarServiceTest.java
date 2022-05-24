@@ -345,7 +345,7 @@ public class TeamCalendarServiceTest {
 
 
         //create calendar
-        TeamCalendar updatedTeamCalendar = teamCalendarService.updatePreferences(1L, testCalendarUpdate );
+        TeamCalendar updatedTeamCalendar = teamCalendarService.updatePreferences(1L, testCalendarUpdate, 2L );
         assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
         assertEquals(6,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
         assertEquals(-4,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getSpecial());
