@@ -256,7 +256,7 @@ public class GameService {
     public void updateOptimizedTeamCalendar( TeamCalendar newCalendar){
         // clean existing data from the fixed calendar
         Long id = newCalendar.getId();
-        newCalendar.getBasePlanFixed().clear();
+
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
 
@@ -306,6 +306,7 @@ public class GameService {
             TeamCalendar foundCalendar =teamCalendar.get();
             // used the stored basePlan to fill out the fixed calendar
             for (Day day: basePlan){
+                day.setTeamCalendar(foundCalendar);
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
