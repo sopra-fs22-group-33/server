@@ -101,10 +101,10 @@ public class GameService {
         int size = game.getBoardLength();
 
 // if the current player is not yet dead
-        if (currentPlayer.getStatus() != "dead"){
+        if (!currentPlayer.getStatus().equals("dead")){
 
             // if the player just ate, change his status to null so thathe stops eating...
-            if (currentPlayer.getStatus() == "ate"){
+            if (currentPlayer.getStatus().equals("ate")){
                 currentPlayer.setStatus(null);
             }
             List<Location> chunks = currentPlayer.getChunks();
@@ -171,11 +171,11 @@ public class GameService {
         // check if all the players are dead  // TODO: maybe change to only one player left - then stop game
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
-            if (player.getStatus()!= "dead") {
+            if (!player.getStatus().equals("dead")) {
                 stop = false;
             }
         }
-        if (stop && game.getStatus()=="on"){
+        if (stop && game.getStatus().equals("on")){
             finishGame(game); //  if all the players are dead, finish it
         }
     }
@@ -245,7 +245,7 @@ public class GameService {
 
     private void removeSpecialPreference(User user, Slot slot){
         for (Schedule schedule: slot.getSchedules()){
-            if (schedule.getUser().getId() == user.getId()){
+            if (schedule.getUser().getId().equals(user.getId())){
                 schedule.setSpecial(-1);
             }
         }
