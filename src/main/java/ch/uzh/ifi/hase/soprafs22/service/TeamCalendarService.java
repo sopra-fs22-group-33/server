@@ -420,7 +420,7 @@ public class TeamCalendarService {
                 }
 
                 catch (LpSolveException ex) {
-                   return "Something did not work with optimizer";}
+                   return "Something did not work with lp solve";}
 
                 catch (ArithmeticException ex) {
                     return "no solution found";
@@ -428,7 +428,7 @@ public class TeamCalendarService {
                 }
 
                 catch (Exception ex) {
-                    return "no solution found or some other issue could occur";
+                    return "something went wrong";
                 }
             }
 

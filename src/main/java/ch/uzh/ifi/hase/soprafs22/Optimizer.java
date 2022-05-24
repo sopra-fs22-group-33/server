@@ -57,6 +57,7 @@ public class Optimizer {
     }
 
     // always need to account external collisions otherwise cant depict overlapping slots
+    /*
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
         this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
@@ -84,11 +85,13 @@ public class Optimizer {
             solveReducedProblemIgnoreSpecial();
         }
     }
-
+*/
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
         this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
+        defineObjective();
+
         addRequirementConstraint();
 
 
@@ -322,7 +325,8 @@ public class Optimizer {
             if (!Objects.equals(anotherSchedule.getSlot().getDay().getTeamCalendar().getId(), schedule.getSlot().getDay().getTeamCalendar().getId())){ // if the slot belongs to another calendar
                 if (anotherSchedule.getAssigned() == 1){ // if the user is already assigned there
                     if (schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day
-                        if (((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo()) && (anotherSchedule.getSlot().getTimeTo()> schedule.getSlot().getTimeTo()))||((anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())&& (anotherSchedule.getSlot().getTimeFrom()> schedule.getSlot().getTimeFrom()))){    // if starts earlier than idx is finished or finishes later than schedule starts
+                        // if our schedule starts WHILE another schedule, or finishes WHILE another schedule, or they conicide
+                        if (((schedule.getSlot().getTimeFrom()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeFrom()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeTo()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeFrom()== anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()== anotherSchedule.getSlot().getTimeTo()))){
                             res = true;
                         }
                     }
@@ -352,5 +356,6 @@ public class Optimizer {
         }
         this.nCols =i;
     }
+    // TODO: check all the conditions once again
 }
 
