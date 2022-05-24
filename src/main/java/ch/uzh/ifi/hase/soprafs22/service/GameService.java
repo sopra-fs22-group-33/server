@@ -257,6 +257,7 @@ public class GameService {
         // clean existing data from the fixed calendar
         Long id = newCalendar.getId();
 
+        newCalendar.setStatus("free");
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
 

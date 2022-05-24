@@ -28,6 +28,9 @@ public class TeamCalendar implements Serializable {
     private LocalDate startingDate;
 
     @Column
+    private String status;
+
+    @Column
     private LocalDate startingDateFixed;
 
     @Column
@@ -89,6 +92,14 @@ public class TeamCalendar implements Serializable {
 
     public void setBasePlanFixed(List<Day> basePlanFixed) {
         this.basePlanFixed = basePlanFixed;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

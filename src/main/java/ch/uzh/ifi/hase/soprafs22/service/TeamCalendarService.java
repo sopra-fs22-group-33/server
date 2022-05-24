@@ -395,6 +395,7 @@ public class TeamCalendarService {
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
             foundCalendar.getBasePlanFixed().clear();
+            foundCalendar.setStatus("busy");
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
 
@@ -407,6 +408,7 @@ public class TeamCalendarService {
 
 
             if (res == 0){
+                foundCalendar.setStatus("free");
 
                 try {
                     new Optimizer(foundCalendar);
@@ -424,7 +426,7 @@ public class TeamCalendarService {
                 }
 
                 catch (Exception ex) {
-                    return "something went wrong. probably requirements cant be satisfied or lp solve is not supported";
+                    return "something went wrong.";
                 }
             }
 
@@ -432,7 +434,11 @@ public class TeamCalendarService {
             else if (res ==1){
                 return "there are collisions and games were started";
             }
-            else { // -1 case
+            else { // -1
+                foundCalendar.setStatus("free");
+                teamCalendarRepository.save(foundCalendar);
+                teamCalendarRepository.flush();
+
                 EmailService emailService = new EmailService();
                 try {
 
