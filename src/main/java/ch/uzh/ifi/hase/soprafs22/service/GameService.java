@@ -63,6 +63,11 @@ public class GameService {
         return game;
     }
 
+    @Transactional
+    public void deleteGame(Long id){
+        gameRepository.deleteById(id);
+    }
+
 
 
     @Transactional
@@ -88,6 +93,8 @@ public class GameService {
         //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
         gameRepository.flush();
+
+
     }
 
     public void makeMove(Game game, Player currentPlayer){
@@ -215,8 +222,7 @@ public class GameService {
             try {
                 new Optimizer(game.getSlot().getDay().getTeamCalendar());
                 updateOptimizedTeamCalendar(game.getSlot().getDay().getTeamCalendar());
-                gameRepository.delete(game);
-                gameRepository.flush();
+
             }
             catch (Exception e) {
                 ;
