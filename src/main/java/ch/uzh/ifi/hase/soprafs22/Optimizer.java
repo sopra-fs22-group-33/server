@@ -255,11 +255,12 @@ public class Optimizer {
 
 
     private void addInternalCollisionsConstraint() throws LpSolveException {
-        HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
+
 
         // fill out the hashmap
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
+            HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
                     if (!users.containsKey(schedule.getUser().getId())) {
@@ -274,27 +275,29 @@ public class Optimizer {
                     i += 1;
                 }
             }
-        }
-
-        for (Long key : users.keySet()) { // for each user
-            for (int idx : users.get(key)) { // for each slot of that user
-                ArrayList<Integer> overlappingSlots = checkForOverlaps(idx, users.get(key));
-                if (overlappingSlots.size() !=0){
-                    double[] row = new double[nCols +1];
-                    for (int j: overlappingSlots){
-                        row[j] = 1;
+            for (Long key : users.keySet()) { // for each user
+                for (int idx : users.get(key)) { // for each slot of that user
+                    ArrayList<Integer> overlappingSlots = checkForOverlaps(idx, users.get(key));
+                    if (overlappingSlots.size() !=0){
+                        double[] row = new double[nCols +1];
+                        for (int j: overlappingSlots){
+                            row[j] = 1;
+                        }
+                        this.solver.addConstraint(row, LpSolve.LE, 1);
                     }
-                    this.solver.addConstraint(row, LpSolve.LE, 1);
                 }
             }
+
         }
+
+
     }
 
     private ArrayList<Integer> checkForOverlaps(int idx, ArrayList<Integer> slots){
         ArrayList<Integer> overlappingSlots = new ArrayList<Integer>();
         for (int slot: slots){
             // if starts earlier than idx is finished or finishes later than idx starts
-            if (((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo()) && (result.get(slot-1).getSlot().getTimeFrom()> result.get(idx-1).getSlot().getTimeFrom()))||((result.get(slot-1).getSlot().getTimeTo()> result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeTo()))){
+            if (((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo()) && (result.get(slot-1).getSlot().getTimeFrom()> result.get(idx-1).getSlot().getTimeFrom()))||((result.get(slot-1).getSlot().getTimeTo()> result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeTo()))||((result.get(slot-1).getSlot().getTimeFrom()== result.get(idx-1).getSlot().getTimeFrom()) && (result.get(slot-1).getSlot().getTimeTo()== result.get(idx-1).getSlot().getTimeTo()))){
                 overlappingSlots.add(slot);
             }
         }
