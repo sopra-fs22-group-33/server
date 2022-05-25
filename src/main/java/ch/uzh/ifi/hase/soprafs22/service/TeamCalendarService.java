@@ -61,7 +61,7 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             return foundTeam.getTeamCalendar();
       }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team was not found");
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
@@ -99,7 +99,7 @@ public class TeamCalendarService {
                                     //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
                                 }
-                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user");
                             }
                         }
                     }
@@ -110,7 +110,7 @@ public class TeamCalendarService {
             teamCalendarRepository.flush();
             return savedCalendar;
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no team");
     }
 
 
@@ -141,7 +141,7 @@ public class TeamCalendarService {
                                     //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
                                 }
-                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find user");
                             }
                         }
                     }
@@ -287,6 +287,7 @@ public class TeamCalendarService {
                     }
 
 // PART 2: UNDERSUPPLY
+                    //TODO this case is not possible, it is checked at line 254
                     else if ((assignment+possible) < requirement && (requirement-possible-assignment!=1|| lazy!=1 ) ){ // if there are too littleusers and it is not trivial case when just one user is a problem // TODO: make sure that there are no other corner cases
                         isGame = true;
                         initializeGame(slot);
