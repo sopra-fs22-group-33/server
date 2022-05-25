@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static java.lang.Math.exp;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 
 @Service
@@ -120,15 +121,24 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
             // used the stored basePlan to fill out the fixed calendar
+            int diff = (int) DAYS.between( foundCalendar.getStartingDateFixed(), foundCalendar.getStartingDate());
+            int diff2 = diff - latestDay ;
+
             for (Day day: basePlan){
                 day.setTeamCalendar(foundCalendar);
+                day.setWeekday(day.getWeekday()+diff);
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
+            for (int i = 0; i<diff2; i++){
+                Day day = new Day();
+                day.setWeekday(latestDay+1+i);
+                basePlan.add(day);
+            }
             // update the dates
             //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
-            //foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
-            foundCalendar.setStartingDate(LocalDate.now());
+            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
 
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
@@ -398,6 +408,7 @@ public class TeamCalendarService {
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
             foundCalendar.getBasePlanFixed().clear();
+            foundCalendar.setStartingDateFixed(LocalDate.now());
 
         teamCalendarRepository.save(foundCalendar);
         teamCalendarRepository.flush();

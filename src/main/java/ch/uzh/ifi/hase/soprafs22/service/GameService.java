@@ -19,6 +19,8 @@ import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.*;
 
+import static java.time.temporal.ChronoUnit.DAYS;
+
 /**
  * Game Service
  * This class is the "worker" and responsible for all functionality related to
@@ -307,16 +309,25 @@ public class GameService {
         if (teamCalendar.isPresent()){
 
             TeamCalendar foundCalendar =teamCalendar.get();
-            // used the stored basePlan to fill out the fixed calendar
+            int diff = (int) DAYS.between( foundCalendar.getStartingDateFixed(), foundCalendar.getStartingDate());
+            int diff2 = diff - latestDay ;
+
             for (Day day: basePlan){
                 day.setTeamCalendar(foundCalendar);
+                day.setWeekday(day.getWeekday()+diff);
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
+            for (int i = 0; i<diff2; i++){
+                Day day = new Day();
+                day.setWeekday(latestDay+1+i);
+                day.setTeamCalendar(foundCalendar);
+                basePlan.add(day);
+            }
             // update the dates
             //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
-            //foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
-            foundCalendar.setStartingDate(LocalDate.now());
+            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
 
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
