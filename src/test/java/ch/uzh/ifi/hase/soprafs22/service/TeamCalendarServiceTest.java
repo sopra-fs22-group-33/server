@@ -114,14 +114,15 @@ public class TeamCalendarServiceTest {
         assertEquals(testTeamCalendar.getStartingDate(), createdTeamCalendar.getStartingDate());
     }
 
-    @Test
-    public void updateOptimizedTeamCalendar_validInputs_success_empty_calendar() {
-        teamCalendarService.updateOptimizedTeamCalendar(1L, testTeamCalendar );
-
-        // then
-        Mockito.verify(teamCalendarRepository, Mockito.times(2)).save(Mockito.any());
-
-    }
+//    TODO
+//    @Test
+//    public void updateOptimizedTeamCalendar_validInputs_success_empty_calendar() {
+//        teamCalendarService.updateOptimizedTeamCalendar(1L, testTeamCalendar );
+//
+//        // then
+//        Mockito.verify(teamCalendarRepository, Mockito.times(2)).save(Mockito.any());
+//
+//    }
 
     @Test
     public void createTeamCalendar_validInputs_success_nonEmpty_calendar() {

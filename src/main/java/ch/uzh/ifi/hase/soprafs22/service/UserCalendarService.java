@@ -56,14 +56,6 @@ public class UserCalendarService {
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDateFixed()));
 
-            //adding empty days
-//            for (int j=0; j<differenceInDays+3; j++){
-//                UserDay userD = new UserDay();
-//                userD.setWeekday(j);
-//                userD.setSlots(new ArrayList<>());
-//                userCalendar.getUserPlan().add(userD);
-//            }
-
             for (Day day : membership.getTeam().getTeamCalendar().getBasePlanFixed()){
                 if (!day.getSlots().isEmpty()) {
                     UserDay uD = null;
@@ -78,8 +70,6 @@ public class UserCalendarService {
                         uD.setWeekday(differenceInDays + day.getWeekday());
                         userCalendar.getUserPlan().add(uD);
                     }
-                    //                uD.setWeekday(userCalendar.getUserPlan().indexOf(uD));
-//                    i = membership.getTeam().getTeamCalendar().getBasePlanFixed().indexOf(day);
                     for (Slot slot : day.getSlots()) {
                         UserSlot userSlot = new UserSlot();
                         userSlot.setSchedules(new ArrayList<>());
@@ -101,15 +91,6 @@ public class UserCalendarService {
                 }
             }
         }
-
-        //remove empty days at the end
-//        for (int k=userCalendar.getUserPlan().size()-1; k>0; k--){
-//            if (userCalendar.getUserPlan().get(k).getSlots().isEmpty()){
-//                userCalendar.getUserPlan().remove(k);
-//            }else {
-//                break;
-//            }
-//        }
         return userCalendar;
     }
 }
