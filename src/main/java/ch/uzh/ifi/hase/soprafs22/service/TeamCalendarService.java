@@ -274,6 +274,7 @@ public class TeamCalendarService {
                     }
                 }
             }
+            oldCalendar.setStartingDate(newCalendar.getStartingDate());
 
             TeamCalendar savedCalendar = teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();
