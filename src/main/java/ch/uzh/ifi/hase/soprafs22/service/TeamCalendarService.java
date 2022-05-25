@@ -122,7 +122,7 @@ public class TeamCalendarService {
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
             // used the stored basePlan to fill out the fixed calendar
             int diff = (int) DAYS.between( foundCalendar.getStartingDateFixed(), foundCalendar.getStartingDate());
-            int diff2 = diff - latestDay ;
+
 
             for (Day day: basePlan){
                 day.setTeamCalendar(foundCalendar);
@@ -130,11 +130,7 @@ public class TeamCalendarService {
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
-            for (int i = 0; i<diff2; i++){
-                Day day = new Day();
-                day.setWeekday(latestDay+1+i);
-                basePlan.add(day);
-            }
+
             // update the dates
             //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
             foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));

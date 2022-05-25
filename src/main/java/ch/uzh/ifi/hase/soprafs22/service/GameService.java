@@ -310,7 +310,7 @@ public class GameService {
 
             TeamCalendar foundCalendar =teamCalendar.get();
             int diff = (int) DAYS.between( foundCalendar.getStartingDateFixed(), foundCalendar.getStartingDate());
-            int diff2 = diff - latestDay ;
+
 
             for (Day day: basePlan){
                 day.setTeamCalendar(foundCalendar);
@@ -318,12 +318,7 @@ public class GameService {
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
-            for (int i = 0; i<diff2; i++){
-                Day day = new Day();
-                day.setWeekday(latestDay+1+i);
-                day.setTeamCalendar(foundCalendar);
-                basePlan.add(day);
-            }
+
             // update the dates
             //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
             foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
