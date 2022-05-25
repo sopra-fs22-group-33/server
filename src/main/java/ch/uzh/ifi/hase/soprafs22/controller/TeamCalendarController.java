@@ -48,6 +48,12 @@ public class TeamCalendarController {
         TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput, token);
     }
 
+    @DeleteMapping("/teams/{teamId}/calendars")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void deleteTeamCalendar( @PathVariable("teamId") long id) {
+       teamCalendarService.deleteOldDays(id);
+    }
+
 
 
     @PutMapping("/teams/{teamId}/calendars/{userId}")

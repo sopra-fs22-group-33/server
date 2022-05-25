@@ -390,6 +390,18 @@ public class TeamCalendarService {
         return x;
     }
 
+    public void deleteOldDays(Long id){
+        Optional<Team> teamtest = teamRepository.findById(id);
+        if (teamtest.isPresent()){
+            Team foundTeam = teamtest.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            foundCalendar.getBasePlanFixed().clear();
+
+        teamCalendarRepository.save(foundCalendar);
+        teamCalendarRepository.flush();
+    }
+    }
+
     public String finalCalendarSubmission(Long id){
         // clear fixed calendar here because after optimizer it doesnt work
         Optional<Team> teamtest = teamRepository.findById(id);
