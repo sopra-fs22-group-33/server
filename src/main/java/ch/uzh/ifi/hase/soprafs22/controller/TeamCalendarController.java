@@ -57,7 +57,7 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
         TeamCalendar createdCalendar = teamCalendarService.updatePreferences(id, userInput, idUser);
     }
-/*
+/*//TODO
     @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody

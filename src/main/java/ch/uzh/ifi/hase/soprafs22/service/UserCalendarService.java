@@ -54,12 +54,12 @@ public class UserCalendarService {
         userCalendar.setUserPlan(new ArrayList<>());
 
         //fill with empty days
-        for (int j=0; j<7; j++){
-            UserDay userD = new UserDay();
-            userD.setWeekday(j);
-            userD.setSlots(new ArrayList<>());
-            userCalendar.getUserPlan().add(userD);
-        }
+//        for (int j=0; j<7; j++){
+//            UserDay userD = new UserDay();
+//            userD.setWeekday(j);
+//            userD.setSlots(new ArrayList<>());
+//            userCalendar.getUserPlan().add(userD);
+//        }
 
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDateFixed()));

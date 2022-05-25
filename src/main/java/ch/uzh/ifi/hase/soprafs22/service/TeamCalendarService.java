@@ -324,6 +324,7 @@ public class TeamCalendarService {
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
+        newCalendar.setStartingDateFixed(newCalendar.getStartingDate());
         //checkIfTeamHasCalendar(id);
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
