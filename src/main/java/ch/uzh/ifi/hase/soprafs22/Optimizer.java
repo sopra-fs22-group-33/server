@@ -48,14 +48,18 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints
             this.solver.deleteLp();
-            solveReducedProblemIgnoreExternalCollisions();
+            solveReducedProblemIgnoreSpecial();
         }
     }
 
+    // always need to account external collisions otherwise cant depict overlapping slots
+    /*
     private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
+        this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
         defineObjective();
 
@@ -74,19 +78,25 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
             solveReducedProblemIgnoreSpecial();
         }
     }
+*/
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
+        this.result = new ArrayList<>();
         this.solver = LpSolve.makeLp(0, nCols);
+        defineObjective();
+
         addRequirementConstraint();
 
 
         addInternalCollisionsConstraint();
+        addExternalCollisionsConstraint();
 
 
         addHourLimitConstraintWeekly();
@@ -99,6 +109,7 @@ public class Optimizer {
         if(sol == LpSolve.OPTIMAL){
             readSolution();
             this.solver.deleteLp();
+
         }
         else{ // if not try relaxing constraints further
             this.solver.deleteLp();
@@ -106,6 +117,7 @@ public class Optimizer {
             throw new ArithmeticException("Not possible to optimize, ask the admin to change his requirements");
         }
     }
+
 
 
     private void defineObjective() throws LpSolveException {
@@ -206,7 +218,7 @@ public class Optimizer {
 
     private void addToUserHashmap(HashMap<Long, ArrayList<Integer>> usersWeek, Schedule schedule, int i){
         // if the user is not present in the dictionary, add him and his first index
-        if (!usersWeek.containsKey(schedule.getUser())) {
+        if (!usersWeek.containsKey(schedule.getUser().getId())) {
             ArrayList<Integer> tmp = new ArrayList<>();
             tmp.add(i);
             usersWeek.put(schedule.getUser().getId(), tmp);
@@ -248,14 +260,15 @@ public class Optimizer {
 
 
     private void addInternalCollisionsConstraint() throws LpSolveException {
-        HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
+
 
         // fill out the hashmap
         int i = 1;
         for (Day day : teamCalendar.getBasePlan()) {
+            HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
-                    if (!users.containsKey(schedule.getUser())) {
+                    if (!users.containsKey(schedule.getUser().getId())) {
                         ArrayList<Integer> tmp = new ArrayList<>();
                         tmp.add(i);
                         users.put(schedule.getUser().getId(), tmp);
@@ -267,31 +280,27 @@ public class Optimizer {
                     i += 1;
                 }
             }
-        }
+            for (Long key : users.keySet()) { // for each user
+                for (int slot1 : users.get(key)) { // for each slot of that user
+                    for (int slot2 : users.get(key)){
+                        if (checkForOverlaps(slot1, slot2)){
+                            double[] row = new double[nCols +1];
+                            row[slot1] =1;
+                            row[slot2] =1;
+                            this.solver.addConstraint(row, LpSolve.LE, 1);
 
-        for (Long key : users.keySet()) { // for each user
-            for (int idx : users.get(key)) { // for each slot of that user
-                ArrayList<Integer> overlappingSlots = checkForOverlaps(idx, users.get(key));
-                if (overlappingSlots.size() !=0){
-                    double[] row = new double[nCols +1];
-                    for (int j: overlappingSlots){
-                        row[j] = 1;
+                        }
                     }
-                    this.solver.addConstraint(row, LpSolve.LE, 1);
                 }
             }
         }
+
     }
 
-    private ArrayList<Integer> checkForOverlaps(int idx, ArrayList<Integer> slots){
-        ArrayList<Integer> overlappingSlots = new ArrayList<Integer>();
-        for (int slot: slots){
-            // if starts earlier than idx is finished or finishes later than idx starts
-            if ((result.get(slot-1).getSlot().getTimeFrom()< result.get(idx-1).getSlot().getTimeTo())||(result.get(slot-1).getSlot().getTimeTo()< result.get(idx-1).getSlot().getTimeFrom())){
-                overlappingSlots.add(slot);
-            }
-        }
-        return overlappingSlots;
+    private Boolean checkForOverlaps(int slot1, int slot2){
+        // slot1 starts during slot2, slot2 finishes during slot2, they are the same
+       return (((result.get(slot1-1).getSlot().getTimeFrom()< result.get(slot2-1).getSlot().getTimeTo()) && (result.get(slot2-1).getSlot().getTimeFrom()> result.get(slot2-1).getSlot().getTimeFrom()))||((result.get(slot1-1).getSlot().getTimeTo()> result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()< result.get(slot2-1).getSlot().getTimeTo()))||((result.get(slot1-1).getSlot().getTimeFrom()== result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()== result.get(slot2-1).getSlot().getTimeTo())));
+
     }
 
     private void addExternalCollisionsConstraint() throws LpSolveException {
@@ -313,10 +322,11 @@ public class Optimizer {
     private boolean checkExternalCollisions(Schedule schedule){
         boolean res = false;
         for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
-            if (anotherSchedule.getSlot().getDay().getTeamCalendar().getId() != schedule.getSlot().getDay().getTeamCalendar().getId()){ // if the slot belongs to another calendar
-                if (schedule.getAssigned() == 1){ // if the user is already assigned there
-                    if (anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day, TODO: check this once again
-                        if ((anotherSchedule.getSlot().getTimeFrom()< schedule.getSlot().getTimeTo())||(anotherSchedule.getSlot().getTimeTo()< schedule.getSlot().getTimeFrom())){    // if starts earlier than idx is finished or finishes later than schedule starts
+            if (!Objects.equals(anotherSchedule.getSlot().getDay().getTeamCalendar().getId(), schedule.getSlot().getDay().getTeamCalendar().getId())){ // if the slot belongs to another calendar
+                if (anotherSchedule.getAssigned() == 1){ // if the user is already assigned there
+                    if (schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day
+                        // if our schedule starts WHILE another schedule, or finishes WHILE another schedule, or they conicide
+                        if (((schedule.getSlot().getTimeFrom()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeFrom()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeTo()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeFrom()== anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()== anotherSchedule.getSlot().getTimeTo()))){
                             res = true;
                         }
                     }
@@ -346,5 +356,6 @@ public class Optimizer {
         }
         this.nCols =i;
     }
+    // TODO: check all the conditions once again
 }
 

@@ -28,10 +28,21 @@ public class TeamCalendar implements Serializable {
     private LocalDate startingDate;
 
     @Column
+    private String status;
+
+    @Column
+    private LocalDate startingDateFixed;
+
+    @Column
     private int collisions;
 
-    @OneToMany(mappedBy = "teamCalendar", cascade = CascadeType.ALL, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinTable(name = "base")
     private List<Day> basePlan;
+
+    @OneToMany( cascade = CascadeType.ALL, orphanRemoval=true)
+    @JoinTable(name = "fixed")
+    private List<Day> basePlanFixed;
 
     public Team getTeam() {
         return team;
@@ -65,6 +76,30 @@ public class TeamCalendar implements Serializable {
 
     public void setCollisions(int collisions) {
         this.collisions = collisions;
+    }
+
+    public LocalDate getStartingDateFixed() {
+        return startingDateFixed;
+    }
+
+    public void setStartingDateFixed(LocalDate startingDateFixed) {
+        this.startingDateFixed = startingDateFixed;
+    }
+
+    public List<Day> getBasePlanFixed() {
+        return basePlanFixed;
+    }
+
+    public void setBasePlanFixed(List<Day> basePlanFixed) {
+        this.basePlanFixed = basePlanFixed;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

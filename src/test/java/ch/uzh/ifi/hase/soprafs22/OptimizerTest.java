@@ -282,6 +282,6 @@ public class OptimizerTest {
         }, "Not possible to optimize, ask the admin to change his requirements");
         Assertions.assertEquals("Not possible to optimize, ask the admin to change his requirements", thrown.getMessage());
     }
-*/
 
+*/
 }

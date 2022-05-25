@@ -42,12 +42,22 @@ public class TeamCalendarController {
 
     @PutMapping("/teams/{teamId}/calendars")
     @ResponseStatus(HttpStatus.CREATED)
-    public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id) {
+    public void updateTeamCalendarAdmin(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id,  @RequestHeader("token") String token) {
         // convert API team to internal representation
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
-        TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput);
+        TeamCalendar createdCalendar = teamCalendarService.updateTeamCalendar(id, userInput, token);
     }
 
+
+
+    @PutMapping("/teams/{teamId}/calendars/{userId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void updateTeamCalendar(@RequestBody TeamCalendarPostDTO teamCalendarPostDTO, @PathVariable("teamId") long id, @PathVariable("userId") long idUser) {
+        // convert API team to internal representation
+        TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
+        TeamCalendar createdCalendar = teamCalendarService.updatePreferences(id, userInput, idUser);
+    }
+/*
     @GetMapping("/teams/{teamId}/calendars/optimize")
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
@@ -81,7 +91,7 @@ public class TeamCalendarController {
         throw new ResponseStatusException(HttpStatus.TOO_EARLY, "There are still collisions, you need to play games" );
 
     }
-
+*/
     @GetMapping("/teams/{teamId}/calendars/finalize")
     @ResponseStatus(HttpStatus.OK)
     public String finalSubmission( @PathVariable("teamId") long id) {

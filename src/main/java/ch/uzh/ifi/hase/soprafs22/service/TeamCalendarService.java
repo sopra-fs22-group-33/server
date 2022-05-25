@@ -3,6 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
+import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,12 +16,12 @@ import org.springframework.web.server.ResponseStatusException;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import static java.lang.Math.exp;
 
@@ -37,17 +38,20 @@ public class TeamCalendarService {
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
 
+    private final ScheduleRepository scheduleRepository;
 
 
     @Autowired
     public TeamCalendarService(@Qualifier("teamCalendarRepository") TeamCalendarRepository teamCalendarRepository, @Qualifier("teamRepository") TeamRepository teamRepository,
                                @Qualifier("userRepository") UserRepository userRepository, @Qualifier("playerRepository") PlayerRepository playerRepository,
-                               @Qualifier("dayRepository") DayRepository dayRepository) {
+                               @Qualifier("dayRepository") DayRepository dayRepository, @Qualifier("scheduleRepository") ScheduleRepository scheduleRepository)
+    {
         this.teamCalendarRepository = teamCalendarRepository;
         this.teamRepository = teamRepository;
         this.userRepository = userRepository;
         this.playerRepository= playerRepository;
         this.dayRepository= dayRepository;
+        this.scheduleRepository= scheduleRepository;
 
     }
 
@@ -65,18 +69,183 @@ public class TeamCalendarService {
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
+        // clean existing data from the fixed calendar
+
         teamCalendarRepository.save(newCalendar);
         teamCalendarRepository.flush();
+
+        // create copy of the base plan
+        List<Day> basePlan = new ArrayList<>();
+        int latestDay = 0;
+        for (Day dayFixed: newCalendar.getBasePlan()){
+            if (dayFixed.getWeekday()>latestDay){
+                latestDay = dayFixed.getWeekday();
+            }
+
+            Day day = new Day();
+            day.setWeekday(dayFixed.getWeekday());
+            List<Slot> slots = new ArrayList<>();
+            for (Slot fixedSlot: dayFixed.getSlots()){
+                Slot slot = new Slot();
+                slot.setDay(day);
+                slot.setTimeTo(fixedSlot.getTimeTo());
+                slot.setTimeFrom(fixedSlot.getTimeFrom());
+                slot.setRequirement(fixedSlot.getRequirement());
+                slots.add(slot);
+                List<Schedule> schedules = new ArrayList<>();
+                for (Schedule fixedSchedule: fixedSlot.getSchedules()){
+                    Schedule schedule = new Schedule();
+                    schedule.setSlot(slot);
+                    schedule.setBase(fixedSchedule.getBase());
+                    schedule.setSpecial(fixedSchedule.getSpecial());
+                    schedule.setUser(fixedSchedule.getUser());
+                    schedule.setAssigned(fixedSchedule.getAssigned());
+
+                    // this is not required anymore
+                    fixedSchedule.setAssigned(0);
+                    fixedSchedule.setSpecial(-1);
+                    schedules.add(schedule);
+                }
+                slot.setSchedules(schedules);
+            }
+            day.setSlots(slots);
+            basePlan.add(day);
+        }
+
+
+        Optional<Team> team = teamRepository.findById(id);
+
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            // used the stored basePlan to fill out the fixed calendar
+            for (Day day: basePlan){
+                day.setTeamCalendar(foundCalendar);
+                foundCalendar.getBasePlanFixed().add(day);
+
+            }
+            // update the dates
+            foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate());
+            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
+            teamCalendarRepository.save(foundCalendar);
+            teamCalendarRepository.flush();
+        }
     }
 
-    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar){
+
+    public TeamCalendar updatePreferences(Long id, TeamCalendar newCalendar, Long userId){
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
+            for (Day day: newCalendar.getBasePlan()){
+                for (Slot slot: day.getSlots()){
+                    for (Schedule schedule: slot.getSchedules()){
+                        if( schedule.getUser().getId().equals(userId)){
+                                Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
+                                if (optinalSchedule.isPresent()){
+                                    Schedule foundSchedule = optinalSchedule.get();
+                                    if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
+                                        foundSchedule.setSpecial(schedule.getSpecial());
+                                        foundSchedule.setBase(schedule.getBase());
+                                    }
+                                    else throw new ResponseStatusException(HttpStatus.CONFLICT, "one of the schedule does not belong to this calendar");
+                                }
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "one of the schedules is not in the database");
+                        }
+                    }
+                }
+            }
+
+            teamCalendarRepository.save(oldCalendar);
+            teamCalendarRepository.flush();
+            return oldCalendar;
+        }
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team was not found");
+    }
+
+    public boolean authorizeAdmin(Team team, String token){
+        for (Membership membership : team.getMemberships()){
+            if (membership.getUser().getToken().matches(token) && membership.getIsAdmin()){
+                return true;
+            }
+        }
+        throw new ResponseStatusException(HttpStatus.FORBIDDEN, "you have no admin rights in this team");
+    }
+
+    public void mapUserPreferences(Schedule schedule){
+        LocalDate  date =   schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(schedule.getSlot().getDay().getWeekday());
+        DayOfWeek dayofWeek = date.getDayOfWeek();
+        int weekday =0;
+        switch (dayofWeek) {
+            case MONDAY:
+                weekday = 0;
+                break;
+            case TUESDAY:
+                weekday = 1;
+                break;
+            case WEDNESDAY:
+               weekday = 2;
+               break;
+            case THURSDAY:
+                weekday = 3;
+                break;
+            case FRIDAY:
+                weekday = 4;
+                break;
+            case SATURDAY:
+                weekday = 5;
+                break;
+            case SUNDAY:
+              weekday = 6;
+              break;
+        }
+        PreferenceCalendar calendar = schedule.getUser().getPreferenceCalendar();
+        if (calendar!= null){
+        if (calendar.getPreferencePlan()!= null){
+            PreferenceDay foundDay = calendar.getPreferencePlan().get(0);
+            for (PreferenceDay day:calendar.getPreferencePlan()){
+                if (day.getWeekday() == weekday){
+                    foundDay = day;
+                    break;
+                }
+            }
+
+            int sum = 0;
+            int nHours = 0;
+            // for each hour
+            for (int t = schedule.getSlot().getTimeFrom(); t<schedule.getSlot().getTimeTo(); t++){
+                        for (PreferenceSlot preferenceSlot: foundDay.getSlots()){
+                            if ((preferenceSlot.getTimeFrom()<=t)&&(preferenceSlot.getTimeTo()>t)){
+                                sum+= preferenceSlot.getBase();
+                            }
+                        }
+
+                    nHours+=1;
+            }
+            if(nHours!=0){
+                schedule.setBase(sum/nHours);
+            }
+            else schedule.setBase(0);
+         }
+        }
+        else schedule.setBase(0);
+
+        // set to default
+        schedule.setSpecial(-1);
+    }
+
+    public TeamCalendar updateTeamCalendar(Long id, TeamCalendar newCalendar, String token){
+        Optional<Team> team = teamRepository.findById(id);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            authorizeAdmin(foundTeam, token);
+            TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
             oldCalendar.getBasePlan().clear();
             teamCalendarRepository.save(oldCalendar);
             teamCalendarRepository.flush();}
+
 
         Optional<Team> teamagain = teamRepository.findById(id);
         if (teamagain.isPresent()){
@@ -90,18 +259,16 @@ public class TeamCalendarService {
                 if (day.getSlots() != null) {
                     for (Slot slot : day.getSlots()) {
                         slot.setDay(day);
-                        if (slot.getSchedules() != null) {
-                            for (Schedule schedule : slot.getSchedules()) {
-                                schedule.setSlot(slot);
-                                Optional<User> user = userRepository.findById(schedule.getUser().getId());
-                                if (user.isPresent()) {
-                                    User foundUser = user.get();
-                                    //foundUser.addSchedule(schedule);
-                                    schedule.setUser(foundUser);
-                                }
-                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no user");
-                            }
+                        List<Schedule> schedules= new ArrayList<>();
+                        for (Membership m: foundTeam.getMemberships()) {
+                            Schedule schedule = new Schedule();
+                            schedule.setUser(m.getUser());
+                            schedule.setSlot(slot);
+                            mapUserPreferences(schedule);
+                            schedules.add(schedule);
+
                         }
+                        slot.setSchedules(schedules);
                     }
                 }
             }
@@ -112,6 +279,47 @@ public class TeamCalendarService {
         }
         else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no team");
     }
+
+    public void addTeamMemberToCalendar(Long teamId) {
+
+        Optional<Team> team = teamRepository.findById(teamId);
+        if (team.isPresent()){
+            Team foundTeam = team.get();
+            TeamCalendar calendar = foundTeam.getTeamCalendar();
+
+            for (Day day : calendar.getBasePlan()) {
+                if (day.getSlots() != null) {
+                    for (Slot slot : day.getSlots()) {
+                        if (slot.getSchedules() != null) {
+                            List<Schedule> schedules = slot.getSchedules();
+                            for (Membership m: foundTeam.getMemberships()) {
+                                boolean scheduleExists = false;
+                                for (Schedule schedule : schedules) {
+                                    if (schedule.getUser().getId().equals(m.getUser().getId())){
+                                        scheduleExists = true;
+                                        break;
+                                    }
+                                }
+                                if (!scheduleExists) {
+                                    Schedule newSchedule = new Schedule();
+                                    newSchedule.setUser(m.getUser());
+                                    newSchedule.setSlot(slot);
+                                    mapUserPreferences(newSchedule);
+                                    schedules.add(newSchedule);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            teamCalendarRepository.save(calendar);
+            teamCalendarRepository.flush();
+        }
+
+    }
+
+
 
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
@@ -181,6 +389,17 @@ public class TeamCalendarService {
     }
 
     public String finalCalendarSubmission(Long id){
+        // clear fixed calendar here because after optimizer it doesnt work
+        Optional<Team> teamtest = teamRepository.findById(id);
+        if (teamtest.isPresent()){
+            Team foundTeam = teamtest.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            foundCalendar.getBasePlanFixed().clear();
+            foundCalendar.setStatus("busy");
+            teamCalendarRepository.save(foundCalendar);
+            teamCalendarRepository.flush();
+
+        }
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
@@ -189,22 +408,37 @@ public class TeamCalendarService {
 
 
             if (res == 0){
+                foundCalendar.setStatus("free");
 
-                try{
-
+                try {
                     new Optimizer(foundCalendar);
                     updateOptimizedTeamCalendar(id, foundCalendar);
-                }
-                catch (Exception ex) {
-                    return "optimizer started working but smth went wrong" + ex;
+                    return "optimizer worked";
+
                 }
 
-                return "optimizer is working";
+                catch (LpSolveException ex) {
+                   return "Something did not work with lp solve";}
+
+                catch (ArithmeticException ex) {
+                    return "no solution found";
+
+                }
+
+                catch (Exception ex) {
+                    return "something went wrong";
+                }
             }
+
+
             else if (res ==1){
                 return "there are collisions and games were started";
             }
-            else { // -1 case
+            else { // -1
+                foundCalendar.setStatus("free");
+                teamCalendarRepository.save(foundCalendar);
+                teamCalendarRepository.flush();
+
                 EmailService emailService = new EmailService();
                 try {
 
@@ -221,7 +455,7 @@ public class TeamCalendarService {
                 catch (Exception e) {
                     //do nothing
                 }
-                return "admin has stupid requirement, I have sent him email";
+                return "bad requirement, email sent";
             }
 
         }
@@ -251,7 +485,7 @@ public class TeamCalendarService {
                         }
                     }
 
-                    if(requirement> (assignment+possible) ){ // irresolvable collision
+                    if(requirement> (assignment+possible+lazy) ){ // irresolvable collision
                         return -1;
                     }
   // PART 1 : OVERSUPPLY OF USERS
@@ -329,6 +563,8 @@ public class TeamCalendarService {
     public void initializeGame(Slot slot) {
         Game game = new Game();
         game.setStatus("on");
+        game.setSlot(slot);
+        slot.setGame(game);
         Random rand = new Random();
 
         // set board size based on number of players
@@ -356,6 +592,7 @@ public class TeamCalendarService {
                 Player player = new Player();
                 player.setUser(schedule.getUser());
                 player.setGame(game);
+                player.setSpecial(schedule.getSpecial());
                 Location chunck = new Location();
                 int x = rand.nextInt(size);
                 int y = rand.nextInt(size);
