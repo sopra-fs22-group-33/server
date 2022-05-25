@@ -3,8 +3,6 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.Optimizer;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +65,7 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             return foundTeam.getTeamCalendar();
       }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "team was not found");
     }
 
     public void updateOptimizedTeamCalendar(Long id, TeamCalendar newCalendar){
@@ -280,7 +278,7 @@ public class TeamCalendarService {
             teamCalendarRepository.flush();
             return savedCalendar;
         }
-        else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "no team");
     }
 
     public void addTeamMemberToCalendar(Long teamId) {
@@ -327,6 +325,7 @@ public class TeamCalendarService {
 
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
+        newCalendar.setStartingDateFixed(newCalendar.getStartingDate());
         //checkIfTeamHasCalendar(id);
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
@@ -352,7 +351,7 @@ public class TeamCalendarService {
                                     //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
                                 }
-                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                                else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find user");
                             }
                         }
                     }
@@ -524,6 +523,7 @@ public class TeamCalendarService {
                     }
 
 // PART 2: UNDERSUPPLY
+                    //TODO this case is not possible, it is checked at line 254
                     else if ((assignment+possible) < requirement && (requirement-possible-assignment!=1|| lazy!=1 ) ){ // if there are too littleusers and it is not trivial case when just one user is a problem // TODO: make sure that there are no other corner cases
                         isGame = true;
                         initializeGame(slot);

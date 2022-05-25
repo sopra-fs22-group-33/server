@@ -59,7 +59,7 @@ public class UserCalendarServiceTest {
 
         LocalDate lD = LocalDate.now();
         assertEquals(createdUserCalendar.getStartingDate(), lD);
-        assertTrue(createdUserCalendar.getUserPlan().get(1).getSlots().isEmpty());
+        assertTrue(createdUserCalendar.getUserPlan().isEmpty());
     }
 
     @Test
@@ -77,8 +77,8 @@ public class UserCalendarServiceTest {
         List<Slot> slots = Collections.singletonList(slot);
         day.setSlots(slots);
         List<Day> days = Collections.singletonList(day);
-        testTeamCalendar.setBasePlan(days);
-        testTeamCalendar.setStartingDate(LocalDate.of(2000,1,1));
+        testTeamCalendar.setBasePlanFixed(days);
+        testTeamCalendar.setStartingDateFixed(LocalDate.of(2000,1,1));
         testTeam.setTeamCalendar(testTeamCalendar);
 
         Membership membership = new Membership();
@@ -90,8 +90,8 @@ public class UserCalendarServiceTest {
         UserCalendar createdUserCalendar = userCalendarService.getUserCalendar(testUser);
 
         // then
-        assertEquals(testTeamCalendar.getStartingDate(), createdUserCalendar.getStartingDate());
-        assertEquals(testTeamCalendar.getBasePlan().get(0).getWeekday(), createdUserCalendar.getUserPlan().get(0).getWeekday());
+        assertEquals(testTeamCalendar.getStartingDateFixed(), createdUserCalendar.getStartingDate());
+        assertEquals(testTeamCalendar.getBasePlanFixed().get(0).getWeekday(), createdUserCalendar.getUserPlan().get(0).getWeekday());
     }
 }
 
