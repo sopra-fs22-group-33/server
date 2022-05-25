@@ -62,7 +62,7 @@ public class UserCalendarService {
         }
 
         for (Membership membership : user.getMemberships()){
-            differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
+            differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDateFixed()));
 
                 for (Day day : membership.getTeam().getTeamCalendar().getBasePlanFixed()){
                 UserDay uD = new UserDay();
