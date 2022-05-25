@@ -59,7 +59,7 @@ public class UserCalendarServiceTest {
 
         LocalDate lD = LocalDate.now();
         assertEquals(createdUserCalendar.getStartingDate(), lD);
-        assertTrue(createdUserCalendar.getUserPlan().get(1).getSlots().isEmpty());
+        assertTrue(createdUserCalendar.getUserPlan().isEmpty());
     }
 
     @Test
