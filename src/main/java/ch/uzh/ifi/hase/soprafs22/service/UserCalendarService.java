@@ -64,7 +64,15 @@ public class UserCalendarService {
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDateFixed()));
 
-                for (Day day : membership.getTeam().getTeamCalendar().getBasePlanFixed()){
+            //adding empty days
+            for (int j=0; j<differenceInDays+3; j++){
+                UserDay userD = new UserDay();
+                userD.setWeekday(j);
+                userD.setSlots(new ArrayList<>());
+                userCalendar.getUserPlan().add(userD);
+            }
+
+            for (Day day : membership.getTeam().getTeamCalendar().getBasePlanFixed()){
                 UserDay uD = new UserDay();
                 uD.setSlots(new ArrayList<>());
                 userCalendar.getUserPlan().add(uD);
@@ -84,10 +92,17 @@ public class UserCalendarService {
                         userSlot.setTimeFrom(slot.getTimeFrom());
                         userSlot.setTimeTo(slot.getTimeTo());
                         if (!userSlot.getSchedules().isEmpty()) {
-                            userCalendar.getUserPlan().get(i - differenceInDays).getSlots().add(userSlot);
+                            userCalendar.getUserPlan().get(i + differenceInDays).getSlots().add(userSlot);
                         }
                     }
                 }
+            }
+        }
+        for (int k=userCalendar.getUserPlan().size()-1; k>0; k--){
+            if (userCalendar.getUserPlan().get(k).getSlots().isEmpty()){
+                userCalendar.getUserPlan().remove(k);
+            }else {
+                break;
             }
         }
         return userCalendar;
