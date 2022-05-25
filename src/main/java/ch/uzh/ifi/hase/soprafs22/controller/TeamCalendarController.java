@@ -49,7 +49,7 @@ public class TeamCalendarController {
     }
 
     @DeleteMapping("/teams/{teamId}/calendars")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public void deleteTeamCalendar( @PathVariable("teamId") long id) {
        teamCalendarService.deleteOldDays(id);
     }
