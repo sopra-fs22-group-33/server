@@ -53,14 +53,6 @@ public class UserCalendarService {
         userCalendar.setStartingDate(startingDate);
         userCalendar.setUserPlan(new ArrayList<>());
 
-        //fill with empty days
-//        for (int j=0; j<7; j++){
-//            UserDay userD = new UserDay();
-//            userD.setWeekday(j);
-//            userD.setSlots(new ArrayList<>());
-//            userCalendar.getUserPlan().add(userD);
-//        }
-
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDateFixed()));
 
@@ -98,6 +90,8 @@ public class UserCalendarService {
                 }
             }
         }
+
+        //remove empty days at the end
         for (int k=userCalendar.getUserPlan().size()-1; k>0; k--){
             if (userCalendar.getUserPlan().get(k).getSlots().isEmpty()){
                 userCalendar.getUserPlan().remove(k);
@@ -107,5 +101,4 @@ public class UserCalendarService {
         }
         return userCalendar;
     }
-
 }
