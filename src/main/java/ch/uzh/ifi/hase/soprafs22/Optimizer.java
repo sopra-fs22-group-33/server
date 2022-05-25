@@ -341,7 +341,6 @@ public class Optimizer {
         double[] var = solver.getPtrVariables();
         for (int j = 0; j < var.length; j++) {
             this.result.get(j).setAssigned((int) var[j]);
-            this.result.get(j).setFinal(true);
         }
     }
 

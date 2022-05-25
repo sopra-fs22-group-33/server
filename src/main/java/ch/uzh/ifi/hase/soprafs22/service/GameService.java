@@ -288,6 +288,7 @@ public class GameService {
                     schedule.setSpecial(fixedSchedule.getSpecial());
                     schedule.setUser(fixedSchedule.getUser());
                     schedule.setAssigned(fixedSchedule.getAssigned());
+                    schedule.setFinal(true);
 
                     // this is not required anymore
                     fixedSchedule.setAssigned(0);
