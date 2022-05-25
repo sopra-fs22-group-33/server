@@ -24,6 +24,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import static java.lang.Math.exp;
+import static java.time.temporal.ChronoUnit.DAYS;
 
 
 @Service
@@ -100,6 +101,7 @@ public class TeamCalendarService {
                     schedule.setSpecial(fixedSchedule.getSpecial());
                     schedule.setUser(fixedSchedule.getUser());
                     schedule.setAssigned(fixedSchedule.getAssigned());
+                    schedule.setFinal(true);
 
                     // this is not required anymore
                     fixedSchedule.setAssigned(0);
@@ -119,14 +121,20 @@ public class TeamCalendarService {
             Team foundTeam = team.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
             // used the stored basePlan to fill out the fixed calendar
+            int diff = (int) DAYS.between( foundCalendar.getStartingDateFixed(), foundCalendar.getStartingDate());
+
+
             for (Day day: basePlan){
                 day.setTeamCalendar(foundCalendar);
+                day.setWeekday(day.getWeekday()+diff);
                 foundCalendar.getBasePlanFixed().add(day);
 
             }
+
             // update the dates
-            foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate());
+            //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
             foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+
 
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
@@ -390,13 +398,26 @@ public class TeamCalendarService {
         return x;
     }
 
+    public void deleteOldDays(Long id){
+        Optional<Team> teamtest = teamRepository.findById(id);
+        if (teamtest.isPresent()){
+            Team foundTeam = teamtest.get();
+            TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
+            foundCalendar.getBasePlanFixed().clear();
+            foundCalendar.setStartingDateFixed(LocalDate.now());
+
+        teamCalendarRepository.save(foundCalendar);
+        teamCalendarRepository.flush();
+    }
+    }
+
     public String finalCalendarSubmission(Long id){
         // clear fixed calendar here because after optimizer it doesnt work
         Optional<Team> teamtest = teamRepository.findById(id);
         if (teamtest.isPresent()){
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
-            foundCalendar.getBasePlanFixed().clear();
+           //foundCalendar.getBasePlanFixed().clear();
             foundCalendar.setStatus("busy");
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();

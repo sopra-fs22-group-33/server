@@ -268,7 +268,7 @@ public class Optimizer {
             HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
-                    if (!users.containsKey(schedule.getUser().getId())) {
+                    if ((!schedule.getFinal())&& (!users.containsKey(schedule.getUser().getId()))) {
                         ArrayList<Integer> tmp = new ArrayList<>();
                         tmp.add(i);
                         users.put(schedule.getUser().getId(), tmp);
@@ -324,7 +324,7 @@ public class Optimizer {
         for (Schedule anotherSchedule: schedule.getUser().getSchedules()){ // iterate over all the slots the user is assigned to
             if (!Objects.equals(anotherSchedule.getSlot().getDay().getTeamCalendar().getId(), schedule.getSlot().getDay().getTeamCalendar().getId())){ // if the slot belongs to another calendar
                 if (anotherSchedule.getAssigned() == 1){ // if the user is already assigned there
-                    if (schedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDate().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day
+                    if (schedule.getSlot().getDay().getTeamCalendar().getStartingDateFixed().plusDays( anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() == anotherSchedule.getSlot().getDay().getTeamCalendar().getStartingDateFixed().plusDays(anotherSchedule.getSlot().getDay().getWeekday()).getDayOfMonth() ) { // if it is the same day
                         // if our schedule starts WHILE another schedule, or finishes WHILE another schedule, or they conicide
                         if (((schedule.getSlot().getTimeFrom()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeFrom()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeTo()> anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()< anotherSchedule.getSlot().getTimeTo()))||((schedule.getSlot().getTimeFrom()== anotherSchedule.getSlot().getTimeFrom()) && (schedule.getSlot().getTimeTo()== anotherSchedule.getSlot().getTimeTo()))){
                             res = true;
