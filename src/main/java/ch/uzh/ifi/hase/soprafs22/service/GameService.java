@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -312,8 +313,9 @@ public class GameService {
 
             }
             // update the dates
-            foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate());
-            foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+            //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
+            //foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
+            foundCalendar.setStartingDate(LocalDate.now());
 
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
