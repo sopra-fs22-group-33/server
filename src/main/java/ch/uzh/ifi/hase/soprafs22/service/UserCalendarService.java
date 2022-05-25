@@ -44,8 +44,8 @@ public class UserCalendarService {
 
         //set startingDate to the lowest date of all teamCalendars
         for (Membership membership : user.getMemberships()) {
-            if (startingDate.isAfter(membership.getTeam().getTeamCalendar().getStartingDate())){
-                startingDate = membership.getTeam().getTeamCalendar().getStartingDate();
+            if (startingDate.isAfter(membership.getTeam().getTeamCalendar().getStartingDateFixed())){
+                startingDate = membership.getTeam().getTeamCalendar().getStartingDateFixed();
             }
         }
 
@@ -64,12 +64,12 @@ public class UserCalendarService {
         for (Membership membership : user.getMemberships()){
             differenceInDays = (int) (DAYS.between(startingDate, membership.getTeam().getTeamCalendar().getStartingDate()));
 
-                for (Day day : membership.getTeam().getTeamCalendar().getBasePlan()){
+                for (Day day : membership.getTeam().getTeamCalendar().getBasePlanFixed()){
                 UserDay uD = new UserDay();
                 uD.setSlots(new ArrayList<>());
                 userCalendar.getUserPlan().add(uD);
                 uD.setWeekday(userCalendar.getUserPlan().indexOf(uD));
-                i = membership.getTeam().getTeamCalendar().getBasePlan().indexOf(day);
+                i = membership.getTeam().getTeamCalendar().getBasePlanFixed().indexOf(day);
                 for (Slot slot : day.getSlots()) {
                     UserSlot userSlot = new UserSlot();
                     userSlot.setSchedules(new ArrayList<>());
