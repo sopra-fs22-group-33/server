@@ -409,7 +409,7 @@ public class TeamCalendarService {
         if (teamtest.isPresent()){
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
-            foundCalendar.getBasePlanFixed().clear();
+           //foundCalendar.getBasePlanFixed().clear();
             foundCalendar.setStatus("busy");
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();

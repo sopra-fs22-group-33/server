@@ -268,7 +268,7 @@ public class Optimizer {
             HashMap<Long, ArrayList<Integer>> users = new HashMap<>(); // key: id of the user, value: his slots
             for (Slot slot : day.getSlots()) {
                 for (Schedule schedule : slot.getSchedules()) {
-                    if (!users.containsKey(schedule.getUser().getId())) {
+                    if ((!schedule.getFinal())&& (!users.containsKey(schedule.getUser().getId()))) {
                         ArrayList<Integer> tmp = new ArrayList<>();
                         tmp.add(i);
                         users.put(schedule.getUser().getId(), tmp);
@@ -341,6 +341,7 @@ public class Optimizer {
         double[] var = solver.getPtrVariables();
         for (int j = 0; j < var.length; j++) {
             this.result.get(j).setAssigned((int) var[j]);
+            this.result.get(j).setFinal(true);
         }
     }
 

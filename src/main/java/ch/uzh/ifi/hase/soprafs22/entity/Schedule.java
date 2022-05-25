@@ -29,6 +29,9 @@ public class Schedule implements Serializable {
     private String role;
 
     @Column
+    private Boolean isFinal = false;
+
+    @Column
     private int base;
 
     @Column
@@ -94,4 +97,11 @@ public class Schedule implements Serializable {
         this.assigned = assigned;
     }
 
+    public Boolean getFinal() {
+        return isFinal;
+    }
+
+    public void setFinal(Boolean aFinal) {
+        isFinal = aFinal;
+    }
 }
