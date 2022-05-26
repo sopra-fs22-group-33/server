@@ -154,12 +154,19 @@ public class GameService {
                         playerHead = player.getChunks().get(0);
                         if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
                             currentPlayer.setStatus("dead");
-                            currentPlayer.setChunks(null);
-                            currentPlayer.setRank(rank+1);
-
                             player.setStatus("dead");
+
+                            // one with more chunks wins
+                            if (chunks.size() >= playerChunks.size()) {
+                                currentPlayer.setRank(rank + 2);
+                                player.setRank(rank + 1);
+                            } else {
+                                player.setRank(rank + 2);
+                                currentPlayer.setRank(rank + 1);
+                            }
+
+                            currentPlayer.setChunks(null);
                             player.setChunks(null);
-                            player.setRank(rank+1);
                         }
                         else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                             currentPlayer.setStatus("dead");
@@ -167,6 +174,21 @@ public class GameService {
                             currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
 
                         }
+                    }
+                }
+            }
+
+            // check collision with self if not dead yet
+            if (!"dead".equals(currentPlayer.getStatus()) && chunks.size() > 0) {
+                Location chunk;
+                for (int i=1; i < chunks.size(); i ++) {
+                    chunk = chunks.get(i);
+                    if (head.getX().equals(chunk.getX()) && head.getY().equals(chunk.getY())) {
+                        currentPlayer.setStatus("dead");
+                        currentPlayer.setChunks(null);
+                        currentPlayer.setRank(rank+1);
+
+                        break;
                     }
                 }
             }
