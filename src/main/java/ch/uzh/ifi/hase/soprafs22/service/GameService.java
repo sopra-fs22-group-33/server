@@ -154,12 +154,19 @@ public class GameService {
                         playerHead = player.getChunks().get(0);
                         if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
                             currentPlayer.setStatus("dead");
-                            currentPlayer.setChunks(null);
-                            currentPlayer.setRank(rank+1);
-
                             player.setStatus("dead");
+
+                            // one with more chunks wins
+                            if (chunks.size() >= playerChunks.size()) {
+                                currentPlayer.setRank(rank + 2);
+                                player.setRank(rank + 1);
+                            } else {
+                                player.setRank(rank + 2);
+                                currentPlayer.setRank(rank + 1);
+                            }
+
+                            currentPlayer.setChunks(null);
                             player.setChunks(null);
-                            player.setRank(rank+1);
                         }
                         else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
                             currentPlayer.setStatus("dead");
