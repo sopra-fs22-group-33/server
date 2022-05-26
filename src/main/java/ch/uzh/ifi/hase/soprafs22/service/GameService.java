@@ -170,6 +170,21 @@ public class GameService {
                     }
                 }
             }
+
+            // check collision with self if not dead yet
+            if (!"dead".equals(currentPlayer.getStatus()) && chunks.size() > 0) {
+                Location chunk;
+                for (int i=1; i < chunks.size(); i ++) {
+                    chunk = chunks.get(i);
+                    if (head.getX().equals(chunk.getX()) && head.getY().equals(chunk.getY())) {
+                        currentPlayer.setStatus("dead");
+                        currentPlayer.setChunks(null);
+                        currentPlayer.setRank(rank+1);
+
+                        break;
+                    }
+                }
+            }
         }
         // check if all the players are dead  // TODO: maybe change to only one player left - then stop game
         Boolean stop = true;
