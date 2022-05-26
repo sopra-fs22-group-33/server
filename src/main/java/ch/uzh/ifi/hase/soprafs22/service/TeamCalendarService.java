@@ -418,7 +418,7 @@ public class TeamCalendarService {
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
            //foundCalendar.getBasePlanFixed().clear();
-            foundCalendar.setStatus("busy");
+            foundCalendar.setBusy(true);
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();
 
@@ -431,7 +431,7 @@ public class TeamCalendarService {
 
 
             if (res == 0){
-                foundCalendar.setStatus("free");
+                foundCalendar.setBusy(false);
 
                 try {
                     new Optimizer(foundCalendar);
@@ -458,7 +458,7 @@ public class TeamCalendarService {
                 return "there are collisions and games were started";
             }
             else { // -1
-                foundCalendar.setStatus("free");
+                foundCalendar.setBusy(false);
                 teamCalendarRepository.save(foundCalendar);
                 teamCalendarRepository.flush();
 

@@ -9,6 +9,8 @@ public class TeamCalendarGetDTO {
 
     private Long id;
 
+    private Boolean isBusy;
+
     private LocalDate startingDate;
 
     private List <Day> days;
@@ -55,5 +57,13 @@ public class TeamCalendarGetDTO {
 
     public void setStartingDateFixed(LocalDate startingDateFixed) {
         this.startingDateFixed = startingDateFixed;
+    }
+
+    public Boolean getBusy() {
+        return isBusy;
+    }
+
+    public void setBusy(Boolean busy) {
+        isBusy = busy;
     }
 }

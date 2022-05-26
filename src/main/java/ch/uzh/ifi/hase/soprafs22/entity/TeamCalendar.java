@@ -28,7 +28,7 @@ public class TeamCalendar implements Serializable {
     private LocalDate startingDate;
 
     @Column
-    private String status;
+    private Boolean isBusy;
 
     @Column
     private LocalDate startingDateFixed;
@@ -94,12 +94,13 @@ public class TeamCalendar implements Serializable {
         this.basePlanFixed = basePlanFixed;
     }
 
-    public String getStatus() {
-        return status;
+
+    public Boolean getBusy() {
+        return isBusy;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setBusy(Boolean busy) {
+        isBusy = busy;
     }
 }
 
