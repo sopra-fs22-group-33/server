@@ -94,3 +94,42 @@ do the following:
 ## Testing
 
 Have a look here: https://www.baeldung.com/spring-boot-testing
+
+## Introduction
+Many teams who are working in shifts are still using hand made plans to organize their work. This takes a lot of time for the team leader, who has to create the plan. The team members have to check the physical plan for changes on a regular basis. The goal of this project is to provide a software system which supports this process. A team leader can create a base plan where the team members get assigned to automatically. Team members get their working plan directly into their calendars and they can post their prefered shifts or days off directly into the system. In case of a conflict, the team members can sort it
+out in real time.
+
+## Technologies
+- Java 15 
+- Gradle 6.8.1
+- Sonarqube 3.1.1
+- Heroku
+- Sendgrid e-mail API 4.4.1
+- optimizer lpsolve 5.5.2.0
+## High-level components
+- User
+  - Calendar
+  - PreferenceCalendar
+- Team
+  - Calendar
+- Game
+  - resolving conflicts
+- Optimizer
+  - assigns users to empty shifts according to their preferences
+## Launch & Deployment
+
+## Illustrations
+## Roadmap
+- [ ] automated finalizing of calendars
+- [ ] shift swaps
+- [ ] individual constraints for team members (working hours per week, number of jokers etc.) 
+- [ ] export calendar as .ics
+## Authors and acknowledgement
+shift planner is created by vmjulia, UpstairsForest, eoeaee and grueezi
+
+thanks to maettuu for guiding us through the semester. 
+
+thanks to the SoPra team for your support and providing a cool course! 
+
+## License
+
