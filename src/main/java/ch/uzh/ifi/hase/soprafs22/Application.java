@@ -1,6 +1,6 @@
 
 
-/*<one line to give the program's name and a brief idea of what it does.>
+/*plan your teams working hours by using the shift planner
 Copyright (C) 2022 sopra-fs22-group-33
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.

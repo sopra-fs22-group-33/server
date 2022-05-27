@@ -44,4 +44,4 @@ local.properties
 bin/main/application.properties
 .vscode/settings.json
 sendgrid.env
-sendgrid.env
+/.vscode/
