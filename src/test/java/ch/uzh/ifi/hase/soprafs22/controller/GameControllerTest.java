@@ -35,44 +35,61 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * request without actually sending them over the network.
  * This tests if the GameController works.
  */
-// @WebMvcTest(GameController.class)
-// public class GameControllerTest {
+@WebMvcTest(GameController.class)
+ public class GameControllerTest {
 
-//     @Autowired
-//     private MockMvc mockMvc;
-//     @MockBean
-//     private GameService gameService;
+     @Autowired
+     private MockMvc mockMvc;
+     @MockBean
+     private GameService gameService;
 
-//     @MockBean
-//     private UserService userService;
+     @MockBean
+     private UserService userService;
 
 
 
-//     @Test
-//     public void givenGame_whenGetGame_thenReturnJsonArray() throws Exception {
-//         // given
-//         Game game = new Game();
-//         game.setId(1L);
-//         List<Game> allGames= Collections.singletonList(game);
+     @Test
+    public void givenGame_whenGetGame_thenReturnJsonArray() throws Exception {
+       // given
+         Game game = new Game();
+        game.setId(1L);
+        List<Game> allGames= Collections.singletonList(game);
 
-//         given(gameService.getGames()).willReturn( allGames);
+        given(gameService.getGames()).willReturn( allGames);
 
-//         // when
-//         MockHttpServletRequestBuilder getRequest = get("/games").contentType(MediaType.APPLICATION_JSON);
+     // when
+         MockHttpServletRequestBuilder getRequest = get("/games").contentType(MediaType.APPLICATION_JSON);
 
-//         // then
-//         mockMvc.perform(getRequest).andExpect(status().isOk())
-//                 .andExpect(jsonPath("$", hasSize(1)))
-//                 .andExpect(jsonPath("$[0].id", is(1)));
-//     }
+         // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)))
+                .andExpect(jsonPath("$[0].id", is(1)));
+    }
 
-//     @Test
-//     public void postGame_getGame_thenReturnJsonArray() throws Exception {
-//         // given
-//         Game game = new Game();
-//         game.setId(1L);
+    @Test
+    public void givenGame_whenGetGame_forconcretePlayer__thenReturnJsonArray() throws Exception {
+        // given
+        Game game = new Game();
+        game.setId(1L);
 
-//         given(gameService.startGame(Mockito.any())).willReturn(game);
+        given(gameService.getGame(Mockito.anyLong(), Mockito.anyLong())).willReturn( game);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/games/1/1").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(1)));
+    }
+
+
+    //@Test
+    // public void postGame_getGame_thenReturnJsonArray() throws Exception {
+         // given
+      //   Game game = new Game();
+       //  game.setId(1L);
+
+         //given(gameService.startGame(Mockito.any())).willReturn(game);
 
 //         GamePostDTO gamePostDTO = new GamePostDTO();
 
@@ -96,4 +113,4 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 //         }
 //     }
 
-// }
+ }
