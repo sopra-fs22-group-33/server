@@ -669,7 +669,6 @@ public class TeamCalendarServiceTest {
         assertEquals(1,testTeamCalendar.getBasePlanFixed().size());
         assertEquals(1,testTeamCalendar.getBasePlan().size());
 
-        Optional<Team> team = teamRepository.findById(1L);
 
     }
 

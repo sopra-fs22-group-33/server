@@ -3,6 +3,8 @@ package ch.uzh.ifi.hase.soprafs22.service;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
+import ch.uzh.ifi.hase.soprafs22.repository.TeamCalendarRepository;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,6 +24,8 @@ public class GameServiceTest {
     private GameRepository gameRepository;
     @Mock
     private PlayerRepository playerRepository;
+    @Mock
+    private TeamCalendarRepository teamCalendarRepository;
     @InjectMocks
     private GameService gameService;
 
@@ -56,6 +60,7 @@ public class GameServiceTest {
         Mockito.when(playerRepository.findById(3L)).thenReturn(Optional.ofNullable(testPlayer2));
         Mockito.when(playerRepository.findById(4L)).thenReturn(Optional.ofNullable(null));
         Mockito.when(gameRepository.save(Mockito.any())).thenReturn(testGame);
+
 
 
     }
@@ -286,8 +291,57 @@ public class GameServiceTest {
         assertEquals(-1, schedule2.getSpecial());
         assertEquals(-1, schedule3.getSpecial());
 
+    }
 
+    @Test
+    public void update_calendar_after_optimizer_test() {
 
+        Team testTeam = new Team();
+        testTeam.setId(1L);
+        User testUser = new User();
+        testUser.setId(2L);
+        testUser.setToken("token");
+        testTeam.setName("testTeamname");
+        TeamCalendar testTeamCalendar = new TeamCalendar();
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setBasePlan(new ArrayList<>());
+        testTeam.setTeamCalendar(testTeamCalendar);
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+        List<Day> daysFixed = new ArrayList<>();
+        testTeamCalendar.setBasePlanFixed(daysFixed);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setStartingDateFixed(LocalDate.now());
+
+        assertEquals(1, testTeamCalendar.getBasePlan().size());
+        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
+        teamCalendarPostDTO.setStartingDate(LocalDate.now());
+
+        Mockito.when(teamCalendarRepository.findById(Mockito.anyLong())).thenReturn(Optional.of(testTeamCalendar));
+        Mockito.when(teamCalendarRepository.save(Mockito.any())).thenReturn(testTeamCalendar);
+
+        gameService.updateOptimizedTeamCalendar(testTeamCalendar );
+
+        assertEquals(1,testTeamCalendar.getBasePlanFixed().size());
+        assertEquals(1,testTeamCalendar.getBasePlan().size());
 
     }
 
