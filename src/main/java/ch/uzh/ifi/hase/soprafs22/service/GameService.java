@@ -193,7 +193,7 @@ public class GameService {
                 }
             }
         }
-        // check if all the players are dead  // TODO: maybe change to only one player left - then stop game
+        // check if all the players are dead
         Boolean stop = true;
         for (Player player:game.getPlayers()) {
             if (!Objects.equals(player.getStatus(), "dead")) {
@@ -206,7 +206,7 @@ public class GameService {
     }
 
     private void finishGame(Game game){
-        // TODO: Maybe need to delete the game from the database - > discuss
+
         game.setStatus("off");
         game.getSlot().getDay().getTeamCalendar().setCollisions( game.getSlot().getDay().getTeamCalendar().getCollisions()-1);
         int requirement = game.getSlot().getRequirement();
