@@ -635,6 +635,45 @@ public class TeamCalendarServiceTest {
     }
 
     @Test
+    public void update_calendar_after_optimizer_test() {
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+        List<Day> daysFixed = new ArrayList<>();
+        testTeamCalendar.setBasePlanFixed(daysFixed);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setStartingDateFixed(LocalDate.now());
+
+        assertEquals(1, testTeamCalendar.getBasePlan().size());
+        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
+        teamCalendarPostDTO.setStartingDate(LocalDate.now());
+        teamCalendarService.updateOptimizedTeamCalendar(1L, testTeamCalendar );
+
+        assertEquals(1,testTeamCalendar.getBasePlanFixed().size());
+        assertEquals(1,testTeamCalendar.getBasePlan().size());
+
+        Optional<Team> team = teamRepository.findById(1L);
+
+    }
+
+    @Test
     public void checkCollisions_CollisionPart2_return1() {
 
         User testUser2 = new User();
@@ -667,43 +706,8 @@ public class TeamCalendarServiceTest {
         teamCalendarService.initializeGame(slot);
         Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
     }
-/*
-    //TODO
-    @Test
-    public void update_calendar_after_optimizer_test() {
 
 
-        Day day = new Day ();
-        day.setTeamCalendar(testTeamCalendar);
-        testTeam.setTeamCalendar(testTeamCalendar);
-        Slot slot = new Slot();
-        slot.setDay(day);
-        Schedule schedule = new Schedule();
-        schedule.setSlot(slot);
-        schedule.setId(10L);
-        schedule.setSpecial(-1);
-        schedule.setBase(1);
-        schedule.setUser(testUser);
-        List<Schedule> schedules = Collections.singletonList(schedule);
-        slot.setSchedules(schedules);
-        slot.setRequirement(1);
-        List<Slot> slots = Collections.singletonList(slot);
-        day.setSlots(slots);
-        List<Day> days = Collections.singletonList(day);
-        testTeamCalendar.setId(1L);
-        testTeamCalendar.setBasePlan(days);
-        testTeamCalendar.setStartingDate(LocalDate.now());
-
-        assertEquals(1, testTeamCalendar.getBasePlan().size());
-        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
-        teamCalendarPostDTO.setStartingDate(LocalDate.now());
-        teamCalendarService.updateOptimizedTeamCalendar(1L, testTeamCalendar );
-        assertEquals(1, testTeamCalendar.getBasePlanFixed().size());
-        assertEquals(1, testTeamCalendar.getBasePlan().size());
-
-
-    }
-*/
 
 }
 

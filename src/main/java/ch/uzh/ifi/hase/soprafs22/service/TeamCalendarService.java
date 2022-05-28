@@ -132,7 +132,7 @@ public class TeamCalendarService {
             }
 
             // update the dates
-            //foundCalendar.setStartingDateFixed(foundCalendar.getStartingDate()); - dont update starting date fixed
+
             foundCalendar.setStartingDate(foundCalendar.getStartingDate().plusDays(latestDay+ 1));
 
 

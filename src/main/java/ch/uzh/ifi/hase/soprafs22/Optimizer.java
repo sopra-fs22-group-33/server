@@ -6,8 +6,6 @@ import lpsolve.LpSolveException;
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 
 
@@ -56,36 +54,6 @@ public class Optimizer {
         }
     }
 
-    // always need to account external collisions otherwise cant depict overlapping slots
-    /*
-    private void solveReducedProblemIgnoreExternalCollisions() throws LpSolveException, ArithmeticException {
-        this.result = new ArrayList<>();
-        this.solver = LpSolve.makeLp(0, nCols);
-        defineObjective();
-
-        addRequirementConstraint();
-        addSpecialPreferenceConstraint();
-
-        addInternalCollisionsConstraint();
-
-        addHourLimitConstraintWeekly();
-        addHourLimitConstraintDaily();
-
-        // solve the problem
-        this.solver.setMaxim();
-        int sol = this.solver.solve();
-
-        if(sol == LpSolve.OPTIMAL){
-            readSolution();
-            this.solver.deleteLp();
-
-        }
-        else{ // if not try relaxing constraints further
-            this.solver.deleteLp();
-            solveReducedProblemIgnoreSpecial();
-        }
-    }
-*/
 
     private void  solveReducedProblemIgnoreSpecial() throws LpSolveException, ArithmeticException {
         this.result = new ArrayList<>();
@@ -356,6 +324,6 @@ public class Optimizer {
         }
         this.nCols =i;
     }
-    // TODO: check all the conditions once again
+
 }
 
