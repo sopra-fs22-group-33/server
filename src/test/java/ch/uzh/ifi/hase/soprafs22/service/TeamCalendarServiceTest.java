@@ -762,6 +762,121 @@ public class TeamCalendarServiceTest {
 
     }
 
+    @Test
+    public void checkfinalSubmission_test() {
+        User testUser2 = new User();
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(-1);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = List.of((new Schedule[]{schedule, schedule2}));
+        slot.setSchedules(schedules);
+        slot.setRequirement(3);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        assertEquals("not enough members available to fulfil requirement!", teamCalendarService.finalCalendarSubmission(1L));
+    }
+
+    @Test
+    public void checkfinalSubmission_Games_start_test() {
+        User testUser2 = new User();
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(0);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(0);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = List.of((new Schedule[]{schedule, schedule2}));
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        assertEquals("there are collisions and games were started", teamCalendarService.finalCalendarSubmission(1L));
+    }
+
+    @Test
+    public void addTeamMemberToCalendar(){
+        PreferenceCalendar prefCalendar = new PreferenceCalendar();
+        prefCalendar.setUser(testUser);
+        PreferenceDay prefDay = new PreferenceDay();
+        prefDay.setId(5L);
+        prefDay.setWeekday(0);
+        List<PreferenceDay>  prefdays = Collections.singletonList(prefDay);
+        PreferenceSlot prefSlot = new PreferenceSlot();
+        prefSlot.setDay(prefDay);
+        prefSlot.setId(6L);
+        prefSlot.setTimeFrom(1);
+        prefSlot.setTimeTo(4);
+        prefSlot.setBase(5);
+        List<PreferenceSlot>  prefSlots = Collections.singletonList(prefSlot);
+        prefDay.setSlots(prefSlots);
+        prefCalendar.setPreferencePlan(prefdays);
+        testUser.setPreferenceCalendar(prefCalendar);
+        Mockito.when(preferenceCalendarRepository.save(Mockito.any())).thenReturn(prefCalendar);
+        User testUser2 = new User();
+        testUser2.setId(10L);
+
+
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Set <Membership> memberships = new HashSet<>();
+        Membership m = new Membership();
+        m.setTeam(testTeam);
+        m.setIsAdmin(true);
+        m.setUser(testUser);
+        memberships.add(m);
+        testTeam.setMemberships(memberships);
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        slot.setDay(day);
+        slot.setTimeFrom(1);
+        slot.setTimeTo(4);
+        day.setTeamCalendar(testTeamCalendar);
+        slot.setRequirement(1);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(0);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = new ArrayList<>();
+        schedules.add(schedule2);
+        slot.setSchedules(schedules);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+
+
+        teamCalendarService.addTeamMemberToCalendar(1L);
+
+        assertEquals(5,  testTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(1).getBase());
+
+    }
+
 
 
 }

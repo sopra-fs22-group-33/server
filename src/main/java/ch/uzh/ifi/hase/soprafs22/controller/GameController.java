@@ -64,7 +64,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public List<GameGetDTO> getUserGames(@PathVariable("userId") Long userId) {
-        // todo: remove finished games
+
         List<GameGetDTO> gameGetDTOs = new ArrayList<>();
         Set<Player> players = userService.getUserById(userId).getPlayers();
         for (Player player:players){
