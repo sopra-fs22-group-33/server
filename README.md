@@ -42,6 +42,22 @@ Use the local Gradle Wrapper to build the application.
 ```bash
 ./gradlew test
 ```
+### Development Mode
+
+You can start the backend in development mode, this will automatically trigger a new build and reload the application
+once the content of a file has been changed and you save the file.
+
+Start two terminal windows and run:
+
+`./gradlew build --continuous`
+
+and in the other one:
+
+`./gradlew bootRun`
+
+If you want to avoid running all tests with every change, use the following command instead:
+
+`./gradlew build --continuous -xtest`
 
 ## Roadmap
 - [ ] automated finalizing of calendars
