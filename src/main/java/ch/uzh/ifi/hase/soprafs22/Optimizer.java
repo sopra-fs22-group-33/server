@@ -267,7 +267,7 @@ public class Optimizer {
 
     private Boolean checkForOverlaps(int slot1, int slot2){
         // slot1 starts during slot2, slot2 finishes during slot2, they are the same
-       return (((result.get(slot1-1).getSlot().getTimeFrom()< result.get(slot1-1).getSlot().getTimeTo()) && (result.get(slot2-1).getSlot().getTimeFrom()> result.get(slot2-1).getSlot().getTimeFrom()))||((result.get(slot1-1).getSlot().getTimeTo()> result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()< result.get(slot2-1).getSlot().getTimeTo()))||((result.get(slot1-1).getSlot().getTimeFrom()== result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()== result.get(slot2-1).getSlot().getTimeTo())));
+       return (((result.get(slot1-1).getSlot().getTimeFrom()< result.get(slot2-1).getSlot().getTimeTo()) && (result.get(slot1-1).getSlot().getTimeFrom()> result.get(slot2-1).getSlot().getTimeFrom()))||((result.get(slot1-1).getSlot().getTimeTo()> result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()< result.get(slot2-1).getSlot().getTimeTo()))||((result.get(slot1-1).getSlot().getTimeFrom()== result.get(slot2-1).getSlot().getTimeFrom()) && (result.get(slot1-1).getSlot().getTimeTo()== result.get(slot2-1).getSlot().getTimeTo())));
 
     }
 
