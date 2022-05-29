@@ -39,6 +39,7 @@ public class GameService {
 
     private final TeamCalendarRepository teamCalendarRepository;
     private final PlayerRepository playerRepository;
+    private final Random rand = new Random();
 
 
     @Autowired
@@ -121,7 +122,7 @@ public class GameService {
                         currentPlayer.setStatus("ate");
 
                         // change location  of apple to random
-                        Random rand = new Random();
+
                         int x = rand.nextInt(size);
                         int y = rand.nextInt(size);
                         appleLocation.setX(x);

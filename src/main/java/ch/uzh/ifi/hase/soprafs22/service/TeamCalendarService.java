@@ -544,7 +544,7 @@ public class TeamCalendarService {
                     }
 
 // PART 2: UNDERSUPPLY
-                    //TODO this case is not possible, it is checked at line 254
+
                     else if ((assignment+possible) < requirement && (requirement-possible-assignment!=1|| lazy!=1 ) ){ // if there are too littleusers and it is not trivial case when just one user is a problem // TODO: make sure that there are no other corner cases
                         isGame = true;
                         initializeGame(slot);

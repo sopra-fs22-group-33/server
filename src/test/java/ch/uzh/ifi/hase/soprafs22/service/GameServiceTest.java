@@ -292,6 +292,108 @@ public class GameServiceTest {
         assertEquals(-1, schedule3.getSpecial());
 
     }
+    @Test
+    public void finishGame_too_many_want_to_work_test(){
+
+        Team testTeam = new Team();
+        testTeam.setId(1L);
+        User testUser1 = new User();
+        testUser1.setId(1L);
+        User testUser2 = new User();
+        testUser2.setId(2L);
+        User testUser3 = new User();
+        testUser3.setId(3L);
+
+
+        TeamCalendar testTeamCalendar = new TeamCalendar();
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setCollisions(2);
+        testTeam.setTeamCalendar(testTeamCalendar);
+
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        slot.setRequirement(1);
+
+        Schedule schedule1 = new Schedule();
+        schedule1.setId(1L);
+        schedule1.setSpecial(1);
+        schedule1.setBase(1);
+        schedule1.setUser(testUser1);
+
+        Schedule schedule2 = new Schedule();
+        schedule2.setId(2L);
+        schedule2.setSpecial(1);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+
+        Schedule schedule3 = new Schedule();
+        schedule3.setId(2L);
+        schedule3.setSpecial(1);
+        schedule3.setBase(1);
+        schedule3.setUser(testUser3);
+
+
+        List<Schedule> schedules = new ArrayList<>();
+        schedules.add(schedule1);
+        schedules.add(schedule2);
+        schedules.add(schedule3);
+
+        slot.setSchedules(schedules);
+        slot.setDay(day);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setBasePlan(days);
+        day.setTeamCalendar(testTeamCalendar);
+
+
+
+        testPlayer1.setRank(3);
+        testPlayer2.setRank(2);
+        Player testPlayer3 = new Player();
+        testPlayer3.setRank(1);
+        testPlayer1.setSpecial(1);
+        testPlayer2.setSpecial(1);
+        testPlayer3.setSpecial(1);
+        Set <Player> players = new HashSet<>();
+        players.add(testPlayer1);
+        players.add(testPlayer2);
+        players.add(testPlayer3);
+        testGame.setPlayers(players);
+
+        testPlayer1.setUser(testUser1);
+        testPlayer2.setUser(testUser2);
+        testPlayer3.setUser(testUser3);
+
+
+        testPlayer1.setStatus("dead");
+        testPlayer2.setStatus("dead");
+        testPlayer3.setStatus("dead");
+
+        Location l1 = new Location();
+        l1.setX(3);
+        l1.setY(3);
+        List<Location> chunks1 = new ArrayList<>();
+        chunks1.add(l1);
+        testPlayer1.setChunks(chunks1);
+        testPlayer2.setChunks(chunks1);
+        testPlayer3.setChunks(chunks1);
+
+
+
+        testGame.setStatus("on");
+        testGame.setSlot(slot);
+        gameService.updatePlayerInGame(testPlayer1, 1L, 3L);
+        assertEquals("dead", testPlayer1.getStatus());
+        assertEquals("dead", testPlayer2.getStatus());
+        assertEquals("dead", testPlayer3.getStatus());
+        assertEquals("off", testGame.getStatus());
+        assertEquals(1, schedule1.getSpecial());
+        assertEquals(-1, schedule2.getSpecial());
+        assertEquals(-1, schedule3.getSpecial());
+
+    }
 
     @Test
     public void update_calendar_after_optimizer_test() {

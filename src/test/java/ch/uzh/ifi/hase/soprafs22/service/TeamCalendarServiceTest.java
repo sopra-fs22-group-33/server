@@ -635,6 +635,33 @@ public class TeamCalendarServiceTest {
     }
 
     @Test
+    public void checkCollisions_Collision_too_many_lazy_return1() {
+        User testUser2 = new User();
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(0);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(0);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = List.of((new Schedule[]{schedule, schedule2}));
+        slot.setSchedules(schedules);
+        slot.setRequirement(2);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        assertEquals(1, teamCalendarService.checkCollisions(testTeamCalendar));
+    }
+
+    @Test
     public void update_calendar_after_optimizer_test() {
 
         Day day = new Day ();
@@ -704,6 +731,45 @@ public class TeamCalendarServiceTest {
 
         teamCalendarService.initializeGame(slot);
         Mockito.verify(playerRepository, Mockito.times(1)).save(Mockito.any());
+    }
+
+    @Test
+    public void delete_old_fixed_days_test() {
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+        List<Day> daysFixed = new ArrayList<>();
+        daysFixed.add(day);
+        testTeamCalendar.setBasePlanFixed(daysFixed);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setStartingDateFixed(LocalDate.now());
+
+        assertEquals(1, testTeamCalendar.getBasePlanFixed().size());
+        TeamCalendarPostDTO teamCalendarPostDTO = new TeamCalendarPostDTO();
+        teamCalendarPostDTO.setStartingDate(LocalDate.now());
+        teamCalendarService. deleteOldDays( 1L );
+
+        assertEquals(0,testTeamCalendar.getBasePlanFixed().size());
+        assertEquals(1,testTeamCalendar.getBasePlan().size());
+
+
     }
 
 

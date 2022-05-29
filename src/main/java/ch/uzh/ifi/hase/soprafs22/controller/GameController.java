@@ -53,9 +53,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public GameGetDTO getGame(@PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
-        // get the current game information
 
-        // return the current game information
 
         Game game = gameService.getGame(gameId, playerId);
 
@@ -88,11 +86,7 @@ public class GameController {
     @ResponseStatus(HttpStatus.OK)
     @ResponseBody
     public void updateGame(@RequestBody PlayerPutDTO playerPutDTO, @PathVariable("gameId") Long gameId, @PathVariable("playerId") Long playerId) {
-        // updates the game when a user enters information (makes their move or opts out)
 
-        // GameService needs the userId and what their action is
-
-        // either return the current game information or no response because of the frequent GET request
 
         Player playerInput = DTOMapper.INSTANCE.convertPlayerPutDTOtoEntity(playerPutDTO);
 

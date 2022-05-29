@@ -1,19 +1,14 @@
 package ch.uzh.ifi.hase.soprafs22.rest.mapper;
 
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
-import ch.uzh.ifi.hase.soprafs22.entity.Membership;
-import ch.uzh.ifi.hase.soprafs22.entity.Team;
-import ch.uzh.ifi.hase.soprafs22.entity.User;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamPostDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
+import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
 
 /**
  * DTOMapperTest
@@ -122,5 +117,130 @@ public class DTOMapperTest {
     //check if user belongs to team and vice versa
     assertEquals(userGetDTO.getMemberships().iterator().next().getTeam(), team);
     assertEquals(teamGetDTO.getMemberships().iterator().next().getUser(), user);
-  }  
+  }
+
+
+    @Test
+    public void testGetTeamCalendar_fromTeamCaelndar_toTeamCaelndarGetDTO_success() {
+
+        Team testTeam = new Team();
+        testTeam.setId(1L);
+        User testUser = new User();
+        testUser.setId(2L);
+        testUser.setToken("token");
+        testTeam.setName("testTeamname");
+        TeamCalendar testTeamCalendar = new TeamCalendar();
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setBasePlan(new ArrayList<>());
+        testTeam.setTeamCalendar(testTeamCalendar);
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+        List<Day> daysFixed = new ArrayList<>();
+        testTeamCalendar.setBasePlanFixed(daysFixed);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setStartingDateFixed(LocalDate.now());
+
+        // MAP -> Create TeamGetDTO
+        TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(testTeamCalendar);
+
+        // check content
+        assertEquals(testTeamCalendar.getId(), teamCalendarGetDTO.getId());
+        assertEquals(testTeamCalendar.getBasePlan().size(), teamCalendarGetDTO.getDays().size());
+        assertEquals(testTeamCalendar.getStartingDate(), teamCalendarGetDTO.getStartingDate());
+        assertEquals(testTeamCalendar.getStartingDateFixed(), teamCalendarGetDTO.getStartingDateFixed());
+        assertEquals(testTeamCalendar.getBusy(), teamCalendarGetDTO.getBusy());
+    }
+
+    @Test
+    public void testGetGame_fromGame_toGameGetDTO_success() {
+
+        Team testTeam = new Team();
+        testTeam.setId(1L);
+        User testUser = new User();
+        testUser.setId(2L);
+        testUser.setToken("token");
+        testTeam.setName("testTeamname");
+        TeamCalendar testTeamCalendar = new TeamCalendar();
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setBasePlan(new ArrayList<>());
+        testTeam.setTeamCalendar(testTeamCalendar);
+
+
+
+        Day day = new Day ();
+        day.setTeamCalendar(testTeamCalendar);
+        testTeam.setTeamCalendar(testTeamCalendar);
+        Slot slot = new Slot();
+        slot.setDay(day);
+        Schedule schedule = new Schedule();
+        schedule.setSlot(slot);
+        schedule.setId(10L);
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        List<Schedule> schedules = Collections.singletonList(schedule);
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = Collections.singletonList(day);
+        testTeamCalendar.setId(1L);
+        testTeamCalendar.setBasePlan(days);
+        List<Day> daysFixed = new ArrayList<>();
+        testTeamCalendar.setBasePlanFixed(daysFixed);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+        testTeamCalendar.setStartingDateFixed(LocalDate.now());
+
+        Game testGame = new Game();
+        testGame.setId(1L);
+        testGame.setBoardLength(10);
+        Player testPlayer1= new Player();
+        Player testPlayer2 = new Player();
+        testPlayer1.setId(2L);
+        testPlayer2.setId(3L);
+        testPlayer1.setGame(testGame);
+        testPlayer2.setGame(testGame);
+        Set<Player> players = new HashSet<Player>();
+        players.add(testPlayer1);
+        players.add(testPlayer2);
+        testGame.setPlayers(players);
+        testGame.setBoardLength(10);
+
+        Location apple = new Location();
+        apple.setX(3);
+        apple.setY(3);
+        List<Location> apples = new ArrayList<>();
+        apples.add(apple);
+        testGame.setApples(apples);
+
+        // MAP -> Create TeamGetDTO
+        GameGetDTO gameGetDTO = DTOMapper.INSTANCE.convertEntityToGameGetDTO(testGame);
+
+        // check content
+        assertEquals(testGame.getId(), gameGetDTO.getId());
+        assertEquals(testGame.getPlayers().size(),gameGetDTO.getPlayers().size());
+        assertEquals(testGame.getBoardLength(), gameGetDTO.getBoardLength());
+        assertEquals(testGame.getApples().get(0).getX(), gameGetDTO.getApples().get(0).getX());
+        assertEquals(testGame.getApples().get(0).getY(), gameGetDTO.getApples().get(0).getY());
+        assertEquals(testGame.getStatus(), gameGetDTO.getStatus());
+
+    }
 }
