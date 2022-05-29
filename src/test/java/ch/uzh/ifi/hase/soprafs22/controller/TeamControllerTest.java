@@ -123,7 +123,7 @@ public class TeamControllerTest {
 
         // when/then -> do the request + validate the result
         MockHttpServletRequestBuilder getRequest = get("/teams/1");
-;
+
 
         // then
         mockMvc.perform(getRequest)
@@ -221,7 +221,7 @@ public class TeamControllerTest {
     }
 
     @Test
-    public void getAllUsersOfTeam_doesNotExist_nullReturned() throws Exception {
+    public void getAllUsersOfTeam_doesNotExist_emptyReturned() throws Exception {
         // given
         User user = new User();
         user.setId(1L);
@@ -254,7 +254,7 @@ public class TeamControllerTest {
         // then
         mockMvc.perform(getRequest)
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").doesNotExist());
+                .andExpect(jsonPath("$").isEmpty());
     }
 
     @Test
@@ -304,7 +304,7 @@ public class TeamControllerTest {
       return new ObjectMapper().writeValueAsString(object);
     } catch (JsonProcessingException e) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-          String.format("The request body could not be created.%s", e.toString()));
+          String.format("The request body could not be created.%s", e));
     }
   }
 }
