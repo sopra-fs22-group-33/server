@@ -43,7 +43,6 @@ public class Slot implements Serializable {
         this.game = game;
     }
 
-    //TODO check if slots get deleted by cascade
     @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules;
 

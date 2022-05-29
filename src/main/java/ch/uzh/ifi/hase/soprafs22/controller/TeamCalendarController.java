@@ -63,41 +63,7 @@ public class TeamCalendarController {
         TeamCalendar userInput = DTOMapper.INSTANCE.convertTeamCalendarPostDTOtoEntity(teamCalendarPostDTO);
         TeamCalendar createdCalendar = teamCalendarService.updatePreferences(id, userInput, idUser);
     }
-/*//TODO
-    @GetMapping("/teams/{teamId}/calendars/optimize")
-    @ResponseStatus(HttpStatus.OK)
-    @ResponseBody
-    public TeamCalendarGetDTO getOptimizedTeamCalendars(@PathVariable("teamId") long id) {
-        TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
 
-        // if there are no collisions
-        if (!teamCalendarService.checkCollisionsWithoutGameStart(teamCalendar)) {
-            try {
-                new Optimizer(teamCalendar);
-                 teamCalendarService.updateOptimizedTeamCalendar(id, teamCalendar);
-                 TeamCalendarGetDTO teamCalendarGetDTO = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
-                 return teamCalendarGetDTO;
-            }
-
-            catch (LpSolveException ex) {
-                log.debug("Something did not work with optimizer (I dont know what)" + ex);
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Something did not work with optimizer, it though an error" );
-            }
-
-            catch (ArithmeticException ex) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, "no solution found, ask admin to change requirements");
-            }
-
-            catch (Exception ex) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "lp_solve is not supported (probably)");
-            }
-        }
-
-        log.debug("There are still collisions, you need to play games" );
-        throw new ResponseStatusException(HttpStatus.TOO_EARLY, "There are still collisions, you need to play games" );
-
-    }
-*/
     @GetMapping("/teams/{teamId}/calendars/finalize")
     @ResponseStatus(HttpStatus.OK)
     public String finalSubmission( @PathVariable("teamId") long id) {

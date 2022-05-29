@@ -140,8 +140,6 @@ public class TeamServiceIntegrationTest {
     assertNotNull(userService.findUserById(createdUser.getId()));
   }
 
-
-  //TODO use for report
   @Test
   @Transactional
   public void deleteTeam_noAdmin_throwsException() {

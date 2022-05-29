@@ -444,7 +444,7 @@ public class TeamCalendarService {
                    return "Something did not work with lp solve";}
 
                 catch (ArithmeticException ex) {
-                    return "no solution found";
+                    return "no possible solution found, please adjust calendar";
 
                 }
 
@@ -478,7 +478,7 @@ public class TeamCalendarService {
                 catch (Exception e) {
                     //do nothing
                 }
-                return "bad requirement, email sent";
+                return "not enough members available to fulfil requirement!";
             }
 
         }
