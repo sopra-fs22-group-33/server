@@ -154,7 +154,7 @@ public class TeamCalendarService {
                                 Optional<Schedule> optinalSchedule = scheduleRepository.findById(schedule.getId());
                                 if (optinalSchedule.isPresent()){
                                     Schedule foundSchedule = optinalSchedule.get();
-                                    if (foundSchedule.getSlot().getDay().getTeamCalendar().getId() == oldCalendar.getId()){
+                                    if (foundSchedule.getSlot().getDay().getTeamCalendar().getId().equals(oldCalendar.getId())){
                                         foundSchedule.setSpecial(schedule.getSpecial());
                                         foundSchedule.setBase(schedule.getBase());
                                     }

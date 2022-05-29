@@ -118,7 +118,7 @@ public class GameService {
             if (game.getApples()!=null){
             for (int i = 0; i< game.getApples().size(); i++){
                  Location appleLocation = game.getApples().get(i);
-                    if ((head.getX() == appleLocation.getX()) && ((head.getY() == appleLocation.getY()))){
+                    if ((head.getX().equals(appleLocation.getX())) && ((head.getY().equals(appleLocation.getY())))){
                         currentPlayer.setStatus("ate");
 
                         // change location  of apple to random
@@ -148,12 +148,12 @@ public class GameService {
 
             else  for (Player player:game.getPlayers()) {
                 // if that player is not dead and it is not us
-            if (!Objects.equals(player.getStatus(), "dead") && player.getId() != currentPlayer.getId()) {
+            if (!Objects.equals(player.getStatus(), "dead") && (!player.getId().equals(currentPlayer.getId()))) {
                     List<Location> playerChunks = player.getChunks();
                     for (Location chunkLocation : playerChunks) {
                         // handle the case when two heads meet
                         playerHead = player.getChunks().get(0);
-                        if ((head.getX() == playerHead.getX()) && (head.getY() == playerHead.getY())) {
+                        if ((head.getX().equals(playerHead.getX())) && (head.getY().equals(playerHead.getY()))) {
                             currentPlayer.setStatus("dead");
                             player.setStatus("dead");
 
@@ -169,7 +169,7 @@ public class GameService {
                             currentPlayer.setChunks(null);
                             player.setChunks(null);
                         }
-                        else if ((head.getX() == chunkLocation.getX()) && ((head.getY() == chunkLocation.getY()))) {
+                        else if ((head.getX().equals(chunkLocation.getX())) && ((head.getY().equals(chunkLocation.getY())))) {
                             currentPlayer.setStatus("dead");
                             currentPlayer.setChunks(null);
                             currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
