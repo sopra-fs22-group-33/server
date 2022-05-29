@@ -762,6 +762,60 @@ public class TeamCalendarServiceTest {
 
     }
 
+    @Test
+    public void checkfinalSubmission_test() {
+        User testUser2 = new User();
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(-1);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(-1);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = List.of((new Schedule[]{schedule, schedule2}));
+        slot.setSchedules(schedules);
+        slot.setRequirement(3);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        assertEquals("not enough members available to fulfil requirement!", teamCalendarService.finalCalendarSubmission(1L));
+    }
+
+    @Test
+    public void checkfinalSubmission_Games_start_test() {
+        User testUser2 = new User();
+
+        Day day = new Day ();
+        Slot slot = new Slot();
+        Schedule schedule = new Schedule();
+        schedule.setSpecial(0);
+        schedule.setBase(1);
+        schedule.setUser(testUser);
+        Schedule schedule2 = new Schedule();
+        schedule2.setSpecial(0);
+        schedule2.setBase(1);
+        schedule2.setUser(testUser2);
+        List<Schedule> schedules = List.of((new Schedule[]{schedule, schedule2}));
+        slot.setSchedules(schedules);
+        slot.setRequirement(1);
+        List<Slot> slots = Collections.singletonList(slot);
+        day.setSlots(slots);
+        List<Day> days = new ArrayList<>();
+        days.add(day);
+        testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setStartingDate(LocalDate.now());
+
+        assertEquals("there are collisions and games were started", teamCalendarService.finalCalendarSubmission(1L));
+    }
+
 
 
 }
