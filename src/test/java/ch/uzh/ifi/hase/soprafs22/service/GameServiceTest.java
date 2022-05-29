@@ -191,6 +191,70 @@ public class GameServiceTest {
     }
 
     @Test
+    public void updatePlayerInGameTest_self_collision(){
+        Location apple = new Location();
+        apple.setX(5);
+        apple.setY(5);
+        List<Location> apples = new ArrayList<>();
+
+        testGame.setApples(apples);
+        Location l = new Location();
+        l.setX(3);
+        l.setY(3);
+        Location l2 = new Location();
+        l2.setX(3);
+        l2.setY(3);
+        List<Location> chunks = new ArrayList<>();
+        chunks.add(l);
+        chunks.add(l2);
+
+        testPlayer2.setChunks(apples);
+        testPlayer1.setChunks(apples);
+
+        List<Location> chunks3 = new ArrayList<>();
+        chunks3.add(l);
+        chunks3.add(l2);
+
+        Player playerInput = new Player();
+        playerInput.setChunks(chunks3);
+
+        gameService.updatePlayerInGame(playerInput,1L, 3L);
+        assertEquals("dead", testPlayer2.getStatus());
+    }
+
+    @Test
+    public void updatePlayerInGameTest_wall_crash(){
+        Location apple = new Location();
+        apple.setX(5);
+        apple.setY(5);
+        List<Location> apples = new ArrayList<>();
+
+        testGame.setApples(apples);
+        Location l = new Location();
+        l.setX(-3);
+        l.setY(-3);
+        Location l2 = new Location();
+        l2.setX(3);
+        l2.setY(3);
+        List<Location> chunks = new ArrayList<>();
+        chunks.add(l);
+        chunks.add(l2);
+
+        testPlayer2.setChunks(apples);
+        testPlayer1.setChunks(apples);
+
+        List<Location> chunks3 = new ArrayList<>();
+        chunks3.add(l);
+        chunks3.add(l2);
+
+        Player playerInput = new Player();
+        playerInput.setChunks(chunks3);
+
+        gameService.updatePlayerInGame(playerInput,1L, 3L);
+        assertEquals("dead", testPlayer2.getStatus());
+    }
+
+    @Test
     public void finishGame_test(){
 
         Team testTeam = new Team();
