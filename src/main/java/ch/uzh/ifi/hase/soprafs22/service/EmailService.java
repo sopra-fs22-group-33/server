@@ -9,8 +9,6 @@ import com.sendgrid.helpers.mail.objects.Content;
 import com.sendgrid.helpers.mail.objects.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.io.IOException;
-
 
 public class EmailService {
 
@@ -20,7 +18,6 @@ public class EmailService {
 
     public void sendEmail(String toAddress, String subject, String content) throws Exception{
         Email from = new Email("sopra.shiftplanner@gmail.com");
-        //String subject = subject;
         Email to = new Email(toAddress);
         Content value = new Content("text/plain", content);
         Mail mail = new Mail(from, subject, to, value);

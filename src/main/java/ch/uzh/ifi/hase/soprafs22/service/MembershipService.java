@@ -62,7 +62,6 @@ public class MembershipService {
     User user = membership.getUser();
     user.getMemberships().remove(membership);
     membershipRepository.delete(membership);
-//    membershipRepository.deleteById(membership.getId());
     membershipRepository.flush();
   }
 }

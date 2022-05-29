@@ -8,7 +8,5 @@ import java.util.Optional;
 
 @Repository("teamCalendarRepository")
 public interface TeamCalendarRepository extends JpaRepository<TeamCalendar, Long>{
-
-    //TeamCalendar findByTeam(Team team);
     Optional<TeamCalendar> findById (Long id);
 }

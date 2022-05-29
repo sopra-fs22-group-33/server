@@ -2,8 +2,6 @@ package ch.uzh.ifi.hase.soprafs22.service;
 
 import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -17,7 +15,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Service
 @Transactional
 public class UserCalendarService {
-    private final Logger log = LoggerFactory.getLogger(TeamCalendarService.class);
 
     private final UserCalendarRepository userCalendarRepository;
     private final TeamRepository teamRepository;
@@ -40,7 +37,6 @@ public class UserCalendarService {
     public UserCalendar getUserCalendar (User user){
         int differenceInDays;
         LocalDate startingDate = LocalDate.now();
-        int i;
 
         //set startingDate to the lowest date of all teamCalendars
         for (Membership membership : user.getMemberships()) {

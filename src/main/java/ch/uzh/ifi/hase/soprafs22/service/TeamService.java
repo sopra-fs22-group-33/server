@@ -38,7 +38,6 @@ public class TeamService {
 
   public Team createTeam(Team newTeam, User user) {
     
-    // checkIfTeamExists(newTeam);
     Membership membership = new Membership();
     membership.setUser(user);
     membership.setTeam(newTeam);

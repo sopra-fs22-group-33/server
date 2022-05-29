@@ -332,7 +332,6 @@ public class TeamCalendarService {
     public TeamCalendar createTeamCalendar(long id, TeamCalendar newCalendar) {
 
         newCalendar.setStartingDateFixed(newCalendar.getStartingDate());
-        //checkIfTeamHasCalendar(id);
         Optional<Team> team = teamRepository.findById(id);
         if (team.isPresent()){
             Team foundTeam = team.get();
@@ -354,7 +353,6 @@ public class TeamCalendarService {
                                 Optional<User> user = userRepository.findById(schedule.getUser().getId());
                                 if (user.isPresent()) {
                                     User foundUser = user.get();
-                                    //foundUser.addSchedule(schedule);
                                     schedule.setUser(foundUser);
                                 }
                                 else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "couldn't find user");
@@ -415,7 +413,6 @@ public class TeamCalendarService {
         if (teamtest.isPresent()){
             Team foundTeam = teamtest.get();
             TeamCalendar foundCalendar = foundTeam.getTeamCalendar();
-           //foundCalendar.getBasePlanFixed().clear();
             foundCalendar.setBusy(true);
             teamCalendarRepository.save(foundCalendar);
             teamCalendarRepository.flush();

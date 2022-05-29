@@ -188,10 +188,8 @@ public class UserController {
   @ResponseStatus(HttpStatus.OK)
   @ResponseBody
   public UserCalendarGetDTO getUserCalendar(@PathVariable("userId") long userId ){ //@RequestHeader("token") String token
-//      if (userService.authorizeUser(userId, token)) {
           User user = userService.findUserById(userId);
           UserCalendar userCalendar = userCalendarService.getUserCalendar(user);
-//      }
       return DTOMapper.INSTANCE.convertEntityToUserCalendarGetDTO(userCalendar);
   }
 }

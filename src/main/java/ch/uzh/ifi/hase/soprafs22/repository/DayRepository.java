@@ -6,7 +6,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository("dayRepository")
 public interface DayRepository extends JpaRepository< Day, Long>{
-
-    //@Query("SELECT d FROM Day d where d.id=:id and d.weekday=:weekday ")
-    //Day getDayFromDayKey(Weekday w, Long id);
 }

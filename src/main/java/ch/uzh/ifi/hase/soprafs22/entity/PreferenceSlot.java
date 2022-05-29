@@ -7,7 +7,6 @@ import java.io.Serializable;
 
 @Entity
 public class PreferenceSlot implements Serializable {
-//    private static final long serialVersionUID = 2L;
     @Id
     @GeneratedValue
     private Long id;

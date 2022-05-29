@@ -5,8 +5,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamCalendarRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -29,8 +27,6 @@ import static java.time.temporal.ChronoUnit.DAYS;
 @Service
 @Transactional
 public class GameService {
-
-    private final Logger log = LoggerFactory.getLogger(UserService.class);
 
     private final GameRepository gameRepository;
 
@@ -90,12 +86,8 @@ public class GameService {
 
         makeMove(foundGame, foundPlayer);
 
-        //playerRepository.save(foundPlayer);
-        //playerRepository.flush();
         gameRepository.save(foundGame); // should propagate by cascade to players
         gameRepository.flush();
-
-
     }
 
     public void makeMove(Game game, Player currentPlayer){
@@ -104,7 +96,7 @@ public class GameService {
 // if the current player is not yet dead
         if (!Objects.equals(currentPlayer.getStatus(), "dead")){
 
-            // if the player just ate, change his status to null so thathe stops eating...
+            // if the player just ate, change his status to null so that he stops eating...
             if (Objects.equals(currentPlayer.getStatus(), "ate")){
                 currentPlayer.setStatus(null);
             }
@@ -115,7 +107,7 @@ public class GameService {
             if (game.getApples()!=null){
             for (int i = 0; i< game.getApples().size(); i++){
                  Location appleLocation = game.getApples().get(i);
-                    if ((head.getX().equals(appleLocation.getX())) && ((head.getY().equals(appleLocation.getY())))){
+                    if ((head.getX().equals(appleLocation.getX())) && (head.getY().equals(appleLocation.getY()))){
                         currentPlayer.setStatus("ate");
 
                         // change location  of apple to random
@@ -144,7 +136,7 @@ public class GameService {
             // if the player did not die because of wall maybe he crashed into others
 
             else  for (Player player:game.getPlayers()) {
-                // if that player is not dead and it is not us
+                // if that player is not dead, and it is not us
             if (!Objects.equals(player.getStatus(), "dead") && (!player.getId().equals(currentPlayer.getId()))) {
                     List<Location> playerChunks = player.getChunks();
                     for (Location chunkLocation : playerChunks) {
@@ -166,7 +158,7 @@ public class GameService {
                             currentPlayer.setChunks(null);
                             player.setChunks(null);
                         }
-                        else if ((head.getX().equals(chunkLocation.getX())) && ((head.getY().equals(chunkLocation.getY())))) {
+                        else if ((head.getX().equals(chunkLocation.getX())) && (head.getY().equals(chunkLocation.getY()))) {
                             currentPlayer.setStatus("dead");
                             currentPlayer.setChunks(null);
                             currentPlayer.setRank(rank+1);  // 1 - looser ... n - winner
@@ -248,7 +240,7 @@ public class GameService {
 
             }
             catch (Exception e) {
-                ;
+                //do nothing
             }
         }
     }
