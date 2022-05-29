@@ -289,7 +289,7 @@ public class GameService {
 
         // create copy of the base plan
         List<Day> basePlan = new ArrayList<>();
-        int latestDay = 0;
+        long latestDay = 0;
         for (Day dayFixed: newCalendar.getBasePlan()){
             if (dayFixed.getWeekday()>latestDay){
                 latestDay = dayFixed.getWeekday();

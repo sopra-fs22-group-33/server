@@ -38,6 +38,7 @@ public class TeamCalendarService {
     private final UserRepository userRepository;
     private final PlayerRepository playerRepository;
     private final DayRepository dayRepository;
+    private final   Random rand = new Random();
 
     private final ScheduleRepository scheduleRepository;
 
@@ -77,7 +78,7 @@ public class TeamCalendarService {
 
         // create copy of the base plan
         List<Day> basePlan = new ArrayList<>();
-        int latestDay = 0;
+        long latestDay = 0;
         for (Day dayFixed: newCalendar.getBasePlan()){
             if (dayFixed.getWeekday()>latestDay){
                 latestDay = dayFixed.getWeekday();
@@ -257,7 +258,7 @@ public class TeamCalendarService {
 
         Optional<Team> teamagain = teamRepository.findById(id);
         if (teamagain.isPresent()){
-            Team foundTeam = team.get();
+            Team foundTeam = teamagain.get();
             TeamCalendar oldCalendar = foundTeam.getTeamCalendar();
 
             for (Day day : newCalendar.getBasePlan()) {
@@ -588,7 +589,7 @@ public class TeamCalendarService {
         game.setStatus("on");
         game.setSlot(slot);
         slot.setGame(game);
-        Random rand = new Random();
+
 
         // set board size based on number of players
         int size = (int) (60*(1- exp(-slot.getSchedules().size()/4.0)));
