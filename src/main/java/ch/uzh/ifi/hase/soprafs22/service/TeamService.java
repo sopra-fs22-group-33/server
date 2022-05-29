@@ -17,6 +17,7 @@ import ch.uzh.ifi.hase.soprafs22.repository.TeamRepository;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 @Service
@@ -66,8 +67,9 @@ public class TeamService {
   }
 
   public void deleteTeam(long id, String token){
-      if (teamRepository.findById(id).isPresent()){
-          if (authorizeAdmin(teamRepository.findById(id).get(), token)){
+      Optional<Team> team = teamRepository.findById(id);
+      if (team.isPresent()){
+          if (authorizeAdmin(team.get(), token)){
             teamRepository.deleteById(id);
           }
       }
