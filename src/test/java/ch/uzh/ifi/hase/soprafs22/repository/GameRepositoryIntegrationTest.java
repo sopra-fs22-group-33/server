@@ -42,7 +42,6 @@ public class GameRepositoryIntegrationTest {
         List<Game> found = gameRepository.findAll();
 
         // then
-        assertNotNull(found.get(0).getId());
         assertEquals(found.get(0).getId(), game.getId());
 
     }

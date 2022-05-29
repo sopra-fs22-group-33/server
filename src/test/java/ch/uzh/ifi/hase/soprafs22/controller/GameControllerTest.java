@@ -2,6 +2,8 @@ package ch.uzh.ifi.hase.soprafs22.controller;
 
 
 import ch.uzh.ifi.hase.soprafs22.entity.Game;
+import ch.uzh.ifi.hase.soprafs22.entity.Player;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.GamePostDTO;
 import ch.uzh.ifi.hase.soprafs22.service.GameService;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
@@ -19,7 +21,9 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
@@ -69,7 +73,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     }
 
     @Test
-    public void givenGame_whenGetGame_forconcretePlayer__thenReturnJsonArray() throws Exception {
+    public void givenGame_whenGetGame_forconcretePlayer__thenReturnthatGame() throws Exception {
         // given
         Game game = new Game();
         game.setId(1L);
@@ -82,6 +86,35 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         // then
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
+    }
+
+    @Test
+    public void givenGame_whenGetGame_forconcretePlayer__thenReturnJsonArray() throws Exception {
+        // given
+        Game game = new Game();
+        game.setId(1L);
+        Player player1 = new Player();
+        player1.setId(1L);
+        player1.setGame(game);
+        Player player2 = new Player();
+        player2.setId(2L);
+        player2.setGame(game);
+        User testUser = new User();
+        Set<Player> players = new HashSet<>();
+        players.add(player1);
+        players.add(player2);
+        testUser.setPlayers(players);
+
+        given(userService.getUserById(Mockito.anyLong())).willReturn(testUser);
+        given(gameService.getGame(Mockito.anyLong(), Mockito.anyLong())).willReturn( game);
+
+        // when
+        MockHttpServletRequestBuilder getRequest = get("/users/1/games").contentType(MediaType.APPLICATION_JSON);
+
+        // then
+        mockMvc.perform(getRequest).andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].id", is(1)));
     }
 
  }
