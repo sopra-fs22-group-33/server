@@ -24,7 +24,9 @@ import java.util.List;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -81,36 +83,5 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         mockMvc.perform(getRequest).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(1)));
     }
-
-
-    //@Test
-    // public void postGame_getGame_thenReturnJsonArray() throws Exception {
-         // given
-      //   Game game = new Game();
-       //  game.setId(1L);
-
-         //given(gameService.startGame(Mockito.any())).willReturn(game);
-
-//         GamePostDTO gamePostDTO = new GamePostDTO();
-
-//         // when
-//         MockHttpServletRequestBuilder postRequest =
-//                          post("/games")
-//                         .contentType(MediaType.APPLICATION_JSON)
-//                         .content(asJsonString(gamePostDTO));;
-
-//         // then
-//         mockMvc.perform(postRequest).andExpect(status().isCreated())
-//                 .andExpect(jsonPath("$.id", is(1)));
-//     }
-
-//     private String asJsonString(final Object object) {
-//         try {
-//             return new ObjectMapper().writeValueAsString(object);
-//         } catch (JsonProcessingException e) {
-//             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-//                     String.format("The request body could not be created.%s", e.toString()));
-//         }
-//     }
 
  }
