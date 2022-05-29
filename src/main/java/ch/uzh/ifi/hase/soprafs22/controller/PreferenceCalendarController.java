@@ -8,8 +8,6 @@ import ch.uzh.ifi.hase.soprafs22.rest.dto.PreferenceCalendarPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.PreferenceCalendarService;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -18,8 +16,6 @@ import org.springframework.web.server.ResponseStatusException;
 public class PreferenceCalendarController {
     private final PreferenceCalendarService preferenceCalendarService;
     private final UserService userService;
-
-    private final Logger log = LoggerFactory.getLogger(PreferenceCalendarService.class);
 
     PreferenceCalendarController(PreferenceCalendarService preferenceCalendarService, UserService userService) {
         this.preferenceCalendarService = preferenceCalendarService;

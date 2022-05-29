@@ -21,7 +21,7 @@ import java.util.List;
 @RestController
 public class TeamCalendarController {
     private final TeamCalendarService teamCalendarService;
-    private final Logger log = LoggerFactory.getLogger(TeamCalendarController.class);
+
     TeamCalendarController(TeamCalendarService teamCalendarService) {
         this.teamCalendarService = teamCalendarService;
     }
@@ -75,8 +75,7 @@ public class TeamCalendarController {
     @ResponseBody
     public TeamCalendarGetDTO getTeamCalendars(@PathVariable("teamId") long id) {
         TeamCalendar teamCalendar = teamCalendarService.getCalendar(id);
-        TeamCalendarGetDTO teamCalendarGetDTOs = DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
-        return teamCalendarGetDTOs;
+        return DTOMapper.INSTANCE.convertEntityToTeamCalendarGetDTO(teamCalendar);
     }
 
     @GetMapping("/teamCalendars")

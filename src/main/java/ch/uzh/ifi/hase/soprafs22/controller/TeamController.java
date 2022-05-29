@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -100,7 +101,7 @@ public class TeamController {
         userGetDTOs.add(DTOMapper.INSTANCE.convertEntityToUserGetDTO(user));
       }
       return userGetDTOs;
-    }return null;
+    }return Collections.emptyList();
   }
 
   @DeleteMapping("/users/{userId}/teams/{teamId}")

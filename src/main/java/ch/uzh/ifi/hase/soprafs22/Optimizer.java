@@ -1,16 +1,19 @@
 package ch.uzh.ifi.hase.soprafs22;
 
 
+import ch.uzh.ifi.hase.soprafs22.entity.Day;
+import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
+import ch.uzh.ifi.hase.soprafs22.entity.Slot;
+import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import lpsolve.LpSolve;
 import lpsolve.LpSolveException;
-import ch.uzh.ifi.hase.soprafs22.entity.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 
 public class Optimizer {
-    private final Logger log = LoggerFactory.getLogger(Optimizer.class);
 
     int nCols;
     TeamCalendar teamCalendar;
