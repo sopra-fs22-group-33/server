@@ -3,7 +3,7 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
 
 public class TeamCalendarPostDTO {
 

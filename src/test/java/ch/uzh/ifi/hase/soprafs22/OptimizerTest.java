@@ -1,19 +1,5 @@
 package ch.uzh.ifi.hase.soprafs22;
 
-import ch.uzh.ifi.hase.soprafs22.entity.*;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
-import org.springframework.web.server.ResponseStatusException;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-
 public class OptimizerTest {
 /*
     @Test

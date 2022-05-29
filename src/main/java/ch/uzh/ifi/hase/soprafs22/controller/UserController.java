@@ -1,16 +1,24 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
-import ch.uzh.ifi.hase.soprafs22.entity.*;
-import ch.uzh.ifi.hase.soprafs22.rest.dto.*;
+import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
+import ch.uzh.ifi.hase.soprafs22.entity.Team;
+import ch.uzh.ifi.hase.soprafs22.entity.User;
+import ch.uzh.ifi.hase.soprafs22.entity.UserCalendar;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserCalendarGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserGetDTO;
+import ch.uzh.ifi.hase.soprafs22.rest.dto.UserPostDTO;
 import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.*;
-
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * User Controller
@@ -27,15 +35,13 @@ public class UserController {
   private final MembershipService membershipService;
   private final InvitationService invitationService;
   private final UserCalendarService userCalendarService;
-  private final PreferenceCalendarService preferenceCalendarService;
 
-    UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService, PreferenceCalendarService preferenceCalendarService) {
+    UserController(UserService userService, TeamService teamService, MembershipService membershipService, InvitationService invitationService, UserCalendarService userCalendarService) {
     this.userService = userService;
     this.teamService = teamService;
     this.membershipService = membershipService;
     this.invitationService = invitationService;
     this.userCalendarService = userCalendarService;
-    this.preferenceCalendarService = preferenceCalendarService;
     }
 
   @GetMapping("/users")
@@ -56,7 +62,7 @@ public class UserController {
   @PostMapping("/users")
   @ResponseStatus(HttpStatus.CREATED)
   @ResponseBody
-  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response) throws Exception {
+  public UserGetDTO createUser(@RequestBody UserPostDTO userPostDTO, HttpServletResponse response) {
     // convert API user to internal representation
     User userInput = DTOMapper.INSTANCE.convertUserPostDTOtoEntity(userPostDTO);
 
@@ -84,9 +90,8 @@ public class UserController {
   @ResponseBody
   public UserGetDTO getUser(@PathVariable("id") long id) {
     User user = userService.findUserById(id);
-    UserGetDTO userGetDTO = DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
 
-    return userGetDTO;
+      return DTOMapper.INSTANCE.convertEntityToUserGetDTO(user);
   }
 
   @PutMapping("/users/{id}")

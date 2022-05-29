@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,7 +26,6 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.isNotNull;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -128,7 +126,7 @@ public class PreferenceCalendarControllerTest {
         MockHttpServletRequestBuilder postRequest = post("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(preferenceCalendarPostDTO))
-                .header("token", "1");;
+                .header("token", "1");
 
         // then
         mockMvc.perform(postRequest)
@@ -161,7 +159,7 @@ public class PreferenceCalendarControllerTest {
         MockHttpServletRequestBuilder putRequest = put("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(preferenceCalendarPostDTO))
-                .header("token", "1");;
+                .header("token", "1");
 
 
         // then
@@ -193,7 +191,7 @@ public class PreferenceCalendarControllerTest {
         MockHttpServletRequestBuilder putRequest = put("/users/1/preferences")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(asJsonString(preferenceCalendarPostDTO))
-                .header("token", "1");;
+                .header("token", "1");
 
         // then
         mockMvc.perform(putRequest)
@@ -216,7 +214,7 @@ public class PreferenceCalendarControllerTest {
             return new ObjectMapper().writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    String.format("The request body could not be created.%s", e.toString()));
+                    String.format("The request body could not be created.%s", e));
         }
     }
 }

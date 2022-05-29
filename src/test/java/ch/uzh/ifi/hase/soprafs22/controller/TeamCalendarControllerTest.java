@@ -1,9 +1,12 @@
 package ch.uzh.ifi.hase.soprafs22.controller;
 
 
-import ch.uzh.ifi.hase.soprafs22.entity.*;
+import ch.uzh.ifi.hase.soprafs22.entity.Day;
+import ch.uzh.ifi.hase.soprafs22.entity.Schedule;
+import ch.uzh.ifi.hase.soprafs22.entity.Slot;
+import ch.uzh.ifi.hase.soprafs22.entity.TeamCalendar;
 import ch.uzh.ifi.hase.soprafs22.rest.dto.TeamCalendarPostDTO;
-import ch.uzh.ifi.hase.soprafs22.service.*;
+import ch.uzh.ifi.hase.soprafs22.service.TeamCalendarService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
-import java.util.Set;
-
 import ch.uzh.ifi.hase.soprafs22.entity.Invitation;
 import ch.uzh.ifi.hase.soprafs22.entity.Membership;
+
+import java.util.Set;
 
 public class TeamPostDTO {
     private Long id;

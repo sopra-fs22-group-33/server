@@ -7,17 +7,17 @@ import ch.uzh.ifi.hase.soprafs22.entity.User;
 import ch.uzh.ifi.hase.soprafs22.repository.InvitationRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.MembershipRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.UserRepository;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.web.WebAppConfiguration;
-import static org.junit.jupiter.api.Assertions.*;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for the TeamResource REST resource.

@@ -2,9 +2,8 @@ package ch.uzh.ifi.hase.soprafs22.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import java.io.Serializable;
-
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "SCHEDULE")

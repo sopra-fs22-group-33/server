@@ -5,7 +5,6 @@ import ch.uzh.ifi.hase.soprafs22.entity.*;
 import ch.uzh.ifi.hase.soprafs22.repository.GameRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.PlayerRepository;
 import ch.uzh.ifi.hase.soprafs22.repository.TeamCalendarRepository;
-import lpsolve.LpSolveException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.lang.reflect.Array;
-import java.time.LocalDate;
 import java.util.*;
 
 import static java.time.temporal.ChronoUnit.DAYS;
@@ -77,12 +74,12 @@ public class GameService {
     @Transactional
     public void updatePlayerInGame(Player playerInput, Long gameId, Long playerId) {
         Optional<Game> game = gameRepository.findById(gameId);
-        if (!game.isPresent()){
+        if (game.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Game does not exist");
         }
 
         Optional<Player> player = playerRepository.findById(playerId);
-        if (!player.isPresent()){
+        if (player.isEmpty()){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Player does not exist");
         }
         Player foundPlayer =  player.get();

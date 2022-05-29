@@ -3,7 +3,6 @@ package ch.uzh.ifi.hase.soprafs22.rest.dto;
 import ch.uzh.ifi.hase.soprafs22.constant.UserStatus;
 import ch.uzh.ifi.hase.soprafs22.entity.Location;
 
-import javax.persistence.Column;
 import java.util.List;
 
 public class PlayerPutDTO {

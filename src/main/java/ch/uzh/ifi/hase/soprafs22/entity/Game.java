@@ -1,9 +1,6 @@
 package ch.uzh.ifi.hase.soprafs22.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import javax.persistence.*;
-
 import java.util.List;
 import java.util.Set;
 

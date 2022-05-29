@@ -1,9 +1,9 @@
 package ch.uzh.ifi.hase.soprafs22.rest.dto;
 
-import java.time.LocalDate;
-import java.util.*;
-
 import ch.uzh.ifi.hase.soprafs22.entity.Day;
+
+import java.time.LocalDate;
+import java.util.List;
 
 public class TeamCalendarGetDTO {
 

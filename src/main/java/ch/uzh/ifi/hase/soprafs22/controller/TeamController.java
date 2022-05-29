@@ -9,7 +9,6 @@ import ch.uzh.ifi.hase.soprafs22.rest.mapper.DTOMapper;
 import ch.uzh.ifi.hase.soprafs22.service.MembershipService;
 import ch.uzh.ifi.hase.soprafs22.service.TeamService;
 import ch.uzh.ifi.hase.soprafs22.service.UserService;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
