@@ -267,64 +267,69 @@ public class TeamCalendarServiceTest {
     @Test
     @Transactional
     public void Mapping_base_preferences_default_case() {
-        testTeam.setTeamCalendar(testTeamCalendar);
-        Set <Membership> memberships = new HashSet<>();
-        Membership m = new Membership( );
-        m.setTeam(testTeam);
-        m.setIsAdmin(true);
-        m.setUser(testUser);
-        memberships.add(m);
-        testTeam.setMemberships(memberships);
+        for (int k = 0; k<7; k++){
+            testTeam.setTeamCalendar(testTeamCalendar);
+            Set <Membership> memberships = new HashSet<>();
+            Membership m = new Membership( );
+            m.setTeam(testTeam);
+            m.setIsAdmin(true);
+            m.setUser(testUser);
+            memberships.add(m);
+            testTeam.setMemberships(memberships);
 
-        Day day = new Day ();
-        Slot slot = new Slot();
-        Schedule schedule = new Schedule();
-        schedule.setSpecial(-1);
-        schedule.setBase(1);
-        schedule.setUser(testUser);
-        List<Schedule> schedules = Collections.singletonList(schedule);
-        slot.setSchedules(schedules);
-        slot.setRequirement(1);
-        List<Slot> slots = Collections.singletonList(slot);
-        day.setSlots(slots);
-        List<Day> days = new ArrayList<>();
-        days.add(day);
-        testTeamCalendar.setBasePlan(days);
-        testTeamCalendar.setStartingDate(LocalDate.now());
+            Day day = new Day ();
+            Slot slot = new Slot();
+            Schedule schedule = new Schedule();
+            schedule.setSpecial(-1);
+            schedule.setBase(1);
+            schedule.setUser(testUser);
+            List<Schedule> schedules = Collections.singletonList(schedule);
+            slot.setSchedules(schedules);
+            slot.setRequirement(1);
+            List<Slot> slots = Collections.singletonList(slot);
+            day.setSlots(slots);
+            List<Day> days = new ArrayList<>();
+            days.add(day);
+            testTeamCalendar.setBasePlan(days);
+            testTeamCalendar.setStartingDate(LocalDate.now().plusDays(k));
 
-        //create calendar
-        TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
-        assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), createdTeamCalendar.getBasePlan().get(0).getSlots().size());
-
-
-        // create new calendar  ( you cant get with the old one as it is passed by pointer and gets destroyed when)
-        TeamCalendar testCalendarUpdate = new TeamCalendar();
-        Day day2 = new Day ();
-        Slot slot2 = new Slot();
-        Schedule schedule2 = new Schedule();
-        schedule2.setSpecial(-1);
-        schedule2.setBase(1);
-        schedule2.setUser(testUser);
-        List<Schedule> schedules2 = Collections.singletonList(schedule2);
-        slot2.setSchedules(schedules2);
-        slot2.setRequirement(1);
-        List<Slot> slots2 = Collections.singletonList(slot2);
-        day2.setSlots(slots2);
-        List<Day> days2 = new ArrayList<>();
-        days2.add(day2);
-        testCalendarUpdate.setBasePlan(days2);
-        testCalendarUpdate.setStartingDate(LocalDate.now());
+            //create calendar
+            TeamCalendar createdTeamCalendar = teamCalendarService.createTeamCalendar(1L, testTeamCalendar );
+            assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), createdTeamCalendar.getBasePlan().get(0).getSlots().size());
 
 
-        TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testCalendarUpdate, "token" );
-        assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
-        assertEquals(0,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
+            // create new calendar  ( you cant get with the old one as it is passed by pointer and gets destroyed when)
+            TeamCalendar testCalendarUpdate = new TeamCalendar();
+            Day day2 = new Day ();
+            Slot slot2 = new Slot();
+            Schedule schedule2 = new Schedule();
+            schedule2.setSpecial(-1);
+            schedule2.setBase(1);
+            schedule2.setUser(testUser);
+            List<Schedule> schedules2 = Collections.singletonList(schedule2);
+            slot2.setSchedules(schedules2);
+            slot2.setRequirement(1);
+            List<Slot> slots2 = Collections.singletonList(slot2);
+            day2.setSlots(slots2);
+            List<Day> days2 = new ArrayList<>();
+            days2.add(day2);
+            testCalendarUpdate.setBasePlan(days2);
+            testCalendarUpdate.setStartingDate(LocalDate.now().plusDays(k));
+
+
+            TeamCalendar updatedTeamCalendar = teamCalendarService.updateTeamCalendar(1L, testCalendarUpdate, "token" );
+            assertEquals(testTeamCalendar.getBasePlan().get(0).getSlots().size(), updatedTeamCalendar.getBasePlan().get(0).getSlots().size());
+            assertEquals(0,updatedTeamCalendar.getBasePlan().get(0).getSlots().get(0).getSchedules().get(0).getBase());
+
+        }
+
 
     }
 
     @Test
     @Transactional
     public void UpdatePreferencesTest() {
+
 
         Day day = new Day ();
         day.setTeamCalendar(testTeamCalendar);
@@ -453,7 +458,6 @@ public class TeamCalendarServiceTest {
         Mockito.when(teamRepository.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 
         testTeam.setTeamCalendar(testTeamCalendar);
-
         Day day = new Day ();
         Slot slot = new Slot();
         Schedule schedule = new Schedule();
@@ -765,6 +769,13 @@ public class TeamCalendarServiceTest {
     @Test
     public void checkfinalSubmission_test() {
         User testUser2 = new User();
+        Membership m = new Membership();
+        m.setIsAdmin(true);
+        m.setUser(testUser);
+        m.setTeam(testTeam);
+        Set<Membership> memberships = new HashSet<>();
+        memberships.add(m);
+        testTeam.setMemberships(memberships);
 
         Day day = new Day ();
         Slot slot = new Slot();
@@ -784,6 +795,7 @@ public class TeamCalendarServiceTest {
         List<Day> days = new ArrayList<>();
         days.add(day);
         testTeamCalendar.setBasePlan(days);
+        testTeamCalendar.setTeam(testTeam);
         testTeamCalendar.setStartingDate(LocalDate.now());
 
         assertEquals("not enough members available to fulfil requirement!", teamCalendarService.finalCalendarSubmission(1L));
