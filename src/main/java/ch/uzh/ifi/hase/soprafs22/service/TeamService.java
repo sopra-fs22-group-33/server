@@ -66,9 +66,11 @@ public class TeamService {
   }
 
   public void deleteTeam(long id, String token){
-    if (authorizeAdmin(teamRepository.findById(id).get(), token)){
-      teamRepository.deleteById(id);
-    }
+      if (teamRepository.findById(id).isPresent()){
+          if (authorizeAdmin(teamRepository.findById(id).get(), token)){
+            teamRepository.deleteById(id);
+          }
+      }
   }
 
   public Team findTeamById(@PathVariable Long id){    
